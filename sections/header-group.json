@@ -1,1 +1,38 @@
-{"name":"t:sections.header.name","type":"header","sections":{"announcement-bar":{"type":"announcement-bar","blocks":{"announcement-bar-0":{"type":"announcement","settings":{"text":"Welcome to our store","link":""}}},"block_order":["announcement-bar-0"],"settings":{"auto_rotate":false,"change_slides_speed":5,"color_scheme":"scheme-1","show_line_separator":true,"show_social":false,"enable_country_selector":false,"enable_language_selector":false}},"header":{"type":"header","settings":{"logo_position":"middle-left","mobile_logo_position":"center","menu":"main-menu","menu_type_desktop":"dropdown","sticky_header_type":"on-scroll-up","show_line_separator":true,"color_scheme":"scheme-1","menu_color_scheme":"scheme-1","enable_country_selector":true,"enable_language_selector":true,"enable_customer_avatar":true,"margin_bottom":0,"padding_top":20,"padding_bottom":20}}},"order":["announcement-bar","header"]}
+{
+  "name": "Header",
+  "type": "header",
+  "sections": {
+    "lawn_announcement": {
+      "type": "lawn-announcement-bar",
+      "settings": {
+        "text": "USE CODE: CELEBRATE10 FOR 10% OFF YOUR ORDER!",
+        "bg_color": "#61bd91",
+        "text_color": "#ffffff"
+      }
+    },
+    "lawn_header": {
+      "type": "lawn-header",
+      "blocks": {
+        "link_home": { "type": "link", "settings": { "label": "Home", "url": "/" } },
+        "link_shop": { "type": "link", "settings": { "label": "Shop Now", "url": "/collections/all" } },
+        "link_reviews": { "type": "link", "settings": { "label": "Reviews", "url": "/pages/reviews" } },
+        "link_tracking": { "type": "link", "settings": { "label": "Order Tracking", "url": "/pages/order-tracking" } },
+        "link_contact": { "type": "link", "settings": { "label": "Contact Us", "url": "/pages/contact" } }
+      },
+      "block_order": [
+        "link_home",
+        "link_shop",
+        "link_reviews",
+        "link_tracking",
+        "link_contact"
+      ],
+      "settings": {
+        "logo_width": 176,
+        "cart_label": "Cart",
+        "show_wishlist": true,
+        "show_account": true
+      }
+    }
+  },
+  "order": ["lawn_announcement", "lawn_header"]
+}

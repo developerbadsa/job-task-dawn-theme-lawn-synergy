@@ -1,0 +1,78 @@
+<section class="faq container">
+  {%- if section.settings.eyebrow != blank -%}
+    <p class="eyebrow centered">{{ section.settings.eyebrow }}</p>
+  {%- endif -%}
+  <h2>{{ section.settings.heading | default: 'Frequently Asked.' }}</h2>
+  {%- if section.settings.lead != blank -%}
+    <p class="faq-lead">{{ section.settings.lead }}</p>
+  {%- endif -%}
+
+  <div class="faq-list">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'item' -%}
+        <article class="faq-item{% if forloop.first and section.settings.first_open %} is-open{% endif %}" {{ block.shopify_attributes }}>
+          <button type="button">{{ block.settings.question }}<span>+</span></button>
+          <div class="faq-content">
+            <p>{{ block.settings.answer }}</p>
+          </div>
+        </article>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Lawn — FAQ",
+  "tag": "section",
+  "class": "lawn-faq-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Got Questions?"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked."
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Lead text",
+      "default": "Everything you need to know before you start your daily routine."
+    },
+    {
+      "type": "checkbox",
+      "id": "first_open",
+      "label": "Open first question by default",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "FAQ item",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "Question" },
+        { "type": "textarea", "id": "answer", "label": "Answer", "default": "Answer" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lawn — FAQ",
+      "blocks": [
+        { "type": "item", "settings": { "question": "What Is Envy Premium Tall Fescue Grass Seed Blend?", "answer": "It's a premium grass seed blend designed to build dense, dark green lawns with strong heat and drought tolerance, clean seed quality, and easy seasonal lawn improvement." } },
+        { "type": "item", "settings": { "question": "Where can I use Envy Premium Tall Fescue Grass Seed Blend?", "answer": "Use it on cool-season lawns, bare spots, overseeding projects, and areas where you want thicker turf." } },
+        { "type": "item", "settings": { "question": "When should I plant Envy Premium Tall Fescue Grass Seed?", "answer": "Early fall and spring are ideal because soil temperatures and moisture levels help new roots establish." } },
+        { "type": "item", "settings": { "question": "Does Envy Tall Fescue contain weed seeds?", "answer": "No. The blend is positioned as clean, weed-free seed with no unnecessary filler." } },
+        { "type": "item", "settings": { "question": "How long does it take for the seeds to germinate?", "answer": "Most tall fescue seed starts germinating in about 7 to 14 days when planted in good conditions." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,168 @@
+{%- liquid
+  assign logo = section.settings.logo
+  assign logo_width = section.settings.logo_width | default: 200
+  assign payment_strip = section.settings.payment_strip
+-%}
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      {%- if logo != blank -%}
+        {{ logo | image_url: width: 600 | image_tag:
+          class: 'footer-logo',
+          loading: 'lazy',
+          alt: shop.name,
+          style: 'width: ' | append: logo_width | append: 'px;'
+        }}
+      {%- else -%}
+        <img class="footer-logo" src="{{ 'lawn-synergy-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" style="width: {{ logo_width }}px;" width="{{ logo_width }}" height="60">
+      {%- endif -%}
+    </div>
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'link_list' -%}
+          <div {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.heading }}</h3>
+            {%- assign rows = block.settings.links | newline_to_br | split: '<br />' -%}
+            {%- for row in rows -%}
+              {%- assign trimmed = row | strip -%}
+              {%- if trimmed == blank -%}{%- continue -%}{%- endif -%}
+              {%- assign parts = trimmed | split: '|' -%}
+              {%- assign label = parts[0] | strip -%}
+              {%- assign url = parts[1] | default: '#' | strip -%}
+              <a href="{{ url }}">{{ label }}</a>
+            {%- endfor -%}
+          </div>
+        {%- when 'text' -%}
+          <div {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.heading }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="footer-bottom container">
+    <p>{{ section.settings.copyright | default: '©2026.' }} <strong>{{ section.settings.brand_name | default: shop.name | upcase }}</strong> {{ section.settings.rights | default: 'All Rights Reserved.' }}</p>
+    {%- if payment_strip != blank -%}
+      {{ payment_strip | image_url: width: 600 | image_tag:
+        loading: 'lazy',
+        alt: 'Payment methods',
+        width: 600,
+        height: 60
+      }}
+    {%- elsif section.settings.show_default_payments -%}
+      <img src="{{ 'payment-strip.png' | asset_url }}" alt="Payment methods" loading="lazy" width="460" height="46">
+    {%- endif -%}
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Lawn — Footer",
+  "tag": "section",
+  "class": "lawn-footer-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Footer logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width (px)",
+      "min": 80,
+      "max": 320,
+      "step": 4,
+      "default": 200
+    },
+    {
+      "type": "header",
+      "content": "Bottom bar"
+    },
+    {
+      "type": "text",
+      "id": "copyright",
+      "label": "Copyright",
+      "default": "©2026."
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Brand name",
+      "default": "LAWN SYNERGY"
+    },
+    {
+      "type": "text",
+      "id": "rights",
+      "label": "Rights text",
+      "default": "All Rights Reserved."
+    },
+    {
+      "type": "image_picker",
+      "id": "payment_strip",
+      "label": "Payment strip image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_default_payments",
+      "label": "Show default payment strip when none uploaded",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link_list",
+      "name": "Link column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "QUICK LINKS"
+        },
+        {
+          "type": "textarea",
+          "id": "links",
+          "label": "Links (one per line, format: Label|URL)",
+          "default": "Home|/\nAbout Us|/pages/about\nContact|/pages/contact"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "OUR BRAND"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Body",
+          "default": "Lawn Synergy was built by real lawn and landscape professionals with 25+ years of experience managing over 2,000 high-end residential properties. We're not a big-box brand we're turf experts who want to help you get the lawn you deserve."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lawn — Footer",
+      "blocks": [
+        { "type": "link_list", "settings": { "heading": "QUICK LINKS", "links": "Home|/\nAbout Us|/pages/about\nContact|/pages/contact" } },
+        { "type": "link_list", "settings": { "heading": "BRAND POLICIES", "links": "Privacy Policy|/policies/privacy-policy\nRefund Policy|/policies/refund-policy\nShipping Policy|/policies/shipping-policy\nTerms of Service|/policies/terms-of-service" } },
+        { "type": "text", "settings": { "heading": "OUR BRAND", "text": "Lawn Synergy was built by real lawn and landscape professionals with 25+ years of experience managing over 2,000 high-end residential properties. We're not a big-box brand we're turf experts who want to help you get the lawn you deserve." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,496 @@
+{%- liquid
+  assign product = all_products[section.settings.product]
+  assign main_image = section.settings.main_image
+  assign rating_stars = section.settings.rating_stars | default: '★★★★★'
+  assign sale_price = section.settings.sale_price | default: '$49.99'
+  assign old_price = section.settings.old_price | default: '$56.25'
+-%}
+
+<section class="hero product-section container">
+  <div class="product-media">
+    <div class="gallery">
+      <div class="thumbs" aria-label="Product gallery thumbnails">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'thumb' -%}
+            <button class="thumb{% if forloop.first %} is-active{% endif %}" type="button" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 200 | image_tag:
+                  loading: 'lazy',
+                  alt: block.settings.alt | default: 'Product gallery thumbnail',
+                  width: 200,
+                  height: 200
+                }}
+              {%- else -%}
+                <img src="{{ 'thumb-1.png' | asset_url }}" alt="{{ block.settings.alt | default: 'Product gallery thumbnail' }}" width="200" height="200">
+              {%- endif -%}
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      <div class="main-product-card">
+        {%- if main_image != blank -%}
+          {{ main_image | image_url: width: 1000 | image_tag:
+            loading: 'eager',
+            alt: section.settings.main_image_alt | default: section.settings.title,
+            width: 1000,
+            height: 1000
+          }}
+        {%- else -%}
+          <img src="{{ 'envy-tall-fescue-design.png' | asset_url }}" alt="{{ section.settings.main_image_alt | default: section.settings.title }}" width="1000" height="1000">
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- if section.settings.show_dots -%}
+      <div class="slider-dots" aria-hidden="true">
+        {%- assign dot_count = section.settings.dot_count | default: 5 -%}
+        {%- assign active_dot = section.settings.active_dot | default: 3 -%}
+        {%- for i in (1..dot_count) -%}
+          <span{% if i == active_dot %} class="active"{% endif %}></span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_trust -%}
+      <div class="trust-row">
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'trust' -%}
+            <div class="trust-item" {{ block.shopify_attributes }}>
+              {%- if block.settings.image != blank -%}
+                {{ block.settings.image | image_url: width: 200 | image_tag:
+                  loading: 'lazy',
+                  class: 'seal-img',
+                  alt: '',
+                  width: 86,
+                  height: 86
+                }}
+              {%- else -%}
+                <img class="seal-img" src="{{ 'trust-shipping.png' | asset_url }}" alt="" width="86" height="86">
+              {%- endif -%}
+              <strong>{{ block.settings.label }}</strong>
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+
+  <div class="product-info">
+    {%- if section.settings.show_rating -%}
+      <div class="rating">
+        <span class="stars">{{ rating_stars }}</span>
+        <span>{{ section.settings.rating_text | default: 'Rated By 12,520+ Customers' }}</span>
+      </div>
+    {%- endif -%}
+
+    <h1>{{ section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend' }}</h1>
+    <p class="lead">{{ section.settings.lead | default: 'Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.' }}</p>
+
+    <ul class="feature-list">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'feature' -%}
+          <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+
+    <div class="price-row">
+      {%- if product -%}
+        <span class="sale-price">{{ product.price | money }}</span>
+        {%- if product.compare_at_price > product.price -%}
+          <span class="old-price">{{ product.compare_at_price | money }}</span>
+        {%- endif -%}
+      {%- else -%}
+        <span class="sale-price">{{ sale_price }}</span>
+        {%- if old_price != blank -%}
+          <span class="old-price">{{ old_price }}</span>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    <div class="size-area">
+      <h2>{{ section.settings.size_heading | default: 'Select Your Size' }}</h2>
+      <div class="size-grid" role="radiogroup" aria-label="Select size">
+        {%- assign size_index = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'size' -%}
+            {%- assign size_index = size_index | plus: 1 -%}
+            <button class="size-card{% if forloop.first %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}"
+                    type="button"
+                    aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                    {{ block.shopify_attributes }}>
+              {%- if block.settings.badge != blank -%}
+                <em>{{ block.settings.badge }}</em>
+              {%- endif -%}
+              <strong>{{ block.settings.size }}</strong>
+              <span>{{ block.settings.coverage }}</span>
+              <b>{{ block.settings.price }}</b>
+            </button>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+
+    {%- if product -%}
+      {%- form 'product', product, id: 'lawn-hero-product-form', class: 'lawn-product-form', novalidate: 'novalidate' -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-product-variant-input>
+        <div class="buy-box">
+          <label for="quantity-{{ section.id }}">{{ section.settings.qty_label | default: 'Quantity:' }}</label>
+          <div class="quantity">
+            <button class="qty-btn" data-qty="minus" type="button" aria-label="Decrease quantity">-</button>
+            <span id="quantityValue">{{ section.settings.default_qty | default: 2 }}</span>
+            <button class="qty-btn" data-qty="plus" type="button" aria-label="Increase quantity">+</button>
+            <input type="hidden" name="quantity" id="quantity-{{ section.id }}" value="{{ section.settings.default_qty | default: 2 }}" data-product-quantity-input>
+          </div>
+          {%- if section.settings.urgency_text != blank -%}
+            <span class="selling">{{ section.settings.urgency_text }}</span>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.program_text != blank -%}
+          <p class="program">
+            {{ section.settings.program_text }}
+            {%- if section.settings.program_link != blank -%}
+              <a href="{{ section.settings.program_link }}">{{ section.settings.program_link_label | default: 'Join the Program' }}</a>
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+
+        <button class="add-cart" type="submit" name="add">
+          {{ section.settings.cta_label | default: 'Add To Cart' }}
+        </button>
+      {%- endform -%}
+    {%- else -%}
+      <div class="buy-box">
+        <label>{{ section.settings.qty_label | default: 'Quantity:' }}</label>
+        <div class="quantity">
+          <button class="qty-btn" data-qty="minus" type="button" aria-label="Decrease quantity">-</button>
+          <span id="quantityValue">{{ section.settings.default_qty | default: 2 }}</span>
+          <button class="qty-btn" data-qty="plus" type="button" aria-label="Increase quantity">+</button>
+        </div>
+        {%- if section.settings.urgency_text != blank -%}
+          <span class="selling">{{ section.settings.urgency_text }}</span>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.program_text != blank -%}
+        <p class="program">
+          {{ section.settings.program_text }}
+          {%- if section.settings.program_link != blank -%}
+            <a href="{{ section.settings.program_link }}">{{ section.settings.program_link_label | default: 'Join the Program' }}</a>
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+
+      <button class="add-cart" type="button">{{ section.settings.cta_label | default: 'Add To Cart' }}</button>
+    {%- endif -%}
+
+    {%- if section.settings.show_shipping_line -%}
+      <div class="shipping-line">
+        {%- if section.settings.shipping_left != blank -%}
+          <span>{{ section.settings.shipping_left }}</span>
+        {%- endif -%}
+        {%- if section.settings.shipping_right != blank -%}
+          <span>{{ section.settings.shipping_right }}</span>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_payments -%}
+      <div class="payments">
+        {%- assign payments = section.settings.payment_labels | default: 'AMEX,Pay,G Pay,MC,MC,VISA' | split: ',' -%}
+        {%- for payment in payments -%}
+          <span>{{ payment | strip }}</span>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="product-accordions">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'accordion' -%}
+          <details class="product-accordion" {{ block.shopify_attributes }}>
+            <summary>
+              <span>{{ block.settings.title }}</span>
+              <i></i>
+            </summary>
+            {%- if block.settings.content != blank -%}
+              <div class="product-accordion__content">{{ block.settings.content }}</div>
+            {%- endif -%}
+          </details>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Lawn — Hero Product",
+  "tag": "section",
+  "class": "lawn-hero-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product (optional)"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Linked product",
+      "info": "If set, price and Add-to-Cart will use this product. Otherwise the static text below is used."
+    },
+    {
+      "type": "header",
+      "content": "Main media"
+    },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Main product image"
+    },
+    {
+      "type": "text",
+      "id": "main_image_alt",
+      "label": "Main image alt text",
+      "default": "Envy Premium Tall Fescue product graphic"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show slider dots",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "dot_count",
+      "label": "Number of dots",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "active_dot",
+      "label": "Active dot index",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_trust",
+      "label": "Show trust row",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Product info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating row",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_stars",
+      "label": "Stars text",
+      "default": "★★★★★"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating text",
+      "default": "Rated By 12,520+ Customers"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Envy Premium Tall Fescue Grass Seed Blend"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Lead description",
+      "default": "Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance."
+    },
+    {
+      "type": "header",
+      "content": "Price (used when no product is linked)"
+    },
+    {
+      "type": "text",
+      "id": "sale_price",
+      "label": "Sale price",
+      "default": "$49.99"
+    },
+    {
+      "type": "text",
+      "id": "old_price",
+      "label": "Compare-at price",
+      "default": "$56.25"
+    },
+    {
+      "type": "header",
+      "content": "Size selector"
+    },
+    {
+      "type": "text",
+      "id": "size_heading",
+      "label": "Heading",
+      "default": "Select Your Size"
+    },
+    {
+      "type": "header",
+      "content": "Buy box"
+    },
+    {
+      "type": "text",
+      "id": "qty_label",
+      "label": "Quantity label",
+      "default": "Quantity:"
+    },
+    {
+      "type": "number",
+      "id": "default_qty",
+      "label": "Default quantity",
+      "default": 2
+    },
+    {
+      "type": "text",
+      "id": "urgency_text",
+      "label": "Urgency text",
+      "default": "Selling Fast"
+    },
+    {
+      "type": "text",
+      "id": "program_text",
+      "label": "Program text",
+      "default": "Automatic Lawn Care Program:"
+    },
+    {
+      "type": "text",
+      "id": "program_link_label",
+      "label": "Program link label",
+      "default": "Join the Program"
+    },
+    {
+      "type": "url",
+      "id": "program_link",
+      "label": "Program link"
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Add to cart button",
+      "default": "Add To Cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_shipping_line",
+      "label": "Show shipping line",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "shipping_left",
+      "label": "Shipping line — left",
+      "default": "Free Shipping on orders $45+"
+    },
+    {
+      "type": "text",
+      "id": "shipping_right",
+      "label": "Shipping line — right",
+      "default": "Enjoy or return within 30 Days"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payments",
+      "label": "Show payment badges",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "payment_labels",
+      "label": "Payment badges (comma separated)",
+      "default": "AMEX,Pay,G Pay,MC,MC,VISA"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "thumb",
+      "name": "Gallery thumbnail",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Thumbnail image" },
+        { "type": "text", "id": "alt", "label": "Alt text", "default": "Product gallery thumbnail" }
+      ]
+    },
+    {
+      "type": "trust",
+      "name": "Trust badge",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Icon image" },
+        { "type": "text", "id": "label", "label": "Label", "default": "Fast Shipping" }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Feature point",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Darker Green Color" }
+      ]
+    },
+    {
+      "type": "size",
+      "name": "Size option",
+      "settings": [
+        { "type": "text", "id": "size", "label": "Size label", "default": "10 lbs" },
+        { "type": "text", "id": "coverage", "label": "Coverage", "default": "(1,000-2,500sqft)" },
+        { "type": "text", "id": "price", "label": "Price", "default": "$28.99" },
+        { "type": "text", "id": "badge", "label": "Badge (e.g. Popular)" }
+      ]
+    },
+    {
+      "type": "accordion",
+      "name": "Accordion item",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Product Details" },
+        { "type": "richtext", "id": "content", "label": "Content" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lawn — Hero Product",
+      "blocks": [
+        { "type": "thumb" },
+        { "type": "thumb" },
+        { "type": "thumb" },
+        { "type": "thumb" },
+        { "type": "thumb" },
+        { "type": "trust", "settings": { "label": "Fast Shipping" } },
+        { "type": "trust", "settings": { "label": "Quality Assured" } },
+        { "type": "trust", "settings": { "label": "Secure Checkout" } },
+        { "type": "trust", "settings": { "label": "Easy Returns" } },
+        { "type": "feature", "settings": { "text": "Darker Green Color" } },
+        { "type": "feature", "settings": { "text": "Strong Heat & Drought Tolerance" } },
+        { "type": "feature", "settings": { "text": "Thick, Uniform Lawn Appearance" } },
+        { "type": "feature", "settings": { "text": "0% Weed Seeds Clean, Pure Results" } },
+        { "type": "size", "settings": { "size": "10 lbs", "coverage": "(1,000-2,500sqft)", "price": "$28.99" } },
+        { "type": "size", "settings": { "size": "25 lbs", "coverage": "(2,500-5,000sqft)", "price": "$28.99", "badge": "Popular" } },
+        { "type": "size", "settings": { "size": "50 lbs", "coverage": "(5,000-10,000sqft)", "price": "$28.99", "badge": "Best Value" } },
+        { "type": "accordion", "settings": { "title": "Product Details" } },
+        { "type": "accordion", "settings": { "title": "Spreader Settings" } },
+        { "type": "accordion", "settings": { "title": "What's Inside The Blend?" } },
+        { "type": "accordion", "settings": { "title": "When To Use" } },
+        { "type": "accordion", "settings": { "title": "Grow A Thicker Greener Lawn" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,97 @@
+{%- liquid
+  assign bag = section.settings.bag_image
+-%}
+
+<section class="newsletter container">
+  <div class="newsletter-copy">
+    <h2>{{ section.settings.heading | default: 'Grow Your Dream Lawn' }}</h2>
+    {%- if section.settings.body != blank -%}
+      <p>{{ section.settings.body }}</p>
+    {%- endif -%}
+
+    {%- form 'customer', class: 'newsletter-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <input
+        type="email"
+        name="contact[email]"
+        id="LawnNewsletterEmail-{{ section.id }}"
+        placeholder="{{ section.settings.placeholder | default: 'Mail Address' }}"
+        aria-label="{{ section.settings.placeholder | default: 'Mail Address' }}"
+        required
+      >
+      <button type="submit">{{ section.settings.button_label | default: 'Subscribe' }}</button>
+      {%- if form.posted_successfully? -%}
+        <p style="grid-column: 1 / -1; margin: 12px 0 0; color: #fff;">{{ section.settings.success_text | default: 'Thanks for subscribing!' }}</p>
+      {%- endif -%}
+      {%- if form.errors -%}
+        <p style="grid-column: 1 / -1; margin: 12px 0 0; color: #fff;">{{ form.errors | default_errors }}</p>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+
+  {%- if bag != blank -%}
+    {{ bag | image_url: width: 800 | image_tag:
+      class: 'newsletter-bag',
+      loading: 'lazy',
+      alt: '',
+      width: 800,
+      height: 800
+    }}
+  {%- elsif section.settings.show_default_bag -%}
+    <img class="newsletter-bag" src="{{ 'newsletter-bag.png' | asset_url }}" alt="Envy product bag" loading="lazy">
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Lawn — Newsletter",
+  "tag": "section",
+  "class": "lawn-newsletter-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Grow Your Dream Lawn"
+    },
+    {
+      "type": "textarea",
+      "id": "body",
+      "label": "Body text",
+      "default": "Get Our FREE Lawn Care Guide Plus Expert Tips On Maintaining A Lush, Weed Free Yard."
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Email placeholder",
+      "default": "Mail Address"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Success message",
+      "default": "Thanks for subscribing!"
+    },
+    {
+      "type": "image_picker",
+      "id": "bag_image",
+      "label": "Bag image"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_default_bag",
+      "label": "Show default bag image when none uploaded",
+      "default": true
+    }
+  ],
+  "presets": [
+    { "name": "Lawn — Newsletter" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,135 @@
+{%- liquid
+  assign person = section.settings.person_image
+  assign avatar = section.settings.avatar_image
+-%}
+
+<section class="testimonial">
+  <div class="container testimonial-grid">
+    <div class="person-photo">
+      {%- if person != blank -%}
+        {{ person | image_url: width: 1100 | image_tag:
+          loading: 'lazy',
+          alt: section.settings.person_alt | default: 'Customer holding product',
+          width: 1100,
+          height: 1300
+        }}
+      {%- else -%}
+        <img src="{{ 'testimonial-man.png' | asset_url }}"
+             alt="{{ section.settings.person_alt | default: 'Customer holding Envy grass seed' }}"
+             width="1100" height="1300">
+      {%- endif -%}
+    </div>
+
+    <div class="testimonial-copy">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2>{{ section.settings.heading | default: 'What Happens When You Use Better Grass Seed' }}</h2>
+
+      <article class="quote-card">
+        {%- if avatar != blank -%}
+          {{ avatar | image_url: width: 200 | image_tag:
+            class: 'avatar',
+            loading: 'lazy',
+            alt: section.settings.avatar_alt,
+            width: 200,
+            height: 200
+          }}
+        {%- else -%}
+          <img class="avatar" src="{{ 'testimonial-avatar.png' | asset_url }}" alt="" width="200" height="200">
+        {%- endif -%}
+        <span class="quote-mark">"</span>
+        <p>{{ section.settings.quote | default: 'I overseeded last fall and saw germination within days. My lawn filled in thick, dark green, and looks better than neighbors who use standard store seed.' }}</p>
+        <div>
+          <strong>{{ section.settings.author_name | default: 'Helena' }}</strong>
+          <small>{{ section.settings.author_role | default: 'Model' }}</small>
+          <span class="quote-stars">{{ section.settings.stars | default: '★★★★★' }}</span>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  {%- if section.settings.show_grass_edge -%}
+    <img class="grass-edge" src="{{ 'testimonial-grass-strip.png' | asset_url }}" alt="" loading="lazy">
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Lawn — Testimonial",
+  "tag": "section",
+  "class": "lawn-testimonial-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "person_image",
+      "label": "Person photo (left)"
+    },
+    {
+      "type": "text",
+      "id": "person_alt",
+      "label": "Person alt text",
+      "default": "Customer holding Envy grass seed"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Real Results"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "What Happens When You Use Better Grass Seed"
+    },
+    {
+      "type": "header",
+      "content": "Quote card"
+    },
+    {
+      "type": "image_picker",
+      "id": "avatar_image",
+      "label": "Avatar"
+    },
+    {
+      "type": "text",
+      "id": "avatar_alt",
+      "label": "Avatar alt text"
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Quote",
+      "default": "I overseeded last fall and saw germination within days. My lawn filled in thick, dark green, and looks better than neighbors who use standard store seed."
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Author name",
+      "default": "Helena"
+    },
+    {
+      "type": "text",
+      "id": "author_role",
+      "label": "Author role",
+      "default": "Model"
+    },
+    {
+      "type": "text",
+      "id": "stars",
+      "label": "Stars",
+      "default": "★★★★★"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_grass_edge",
+      "label": "Show bottom grass edge",
+      "default": true
+    }
+  ],
+  "presets": [
+    { "name": "Lawn — Testimonial" }
+  ]
+}
+{% endschema %}

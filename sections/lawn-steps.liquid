@@ -1,0 +1,109 @@
+{%- liquid
+  assign step_classes = 'step-one,step-two,step-three' | split: ','
+-%}
+
+<section class="steps container">
+  {%- if section.settings.eyebrow != blank -%}
+    <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+  {%- endif -%}
+  <h2>{{ section.settings.heading | default: 'How Envy Works To Build Better Lawns' }}</h2>
+  {%- if section.settings.lead != blank -%}
+    <p class="section-lead">{{ section.settings.lead }}</p>
+  {%- endif -%}
+
+  {%- if section.settings.show_curve -%}
+    <div class="steps-line" aria-hidden="true"></div>
+  {%- endif -%}
+
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'step' -%}
+      {%- assign idx = forloop.index0 -%}
+      {%- assign extra_class = step_classes[idx] -%}
+      <div class="step {{ extra_class }}" {{ block.shopify_attributes }}>
+        <span class="step-img">
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 400 | image_tag:
+              loading: 'lazy',
+              alt: '',
+              width: 400,
+              height: 400
+            }}
+          {%- else -%}
+            {%- assign default_step_img = 'step' | append: forloop.index | append: '-grass-clean.png' -%}
+            <img src="{{ default_step_img | asset_url }}" alt="" width="400" height="400">
+          {%- endif -%}
+        </span>
+        <b>{{ block.settings.number | default: forloop.index }}</b>
+        <h3>{{ block.settings.title }}</h3>
+        <p>{{ block.settings.text }}</p>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- if section.settings.show_grass_hill -%}
+    <img class="grass-hill" src="{{ 'grass-hill.png' | asset_url }}" alt="" loading="lazy">
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Lawn — Steps",
+  "tag": "section",
+  "class": "lawn-steps-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "How It Works"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "How Envy Works To Build Better Lawns"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Lead text",
+      "default": "This Blend Works In Three Simple Steps To Grow Thicker, Greener, Stronger Lawns Without Complexity Or Confusion."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_curve",
+      "label": "Show curved connector line",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_grass_hill",
+      "label": "Show grass hill graphic",
+      "default": true
+    }
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "number", "label": "Number", "default": "1" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Fast Germination" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Quick Early Growth Fills Bare Areas Fast And Helps Reduce Weed Invasion During Establishment Stages." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lawn — Steps",
+      "blocks": [
+        { "type": "step", "settings": { "number": "1", "title": "Fast Germination", "text": "Quick Early Growth Fills Bare Areas Fast And Helps Reduce Weed Invasion During Establishment Stages." } },
+        { "type": "step", "settings": { "number": "2", "title": "Deep Roots", "text": "Stronger Root Systems Improve Drought Tolerance, Enhance Nutrient Uptake, And Support Long-Term Lawn Health." } },
+        { "type": "step", "settings": { "number": "3", "title": "Thick Growth", "text": "Dense Turf Growth Crowds Out Weeds Naturally And Creates A Smooth, Full, Uniform Lawn Appearance." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

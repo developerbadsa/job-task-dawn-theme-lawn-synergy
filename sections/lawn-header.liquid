@@ -1,0 +1,141 @@
+{%- liquid
+  assign logo = section.settings.logo
+  assign logo_width = section.settings.logo_width | default: 176
+  assign cart_label = section.settings.cart_label | default: 'Cart'
+-%}
+
+<header class="site-header">
+  <nav class="nav container" aria-label="Main navigation">
+    <a class="brand" href="{{ routes.root_url }}">
+      {%- if logo != blank -%}
+        {{ logo | image_url: width: 400 | image_tag:
+          loading: 'eager',
+          width: logo.width,
+          height: logo.height,
+          alt: shop.name,
+          style: 'width: ' | append: logo_width | append: 'px;'
+        }}
+      {%- else -%}
+        <img src="{{ 'lawn-synergy-logo.png' | asset_url }}"
+             alt="{{ shop.name | escape }}"
+             style="width: {{ logo_width }}px;"
+             width="{{ logo_width }}"
+             height="60">
+      {%- endif -%}
+    </a>
+
+    <ul class="nav-links">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'link' -%}
+          <li {{ block.shopify_attributes }}>
+            <a href="{{ block.settings.url | default: '#' }}">{{ block.settings.label }}</a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+
+    <div class="nav-actions" aria-label="Shopping actions">
+      <a class="cart-button" href="{{ routes.cart_url }}" type="button">
+        <span class="icon cart-icon"></span>
+        <span>{{ cart_label }}</span>
+        <span class="cart-count">{{ cart.item_count | default: 0 }}</span>
+      </a>
+      {%- if section.settings.show_wishlist -%}
+        <a class="icon-button" href="{{ section.settings.wishlist_url | default: '#' }}" aria-label="Wishlist">
+          <span class="icon heart-icon"></span>
+        </a>
+      {%- endif -%}
+      {%- if section.settings.show_account -%}
+        <a class="icon-button" href="{%- if shop.customer_accounts_enabled -%}{{ routes.account_url }}{%- else -%}#{%- endif -%}" aria-label="Account">
+          <span class="icon user-icon"></span>
+        </a>
+      {%- endif -%}
+    </div>
+  </nav>
+</header>
+
+{% schema %}
+{
+  "name": "Lawn — Header",
+  "tag": "section",
+  "class": "lawn-header-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width (px)",
+      "min": 80,
+      "max": 320,
+      "step": 4,
+      "default": 176
+    },
+    {
+      "type": "header",
+      "content": "Cart & Account"
+    },
+    {
+      "type": "text",
+      "id": "cart_label",
+      "label": "Cart label",
+      "default": "Cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "label": "Show wishlist icon",
+      "default": true
+    },
+    {
+      "type": "url",
+      "id": "wishlist_url",
+      "label": "Wishlist link"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Show account icon",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Menu link",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Menu item"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "URL"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lawn — Header",
+      "blocks": [
+        { "type": "link", "settings": { "label": "Home" } },
+        { "type": "link", "settings": { "label": "Shop Now" } },
+        { "type": "link", "settings": { "label": "Reviews" } },
+        { "type": "link", "settings": { "label": "Order Tracking" } },
+        { "type": "link", "settings": { "label": "Contact Us" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
