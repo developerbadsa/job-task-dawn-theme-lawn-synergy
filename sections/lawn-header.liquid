@@ -2,6 +2,7 @@
   assign logo = section.settings.logo
   assign logo_width = section.settings.logo_width | default: 176
   assign cart_label = section.settings.cart_label | default: 'Cart'
+  assign icon_size = section.settings.icon_size | default: 18
 -%}
 
 <header class="site-header">
@@ -36,18 +37,48 @@
 
     <div class="nav-actions" aria-label="Shopping actions">
       <a class="cart-button" href="{{ routes.cart_url }}" type="button">
-        <span class="icon cart-icon"></span>
+        {%- if section.settings.cart_icon != blank -%}
+          {{ section.settings.cart_icon | image_url: width: 96 | image_tag:
+            loading: 'lazy',
+            class: 'header-action-icon header-action-icon--image',
+            alt: section.settings.cart_icon_alt | default: cart_label,
+            width: icon_size,
+            height: icon_size
+          }}
+        {%- else -%}
+          <span class="icon cart-icon"></span>
+        {%- endif -%}
         <span>{{ cart_label }}</span>
         <span class="cart-count">{{ cart.item_count | default: 0 }}</span>
       </a>
       {%- if section.settings.show_wishlist -%}
-        <a class="icon-button" href="{{ section.settings.wishlist_url | default: '#' }}" aria-label="Wishlist">
-          <span class="icon heart-icon"></span>
+        <a class="icon-button" href="{{ section.settings.wishlist_url | default: '#' }}" aria-label="{{ section.settings.wishlist_label | default: 'Wishlist' }}">
+          {%- if section.settings.wishlist_icon != blank -%}
+            {{ section.settings.wishlist_icon | image_url: width: 96 | image_tag:
+              loading: 'lazy',
+              class: 'header-action-icon header-action-icon--image',
+              alt: section.settings.wishlist_icon_alt | default: section.settings.wishlist_label | default: 'Wishlist',
+              width: icon_size,
+              height: icon_size
+            }}
+          {%- else -%}
+            <span class="icon heart-icon"></span>
+          {%- endif -%}
         </a>
       {%- endif -%}
       {%- if section.settings.show_account -%}
-        <a class="icon-button" href="{%- if shop.customer_accounts_enabled -%}{{ routes.account_url }}{%- else -%}#{%- endif -%}" aria-label="Account">
-          <span class="icon user-icon"></span>
+        <a class="icon-button" href="{%- if shop.customer_accounts_enabled -%}{{ routes.account_url }}{%- else -%}#{%- endif -%}" aria-label="{{ section.settings.account_label | default: 'Account' }}">
+          {%- if section.settings.account_icon != blank -%}
+            {{ section.settings.account_icon | image_url: width: 96 | image_tag:
+              loading: 'lazy',
+              class: 'header-action-icon header-action-icon--image',
+              alt: section.settings.account_icon_alt | default: section.settings.account_label | default: 'Account',
+              width: icon_size,
+              height: icon_size
+            }}
+          {%- else -%}
+            <span class="icon user-icon"></span>
+          {%- endif -%}
         </a>
       {%- endif -%}
     </div>
@@ -89,10 +120,47 @@
       "default": "Cart"
     },
     {
+      "type": "image_picker",
+      "id": "cart_icon",
+      "label": "Cart icon image"
+    },
+    {
+      "type": "text",
+      "id": "cart_icon_alt",
+      "label": "Cart icon alt text",
+      "default": "Cart"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Header icon size (px)",
+      "min": 14,
+      "max": 34,
+      "step": 1,
+      "default": 18
+    },
+    {
       "type": "checkbox",
       "id": "show_wishlist",
       "label": "Show wishlist icon",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "wishlist_label",
+      "label": "Wishlist accessibility label",
+      "default": "Wishlist"
+    },
+    {
+      "type": "image_picker",
+      "id": "wishlist_icon",
+      "label": "Wishlist icon image"
+    },
+    {
+      "type": "text",
+      "id": "wishlist_icon_alt",
+      "label": "Wishlist icon alt text",
+      "default": "Wishlist"
     },
     {
       "type": "url",
@@ -104,6 +172,23 @@
       "id": "show_account",
       "label": "Show account icon",
       "default": true
+    },
+    {
+      "type": "text",
+      "id": "account_label",
+      "label": "Account accessibility label",
+      "default": "Account"
+    },
+    {
+      "type": "image_picker",
+      "id": "account_icon",
+      "label": "Account icon image"
+    },
+    {
+      "type": "text",
+      "id": "account_icon_alt",
+      "label": "Account icon alt text",
+      "default": "Account"
     }
   ],
   "blocks": [

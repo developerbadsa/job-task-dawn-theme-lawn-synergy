@@ -150,6 +150,16 @@ img {
   border: 2px solid currentColor;
 }
 
+.header-action-icon {
+  display: block;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
+.icon-button .header-action-icon {
+  margin: auto;
+}
+
 .cart-icon {
   border-top: 0;
   transform: skewX(-8deg);
