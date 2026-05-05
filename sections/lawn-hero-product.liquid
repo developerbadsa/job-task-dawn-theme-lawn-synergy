@@ -16,25 +16,21 @@
     endif
   endif
 
-  comment has_product is the single source of truth for "we have a real product to bind to" endcomment
   assign has_product = false
   if current_product.id != blank
     assign has_product = true
   endif
 
-  comment Section setting fallbacks endcomment
   assign rating_stars = section.settings.rating_stars | default: '★★★★★'
   assign sale_price_text = section.settings.sale_price | default: '$49.99'
   assign old_price_text = section.settings.old_price | default: '$56.25'
 
-  comment Filtered block lists endcomment
   assign thumb_blocks = section.blocks | where: 'type', 'thumb'
   assign size_blocks = section.blocks | where: 'type', 'size'
   assign trust_blocks = section.blocks | where: 'type', 'trust'
   assign feature_blocks = section.blocks | where: 'type', 'feature'
   assign accordion_blocks = section.blocks | where: 'type', 'accordion'
 
-  comment Selected variant for initial state endcomment
   if has_product
     assign selected_variant = current_product.selected_or_first_available_variant
   endif
@@ -44,7 +40,6 @@
     assign use_product_media = true
   endif
 
-  comment Resolve hero title (product title wins when allowed) endcomment
   assign use_product_title = section.settings.use_product_title
   if use_product_title == nil
     assign use_product_title = true
@@ -60,7 +55,6 @@
     assign use_product_description = true
   endif
 
-  comment Resolve hero lead (optional product description) endcomment
   if has_product and use_product_description and current_product.description != blank
     assign hero_lead = current_product.description | strip_html | truncatewords: 32
     assign hero_lead_is_html = false
@@ -69,7 +63,6 @@
     assign hero_lead_is_html = false
   endif
 
-  comment Resolve main image source: product featured image > section setting > asset endcomment
   assign main_image = nil
   assign main_image_from_product = false
   if has_product and use_product_media and current_product.featured_image != blank
@@ -79,7 +72,6 @@
     assign main_image = section.settings.main_image
   endif
 
-  comment Build a flat list of product image candidates for thumb fallback endcomment
   assign product_images_count = 0
   if has_product
     assign product_images_count = current_product.media.size
