@@ -204,26 +204,61 @@
       {%- if section.settings.show_trust_badges -%}
         <div class="lawn-figma-trust" aria-label="Store benefits">
           {%- for block in trust_blocks -%}
+            {%- liquid
+              assign custom_icon_image = block.settings.custom_icon_image
+              assign theme_icon_asset = block.settings.theme_icon_asset | strip
+              assign has_custom_icon = false
+
+              if custom_icon_image != blank or theme_icon_asset != blank
+                assign has_custom_icon = true
+              endif
+            -%}
             <div class="lawn-figma-trust__item" {{ block.shopify_attributes }}>
-              <span class="lawn-figma-trust__seal" aria-hidden="true">
-                {%- case block.settings.icon -%}
-                  {%- when 'quality' -%}
-                    <svg viewBox="0 0 24 24" focusable="false">
-                      <path d="M12 2.5l2.4 2 3.1-.1 1.1 2.9 2.5 1.9-1 3 1 3-2.5 1.9-1.1 2.9-3.1-.1-2.4 2-2.4-2-3.1.1-1.1-2.9L2.9 15.2l1-3-1-3 2.5-1.9 1.1-2.9 3.1.1 2.4-2z"/><path d="M8 12.3l2.5 2.5L16.4 9"/>
-                    </svg>
-                  {%- when 'secure' -%}
-                    <svg viewBox="0 0 24 24" focusable="false">
-                      <path d="M7 10V7a5 5 0 0 1 10 0v3"/><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M12 15v2"/>
-                    </svg>
-                  {%- when 'return' -%}
-                    <svg viewBox="0 0 24 24" focusable="false">
-                      <path d="M20 7v5h-5"/><path d="M19 12a7 7 0 1 1-2-5"/><path d="M8 12h5"/>
-                    </svg>
+              <span class="lawn-figma-trust__seal{% if has_custom_icon %} lawn-figma-trust__seal--custom{% endif %}" aria-hidden="true">
+                {%- if custom_icon_image != blank -%}
+                  {{
+                    custom_icon_image
+                    | image_url: width: 96
+                    | image_tag:
+                      loading: 'lazy',
+                      alt: block.settings.label,
+                      widths: '48, 72, 96',
+                      sizes: '48px',
+                      class: 'lawn-figma-trust__custom-icon'
+                  }}
+                {%- elsif theme_icon_asset != blank -%}
+                  {%- if theme_icon_asset contains '.svg' -%}
+                    {{ theme_icon_asset | inline_asset_content }}
                   {%- else -%}
-                    <svg viewBox="0 0 24 24" focusable="false">
-                      <path d="M3 7h11v9H3z"/><path d="M14 10h3.5l2.5 3v3h-6z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/><path d="M5 10h5M5 13h4"/>
-                    </svg>
-                {%- endcase -%}
+                    <img
+                      class="lawn-figma-trust__custom-icon"
+                      src="{{ theme_icon_asset | asset_url }}"
+                      alt="{{ block.settings.label | escape }}"
+                      loading="lazy"
+                      width="48"
+                      height="48"
+                    >
+                  {%- endif -%}
+                {%- else -%}
+                  {%- case block.settings.icon -%}
+                    {%- when 'quality' -%}
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M12 2.5l2.4 2 3.1-.1 1.1 2.9 2.5 1.9-1 3 1 3-2.5 1.9-1.1 2.9-3.1-.1-2.4 2-2.4-2-3.1.1-1.1-2.9L2.9 15.2l1-3-1-3 2.5-1.9 1.1-2.9 3.1.1 2.4-2z"/><path d="M8 12.3l2.5 2.5L16.4 9"/>
+                      </svg>
+                    {%- when 'secure' -%}
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M7 10V7a5 5 0 0 1 10 0v3"/><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M12 15v2"/>
+                      </svg>
+                    {%- when 'return' -%}
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M20 7v5h-5"/><path d="M19 12a7 7 0 1 1-2-5"/><path d="M8 12h5"/>
+                      </svg>
+                    {%- else -%}
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M3 7h11v9H3z"/><path d="M14 10h3.5l2.5 3v3h-6z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/><path d="M5 10h5M5 13h4"/>
+                      </svg>
+                  {%- endcase -%}
+                {%- endif -%}
               </span>
               <strong>{{ block.settings.label }}</strong>
             </div>
@@ -709,7 +744,7 @@
     box-shadow: inset 0 0 0 2px rgba(255,255,255,.7);
   }
 
-  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal svg {
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal:not(.lawn-figma-trust__seal--custom) svg {
     width: 33px;
     height: 33px;
     fill: none;
@@ -719,8 +754,16 @@
     stroke-linejoin: round;
   }
 
-  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal svg path:first-child,
-  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal svg rect:first-child {
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal--custom svg,
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal img {
+    display: block;
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal:not(.lawn-figma-trust__seal--custom) svg path:first-child,
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal:not(.lawn-figma-trust__seal--custom) svg rect:first-child {
     fill: none;
   }
 
@@ -1802,6 +1845,18 @@
             { "value": "return", "label": "Easy Returns" }
           ],
           "default": "shipping"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_icon_image",
+          "label": "Custom icon image",
+          "info": "Optional. Overrides the selected icon for this badge."
+        },
+        {
+          "type": "text",
+          "id": "theme_icon_asset",
+          "label": "Theme SVG/image asset filename",
+          "info": "Optional. Use a file from theme assets, for example icon-truck.svg or trust-shipping.png. This overrides the selected icon if no custom image is chosen."
         },
         {
           "type": "text",
