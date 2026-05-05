@@ -1,43 +1,118 @@
 {%- liquid
-  assign product = all_products[section.settings.product]
-  assign main_image = section.settings.main_image
+  comment Resolve the product without overwriting the global product object endcomment
+  assign current_product = nil
+  if template.name == 'product' and product != blank
+    assign current_product = product
+  elsif section.settings.product != blank
+    assign current_product = all_products[section.settings.product]
+  endif
+
+  comment Section setting fallbacks endcomment
   assign rating_stars = section.settings.rating_stars | default: '★★★★★'
-  assign sale_price = section.settings.sale_price | default: '$49.99'
-  assign old_price = section.settings.old_price | default: '$56.25'
+  assign sale_price_text = section.settings.sale_price | default: '$49.99'
+  assign old_price_text = section.settings.old_price | default: '$56.25'
+
+  comment Filtered block lists endcomment
+  assign thumb_blocks = section.blocks | where: 'type', 'thumb'
+  assign size_blocks = section.blocks | where: 'type', 'size'
+  assign trust_blocks = section.blocks | where: 'type', 'trust'
+  assign feature_blocks = section.blocks | where: 'type', 'feature'
+  assign accordion_blocks = section.blocks | where: 'type', 'accordion'
+
+  comment Determine if we should render real variant cards endcomment
+  assign use_real_variants = false
+  if current_product != blank and current_product.variants.size > 1
+    assign use_real_variants = true
+  endif
+
+  comment Selected variant for initial state endcomment
+  assign selected_variant = nil
+  if current_product != blank
+    assign selected_variant = current_product.selected_or_first_available_variant
+  endif
+
+  comment Resolve main image source endcomment
+  assign main_image = section.settings.main_image
+  assign main_image_from_product = false
+  if main_image == blank and current_product != blank and current_product.featured_image != blank
+    assign main_image = current_product.featured_image
+    assign main_image_from_product = true
+  endif
 -%}
 
-<section class="hero product-section container">
+<section class="hero product-section container" data-lawn-hero data-section-id="{{ section.id }}">
   <div class="product-media">
     <div class="gallery">
       <div class="thumbs" aria-label="Product gallery thumbnails">
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'thumb' -%}
-            <button class="thumb{% if forloop.first %} is-active{% endif %}" type="button" {{ block.shopify_attributes }}>
-              {%- if block.settings.image != blank -%}
-                {{ block.settings.image | image_url: width: 200 | image_tag:
-                  loading: 'lazy',
-                  alt: block.settings.alt | default: 'Product gallery thumbnail',
-                  width: 200,
-                  height: 200
-                }}
-              {%- else -%}
-                <img src="{{ 'thumb-1.png' | asset_url }}" alt="{{ block.settings.alt | default: 'Product gallery thumbnail' }}" width="200" height="200">
-              {%- endif -%}
-            </button>
-          {%- endif -%}
+        {%- for block in thumb_blocks -%}
+          {%- liquid
+            assign thumb_idx = forloop.index0
+            assign thumb_image = block.settings.image
+            assign thumb_from_asset = false
+            assign product_media_item = nil
+
+            if thumb_image == blank and current_product != blank
+              assign product_media_item = current_product.media[thumb_idx]
+              if product_media_item != blank and product_media_item.preview_image != blank
+                assign thumb_image = product_media_item.preview_image
+              endif
+            endif
+
+            if thumb_image == blank
+              assign thumb_from_asset = true
+              assign default_thumb_name = 'thumb-' | append: forloop.index | append: '.png'
+            endif
+
+            if thumb_from_asset
+              assign large_url = default_thumb_name | asset_url
+            else
+              assign large_url = thumb_image | image_url: width: 1200
+            endif
+          -%}
+          <button
+            class="thumb{% if forloop.first %} is-active{% endif %}"
+            type="button"
+            data-thumb-image="{{ large_url }}"
+            data-thumb-alt="{{ block.settings.alt | default: 'Product gallery thumbnail' | escape }}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if thumb_from_asset -%}
+              <img src="{{ default_thumb_name | asset_url }}"
+                   alt="{{ block.settings.alt | default: 'Product gallery thumbnail' }}"
+                   width="200" height="200" loading="lazy">
+            {%- else -%}
+              {{ thumb_image | image_url: width: 200 | image_tag:
+                loading: 'lazy',
+                alt: block.settings.alt | default: 'Product gallery thumbnail',
+                width: 200,
+                height: 200
+              }}
+            {%- endif -%}
+          </button>
         {%- endfor -%}
       </div>
 
-      <div class="main-product-card">
+      <div class="main-product-card" data-lawn-main-image>
         {%- if main_image != blank -%}
-          {{ main_image | image_url: width: 1000 | image_tag:
-            loading: 'eager',
-            alt: section.settings.main_image_alt | default: section.settings.title,
-            width: 1000,
-            height: 1000
-          }}
+          {%- if main_image_from_product -%}
+            {{ main_image | image_url: width: 1200 | image_tag:
+              loading: 'eager',
+              alt: current_product.title,
+              width: 1200,
+              height: 1200
+            }}
+          {%- else -%}
+            {{ main_image | image_url: width: 1200 | image_tag:
+              loading: 'eager',
+              alt: section.settings.main_image_alt | default: section.settings.title,
+              width: 1200,
+              height: 1200
+            }}
+          {%- endif -%}
         {%- else -%}
-          <img src="{{ 'envy-tall-fescue-design.png' | asset_url }}" alt="{{ section.settings.main_image_alt | default: section.settings.title }}" width="1000" height="1000">
+          <img src="{{ 'envy-tall-fescue-design.png' | asset_url }}"
+               alt="{{ section.settings.main_image_alt | default: section.settings.title }}"
+               width="1200" height="1200">
         {%- endif -%}
       </div>
     </div>
@@ -54,23 +129,21 @@
 
     {%- if section.settings.show_trust -%}
       <div class="trust-row">
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'trust' -%}
-            <div class="trust-item" {{ block.shopify_attributes }}>
-              {%- if block.settings.image != blank -%}
-                {{ block.settings.image | image_url: width: 200 | image_tag:
-                  loading: 'lazy',
-                  class: 'seal-img',
-                  alt: '',
-                  width: 86,
-                  height: 86
-                }}
-              {%- else -%}
-                <img class="seal-img" src="{{ 'trust-shipping.png' | asset_url }}" alt="" width="86" height="86">
-              {%- endif -%}
-              <strong>{{ block.settings.label }}</strong>
-            </div>
-          {%- endif -%}
+        {%- for block in trust_blocks -%}
+          <div class="trust-item" {{ block.shopify_attributes }}>
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 200 | image_tag:
+                loading: 'lazy',
+                class: 'seal-img',
+                alt: '',
+                width: 86,
+                height: 86
+              }}
+            {%- else -%}
+              <img class="seal-img" src="{{ 'trust-shipping.png' | asset_url }}" alt="" width="86" height="86" loading="lazy">
+            {%- endif -%}
+            <strong>{{ block.settings.label }}</strong>
+          </div>
         {%- endfor -%}
       </div>
     {%- endif -%}
@@ -84,27 +157,34 @@
       </div>
     {%- endif -%}
 
-    <h1>{{ section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend' }}</h1>
+    <h1>
+      {%- if current_product != blank -%}
+        {{ current_product.title }}
+      {%- else -%}
+        {{ section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend' }}
+      {%- endif -%}
+    </h1>
+
     <p class="lead">{{ section.settings.lead | default: 'Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.' }}</p>
 
     <ul class="feature-list">
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'feature' -%}
-          <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
-        {%- endif -%}
+      {%- for block in feature_blocks -%}
+        <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
       {%- endfor -%}
     </ul>
 
     <div class="price-row">
-      {%- if product -%}
-        <span class="sale-price">{{ product.price | money }}</span>
-        {%- if product.compare_at_price > product.price -%}
-          <span class="old-price">{{ product.compare_at_price | money }}</span>
+      {%- if current_product != blank -%}
+        <span class="sale-price" data-product-price>{{ selected_variant.price | money }}</span>
+        {%- if selected_variant.compare_at_price > selected_variant.price -%}
+          <span class="old-price" data-product-compare-price>{{ selected_variant.compare_at_price | money }}</span>
+        {%- else -%}
+          <span class="old-price" data-product-compare-price hidden></span>
         {%- endif -%}
       {%- else -%}
-        <span class="sale-price">{{ sale_price }}</span>
-        {%- if old_price != blank -%}
-          <span class="old-price">{{ old_price }}</span>
+        <span class="sale-price">{{ sale_price_text }}</span>
+        {%- if old_price_text != blank -%}
+          <span class="old-price">{{ old_price_text }}</span>
         {%- endif -%}
       {%- endif -%}
     </div>
@@ -112,14 +192,48 @@
     <div class="size-area">
       <h2>{{ section.settings.size_heading | default: 'Select Your Size' }}</h2>
       <div class="size-grid" role="radiogroup" aria-label="Select size">
-        {%- assign size_index = 0 -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'size' -%}
-            {%- assign size_index = size_index | plus: 1 -%}
-            <button class="size-card{% if forloop.first %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}"
-                    type="button"
-                    aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
-                    {{ block.shopify_attributes }}>
+        {%- if use_real_variants -%}
+          {%- for variant in current_product.variants -%}
+            {%- liquid
+              assign vidx = forloop.index0
+              assign sblock = size_blocks[vidx]
+              assign is_selected = false
+              if variant.id == selected_variant.id
+                assign is_selected = true
+              endif
+              assign badge_text = sblock.settings.badge
+              assign coverage_text = sblock.settings.coverage
+            -%}
+            <button
+              class="size-card{% if is_selected %} is-selected{% endif %}{% if badge_text != blank %} has-badge{% endif %}{% unless variant.available %} is-unavailable{% endunless %}"
+              type="button"
+              data-variant-id="{{ variant.id }}"
+              data-variant-price="{{ variant.price | money }}"
+              data-variant-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
+              data-variant-available="{{ variant.available }}"
+              aria-pressed="{% if is_selected %}true{% else %}false{% endif %}"
+              {%- unless variant.available %} aria-disabled="true"{%- endunless %}
+            >
+              {%- if badge_text != blank -%}
+                <em>{{ badge_text }}</em>
+              {%- endif -%}
+              <strong>{{ variant.title }}</strong>
+              {%- if coverage_text != blank -%}
+                <span>{{ coverage_text }}</span>
+              {%- else -%}
+                <span>&nbsp;</span>
+              {%- endif -%}
+              <b>{{ variant.price | money }}</b>
+            </button>
+          {%- endfor -%}
+        {%- else -%}
+          {%- for block in size_blocks -%}
+            <button
+              class="size-card{% if forloop.first %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}"
+              type="button"
+              aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+              {{ block.shopify_attributes }}
+            >
               {%- if block.settings.badge != blank -%}
                 <em>{{ block.settings.badge }}</em>
               {%- endif -%}
@@ -127,14 +241,15 @@
               <span>{{ block.settings.coverage }}</span>
               <b>{{ block.settings.price }}</b>
             </button>
-          {%- endif -%}
-        {%- endfor -%}
+          {%- endfor -%}
+        {%- endif -%}
       </div>
     </div>
 
-    {%- if product -%}
-      {%- form 'product', product, id: 'lawn-hero-product-form', class: 'lawn-product-form', novalidate: 'novalidate' -%}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-product-variant-input>
+    {%- if current_product != blank -%}
+      {%- assign form_id = 'lawn-hero-product-form-' | append: section.id -%}
+      {%- form 'product', current_product, id: form_id, class: 'lawn-product-form', novalidate: 'novalidate' -%}
+        <input type="hidden" name="id" value="{{ selected_variant.id }}" data-product-variant-input>
         <div class="buy-box">
           <label for="quantity-{{ section.id }}">{{ section.settings.qty_label | default: 'Quantity:' }}</label>
           <div class="quantity">
@@ -157,8 +272,12 @@
           </p>
         {%- endif -%}
 
-        <button class="add-cart" type="submit" name="add">
-          {{ section.settings.cta_label | default: 'Add To Cart' }}
+        <button class="add-cart" type="submit" name="add" data-add-to-cart {%- unless selected_variant.available %} disabled{%- endunless %}>
+          {%- if selected_variant.available -%}
+            {{ section.settings.cta_label | default: 'Add To Cart' }}
+          {%- else -%}
+            {{ 'products.product.sold_out' | t | default: 'Sold Out' }}
+          {%- endif -%}
         </button>
       {%- endform -%}
     {%- else -%}
@@ -207,18 +326,16 @@
     {%- endif -%}
 
     <div class="product-accordions">
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'accordion' -%}
-          <details class="product-accordion" {{ block.shopify_attributes }}>
-            <summary>
-              <span>{{ block.settings.title }}</span>
-              <i></i>
-            </summary>
-            {%- if block.settings.content != blank -%}
-              <div class="product-accordion__content">{{ block.settings.content }}</div>
-            {%- endif -%}
-          </details>
-        {%- endif -%}
+      {%- for block in accordion_blocks -%}
+        <details class="product-accordion" {{ block.shopify_attributes }}>
+          <summary>
+            <span>{{ block.settings.title }}</span>
+            <i></i>
+          </summary>
+          {%- if block.settings.content != blank -%}
+            <div class="product-accordion__content">{{ block.settings.content }}</div>
+          {%- endif -%}
+        </details>
       {%- endfor -%}
     </div>
   </div>
@@ -238,7 +355,7 @@
       "type": "product",
       "id": "product",
       "label": "Linked product",
-      "info": "If set, price and Add-to-Cart will use this product. Otherwise the static text below is used."
+      "info": "Used on non-product templates (e.g. homepage). On a product template the global product is used automatically."
     },
     {
       "type": "header",
@@ -247,7 +364,8 @@
     {
       "type": "image_picker",
       "id": "main_image",
-      "label": "Main product image"
+      "label": "Main product image",
+      "info": "Falls back to product featured image, then to envy-tall-fescue-design.png"
     },
     {
       "type": "text",
@@ -310,7 +428,7 @@
     {
       "type": "text",
       "id": "title",
-      "label": "Title",
+      "label": "Title (used when no product is linked)",
       "default": "Envy Premium Tall Fescue Grass Seed Blend"
     },
     {
@@ -426,7 +544,7 @@
       "type": "thumb",
       "name": "Gallery thumbnail",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Thumbnail image" },
+        { "type": "image_picker", "id": "image", "label": "Thumbnail image", "info": "Falls back to product media, then to thumb-N.png assets." },
         { "type": "text", "id": "alt", "label": "Alt text", "default": "Product gallery thumbnail" }
       ]
     },
@@ -449,9 +567,9 @@
       "type": "size",
       "name": "Size option",
       "settings": [
-        { "type": "text", "id": "size", "label": "Size label", "default": "10 lbs" },
+        { "type": "text", "id": "size", "label": "Size label (used when no product variants)", "default": "10 lbs" },
         { "type": "text", "id": "coverage", "label": "Coverage", "default": "(1,000-2,500sqft)" },
-        { "type": "text", "id": "price", "label": "Price", "default": "$28.99" },
+        { "type": "text", "id": "price", "label": "Price (used when no product variants)", "default": "$28.99" },
         { "type": "text", "id": "badge", "label": "Badge (e.g. Popular)" }
       ]
     },

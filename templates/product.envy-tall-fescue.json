@@ -1,0 +1,162 @@
+{
+  "sections": {
+    "hero_product": {
+      "type": "lawn-hero-product",
+      "blocks": {
+        "thumb1": { "type": "thumb", "settings": { "alt": "Envy seed package thumbnail" } },
+        "thumb2": { "type": "thumb", "settings": { "alt": "Tall fescue benefits thumbnail" } },
+        "thumb3": { "type": "thumb", "settings": { "alt": "Lawn result thumbnail" } },
+        "thumb4": { "type": "thumb", "settings": { "alt": "Product details thumbnail" } },
+        "thumb5": { "type": "thumb", "settings": { "alt": "Coverage map thumbnail" } },
+        "trust1": { "type": "trust", "settings": { "label": "Fast Shipping" } },
+        "trust2": { "type": "trust", "settings": { "label": "Quality Assured" } },
+        "trust3": { "type": "trust", "settings": { "label": "Secure Checkout" } },
+        "trust4": { "type": "trust", "settings": { "label": "Easy Returns" } },
+        "feature1": { "type": "feature", "settings": { "text": "Darker Green Color" } },
+        "feature2": { "type": "feature", "settings": { "text": "Strong Heat & Drought Tolerance" } },
+        "feature3": { "type": "feature", "settings": { "text": "Thick, Uniform Lawn Appearance" } },
+        "feature4": { "type": "feature", "settings": { "text": "0% Weed Seeds Clean, Pure Results" } },
+        "size1": { "type": "size", "settings": { "size": "10 lbs", "coverage": "(1,000-2,500sqft)", "price": "$28.99" } },
+        "size2": { "type": "size", "settings": { "size": "25 lbs", "coverage": "(2,500-5,000sqft)", "price": "$28.99", "badge": "Popular" } },
+        "size3": { "type": "size", "settings": { "size": "50 lbs", "coverage": "(5,000-10,000sqft)", "price": "$28.99", "badge": "Best Value" } },
+        "acc1": { "type": "accordion", "settings": { "title": "Product Details" } },
+        "acc2": { "type": "accordion", "settings": { "title": "Spreader Settings" } },
+        "acc3": { "type": "accordion", "settings": { "title": "What's Inside The Blend?" } },
+        "acc4": { "type": "accordion", "settings": { "title": "When To Use" } },
+        "acc5": { "type": "accordion", "settings": { "title": "Grow A Thicker Greener Lawn" } }
+      },
+      "block_order": [
+        "thumb1", "thumb2", "thumb3", "thumb4", "thumb5",
+        "trust1", "trust2", "trust3", "trust4",
+        "feature1", "feature2", "feature3", "feature4",
+        "size1", "size2", "size3",
+        "acc1", "acc2", "acc3", "acc4", "acc5"
+      ],
+      "settings": {
+        "main_image_alt": "Envy Premium Tall Fescue product graphic",
+        "show_dots": true,
+        "dot_count": 5,
+        "active_dot": 3,
+        "show_trust": true,
+        "show_rating": true,
+        "rating_stars": "★★★★★",
+        "rating_text": "Rated By 12,520+ Customers",
+        "title": "Envy Premium Tall Fescue Grass Seed Blend",
+        "lead": "Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.",
+        "sale_price": "$49.99",
+        "old_price": "$56.25",
+        "size_heading": "Select Your Size",
+        "qty_label": "Quantity:",
+        "default_qty": 2,
+        "urgency_text": "Selling Fast",
+        "program_text": "Automatic Lawn Care Program:",
+        "program_link_label": "Join the Program",
+        "cta_label": "Add To Cart",
+        "show_shipping_line": true,
+        "shipping_left": "Free Shipping on orders $45+",
+        "shipping_right": "Enjoy or return within 30 Days",
+        "show_payments": true,
+        "payment_labels": "AMEX,Pay,G Pay,MC,MC,VISA"
+      }
+    },
+    "difference": {
+      "type": "lawn-difference",
+      "blocks": {
+        "card1": { "type": "card", "settings": { "icon_class": "grass-icon", "title": "Thicker, Denser Turf", "text": "Selected For Improved Lawn Density, Creating A Smoother, Thicker, More Uniform Appearance Across Your Entire Lawn." } },
+        "card2": { "type": "card", "settings": { "icon_class": "grass-icon", "title": "Ultra-Dark Green", "text": "Elite Varieties Chosen For Deep, Rich Green Color That Stands Out Beautifully In Any Lawn Setting.", "offset": true } },
+        "card3": { "type": "card", "settings": { "icon_class": "chart-icon", "title": "Improved Fill-In", "text": "Helps Reduce Thin, Patchy Areas Faster Compared To Standard Tall Fescue Blends Used In Lawns." } },
+        "card4": { "type": "card", "settings": { "icon_class": "seed-icon", "title": "0% Weed Seed", "text": "Clean, High-Quality Seed With Zero Weed Seeds And No Unnecessary Fillers For Better Lawn Results.", "offset": true, "style": "green" } }
+      },
+      "block_order": ["card1", "card2", "card3", "card4"],
+      "settings": {
+        "eyebrow": "Premium Difference",
+        "heading": "What Makes Envy Different From Other Grass Seeds?",
+        "photo_alt": "Lawn Synergy specialist holding Envy grass seed"
+      }
+    },
+    "dark_feature": {
+      "type": "lawn-dark-feature",
+      "blocks": {
+        "f1": { "type": "feature", "settings": { "text": "You Want A Darker Green, More Attractive Lawn" } },
+        "f2": { "type": "feature", "settings": { "text": "Your Lawn Feels Thin Or Uneven" } },
+        "f3": { "type": "feature", "settings": { "text": "You Want Better Density And A More Uniform Finish" } },
+        "f4": { "type": "feature", "settings": { "text": "You Want Better Than Basic Seed" } }
+      },
+      "block_order": ["f1", "f2", "f3", "f4"],
+      "settings": {
+        "bag_alt": "Envy Tall Fescue bag in grass",
+        "eyebrow": "Premium Upgrade",
+        "heading": "The Best Lawn Starts With The Right Seed",
+        "body": "If You Want A Lawn That Actually Stands Out - Thicker, Darker, And More Uniform It All Starts With The Seed You Choose. Envy Premium Tall Fescue Is Our Highest-End Blend, Built For Homeowners Who Are Tired Of Thin, Patchy Grass And Want A Lawn That Looks Better, Fills In Thicker, And Performs Consistently Year After Year.",
+        "list_heading": "This Is The Right Seed For You If:",
+        "cta_label": "Add To Cart",
+        "show_grass_edge": true
+      }
+    },
+    "steps": {
+      "type": "lawn-steps",
+      "blocks": {
+        "step1": { "type": "step", "settings": { "number": "1", "title": "Fast Germination", "text": "Quick Early Growth Fills Bare Areas Fast And Helps Reduce Weed Invasion During Establishment Stages." } },
+        "step2": { "type": "step", "settings": { "number": "2", "title": "Deep Roots", "text": "Stronger Root Systems Improve Drought Tolerance, Enhance Nutrient Uptake, And Support Long-Term Lawn Health." } },
+        "step3": { "type": "step", "settings": { "number": "3", "title": "Thick Growth", "text": "Dense Turf Growth Crowds Out Weeds Naturally And Creates A Smooth, Full, Uniform Lawn Appearance." } }
+      },
+      "block_order": ["step1", "step2", "step3"],
+      "settings": {
+        "eyebrow": "How It Works",
+        "heading": "How Envy Works To Build Better Lawns",
+        "lead": "This Blend Works In Three Simple Steps To Grow Thicker, Greener, Stronger Lawns Without Complexity Or Confusion.",
+        "show_curve": true,
+        "show_grass_hill": true
+      }
+    },
+    "testimonial": {
+      "type": "lawn-testimonial",
+      "settings": {
+        "person_alt": "Customer holding Envy grass seed",
+        "eyebrow": "Real Results",
+        "heading": "What Happens When You Use Better Grass Seed",
+        "quote": "I overseeded last fall and saw germination within days. My lawn filled in thick, dark green, and looks better than neighbors who use standard store seed.",
+        "author_name": "Helena",
+        "author_role": "Model",
+        "stars": "★★★★★",
+        "show_grass_edge": true
+      }
+    },
+    "faq": {
+      "type": "lawn-faq",
+      "blocks": {
+        "q1": { "type": "item", "settings": { "question": "What Is Envy Premium Tall Fescue Grass Seed Blend?", "answer": "It's a premium grass seed blend designed to build dense, dark green lawns with strong heat and drought tolerance, clean seed quality, and easy seasonal lawn improvement." } },
+        "q2": { "type": "item", "settings": { "question": "Where can I use Envy Premium Tall Fescue Grass Seed Blend?", "answer": "Use it on cool-season lawns, bare spots, overseeding projects, and areas where you want thicker turf." } },
+        "q3": { "type": "item", "settings": { "question": "When should I plant Envy Premium Tall Fescue Grass Seed?", "answer": "Early fall and spring are ideal because soil temperatures and moisture levels help new roots establish." } },
+        "q4": { "type": "item", "settings": { "question": "Does Envy Tall Fescue contain weed seeds?", "answer": "No. The blend is positioned as clean, weed-free seed with no unnecessary filler." } },
+        "q5": { "type": "item", "settings": { "question": "How long does it take for the seeds to germinate?", "answer": "Most tall fescue seed starts germinating in about 7 to 14 days when planted in good conditions." } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5"],
+      "settings": {
+        "eyebrow": "Got Questions?",
+        "heading": "Frequently Asked.",
+        "lead": "Everything you need to know before you start your daily routine.",
+        "first_open": true
+      }
+    },
+    "newsletter": {
+      "type": "lawn-newsletter",
+      "settings": {
+        "heading": "Grow Your Dream Lawn",
+        "body": "Get Our FREE Lawn Care Guide Plus Expert Tips On Maintaining A Lush, Weed Free Yard.",
+        "placeholder": "Mail Address",
+        "button_label": "Subscribe",
+        "show_default_bag": true
+      }
+    }
+  },
+  "order": [
+    "hero_product",
+    "difference",
+    "dark_feature",
+    "steps",
+    "testimonial",
+    "faq",
+    "newsletter"
+  ]
+}

@@ -1601,3 +1601,47 @@ p {
     margin-bottom: 0;
   }
 }
+
+/* PDP / hero refinements */
+.lawn-hero-section .size-card.is-unavailable {
+  opacity: 0.5;
+  cursor: not-allowed;
+  position: relative;
+}
+
+.lawn-hero-section .size-card.is-unavailable::after {
+  content: "Sold out";
+  position: absolute;
+  bottom: 6px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11px;
+  color: #b94a4a;
+  font-weight: 600;
+}
+
+.lawn-hero-section .add-cart[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.lawn-hero-section .add-cart[disabled]:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.lawn-hero-section .main-product-card img {
+  transition: opacity 0.2s ease;
+}
+
+.lawn-hero-section .old-price[hidden] {
+  display: none;
+}
+
+.lawn-product-form {
+  margin: 0;
+  padding: 0;
+  display: contents;
+}

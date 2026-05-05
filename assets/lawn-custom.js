@@ -1,17 +1,24 @@
 (function () {
-  function init(root) {
-    root = root || document;
+  function bindOnce(el, handler, key) {
+    if (!el || el.dataset[key]) return false;
+    el.dataset[key] = "1";
+    return true;
+  }
 
-    var quantityValue = root.querySelector("#quantityValue");
-    var quantityInput = root.querySelector("[data-product-quantity-input]");
-    var qtyButtons = root.querySelectorAll("[data-qty]");
-    var sizeCards = root.querySelectorAll(".size-card");
-    var variantInput = root.querySelector("[data-product-variant-input]");
-    var faqItems = root.querySelectorAll(".faq-item");
+  function initHero(hero) {
+    var quantityValue = hero.querySelector("#quantityValue");
+    var quantityInput = hero.querySelector("[data-product-quantity-input]");
+    var qtyButtons = hero.querySelectorAll("[data-qty]");
+    var sizeCards = hero.querySelectorAll(".size-card");
+    var variantInput = hero.querySelector("[data-product-variant-input]");
+    var priceEl = hero.querySelector("[data-product-price]");
+    var compareEl = hero.querySelector("[data-product-compare-price]");
+    var addToCartBtn = hero.querySelector("[data-add-to-cart]");
+    var thumbs = hero.querySelectorAll(".thumb[data-thumb-image]");
+    var mainImg = hero.querySelector("[data-lawn-main-image] img");
 
     qtyButtons.forEach(function (button) {
-      if (button.dataset.lawnBound) return;
-      button.dataset.lawnBound = "1";
+      if (!bindOnce(button, null, "lawnBound")) return;
       button.addEventListener("click", function () {
         if (!quantityValue) return;
         var current = Number(quantityValue.textContent) || 1;
@@ -22,24 +29,66 @@
     });
 
     sizeCards.forEach(function (card) {
-      if (card.dataset.lawnBound) return;
-      card.dataset.lawnBound = "1";
+      if (!bindOnce(card, null, "lawnBound")) return;
       card.addEventListener("click", function () {
+        if (card.getAttribute("data-variant-available") === "false") return;
+
         sizeCards.forEach(function (item) {
           item.classList.remove("is-selected");
           item.setAttribute("aria-pressed", "false");
         });
         card.classList.add("is-selected");
         card.setAttribute("aria-pressed", "true");
+
         var variantId = card.getAttribute("data-variant-id");
         if (variantId && variantInput) variantInput.value = variantId;
+
+        var price = card.getAttribute("data-variant-price");
+        if (price && priceEl) priceEl.textContent = price;
+
+        var compare = card.getAttribute("data-variant-compare-price");
+        if (compareEl) {
+          if (compare) {
+            compareEl.textContent = compare;
+            compareEl.removeAttribute("hidden");
+          } else {
+            compareEl.textContent = "";
+            compareEl.setAttribute("hidden", "");
+          }
+        }
+
+        if (addToCartBtn) {
+          var available = card.getAttribute("data-variant-available") !== "false";
+          addToCartBtn.disabled = !available;
+          if (!available) addToCartBtn.textContent = "Sold Out";
+        }
       });
     });
 
+    thumbs.forEach(function (thumb) {
+      if (!bindOnce(thumb, null, "lawnBound")) return;
+      thumb.addEventListener("click", function () {
+        thumbs.forEach(function (t) { t.classList.remove("is-active"); });
+        thumb.classList.add("is-active");
+        if (mainImg) {
+          var src = thumb.getAttribute("data-thumb-image");
+          if (src) {
+            mainImg.src = src;
+            mainImg.removeAttribute("srcset");
+            mainImg.removeAttribute("sizes");
+            var alt = thumb.getAttribute("data-thumb-alt");
+            if (alt) mainImg.alt = alt;
+          }
+        }
+      });
+    });
+  }
+
+  function initFaq(root) {
+    var faqItems = root.querySelectorAll(".faq-item");
     faqItems.forEach(function (item) {
       var button = item.querySelector("button");
-      if (!button || button.dataset.lawnBound) return;
-      button.dataset.lawnBound = "1";
+      if (!button || !bindOnce(button, null, "lawnBound")) return;
       button.addEventListener("click", function () {
         faqItems.forEach(function (entry) {
           if (entry !== item) entry.classList.remove("is-open");
@@ -47,6 +96,19 @@
         item.classList.toggle("is-open");
       });
     });
+  }
+
+  function init(root) {
+    root = root || document;
+
+    var heroes = root.querySelectorAll("[data-lawn-hero]");
+    if (heroes.length) {
+      heroes.forEach(initHero);
+    } else if (root.matches && root.matches("[data-lawn-hero]")) {
+      initHero(root);
+    }
+
+    initFaq(root);
   }
 
   if (document.readyState === "loading") {
