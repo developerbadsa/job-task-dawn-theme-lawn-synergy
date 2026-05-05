@@ -6,66 +6,68 @@
 
   assign person_alt = section.settings.person_alt | default: 'Customer holding Envy grass seed'
   assign avatar_alt = section.settings.avatar_alt | default: 'Customer avatar'
-  assign texture_opacity = section.settings.texture_opacity | default: 23 | times: 0.01
+  assign texture_opacity = section.settings.texture_opacity | default: 25 | divided_by: 100.0
+
+  if bg_texture != blank
+    assign texture_url = bg_texture | image_url: width: 2400
+  else
+    assign texture_url = 'grass-bg.jpg' | asset_url
+  endif
 -%}
 
 <section
   id="lawn-testimonial-{{ section.id }}"
   class="lawn-testimonial-custom"
   style="
-    --testimonial-width: {{ section.settings.content_width | default: 1270 }}px;
-    --testimonial-height: {{ section.settings.section_height | default: 905 }}px;
-    --testimonial-panel-left: {{ section.settings.panel_left | default: 250 }}px;
-    --testimonial-panel-radius: {{ section.settings.panel_radius | default: 30 }}px;
-    --testimonial-person-left: {{ section.settings.person_left | default: 18 }}px;
-    --testimonial-person-bottom: {{ section.settings.person_bottom | default: 0 }}px;
-    --testimonial-person-width: {{ section.settings.person_width | default: 780 }}px;
-    --testimonial-person-height: {{ section.settings.person_height | default: 905 }}px;
-    --testimonial-content-left: {{ section.settings.content_left | default: 590 }}px;
-    --testimonial-content-top: {{ section.settings.content_top | default: 150 }}px;
-    --testimonial-content-width: {{ section.settings.content_box_width | default: 648 }}px;
-    --testimonial-card-width: {{ section.settings.card_width | default: 648 }}px;
-    --testimonial-card-height: {{ section.settings.card_height | default: 328 }}px;
-    --testimonial-card-gap: {{ section.settings.card_top_gap | default: 88 }}px;
-    --testimonial-grass-height: {{ section.settings.grass_height | default: 180 }}px;
-    --testimonial-grass-overlap: {{ section.settings.grass_overlap | default: 22 }}px;
-    --testimonial-panel-bg: {{ section.settings.panel_bg | default: '#00452E' }};
-    --testimonial-card-bg: {{ section.settings.card_bg | default: '#25AA6C' }};
-    --testimonial-primary: {{ section.settings.primary_green | default: '#20B26B' }};
-    --testimonial-heading: {{ section.settings.heading_color | default: '#FFFFFF' }};
-    --testimonial-body: {{ section.settings.body_color | default: '#FFFFFF' }};
-    --testimonial-heading-size: {{ section.settings.heading_size | default: 52 }}px;
-    --testimonial-quote-size: {{ section.settings.quote_size | default: 24 }}px;
+    --testimonial-width: {{ section.settings.content_width }}px;
+    --testimonial-height: {{ section.settings.section_height }}px;
+    --testimonial-panel-left: {{ section.settings.panel_left }}px;
+    --testimonial-panel-radius: {{ section.settings.panel_radius }}px;
+    --testimonial-person-left: {{ section.settings.person_left }}px;
+    --testimonial-person-bottom: {{ section.settings.person_bottom }}px;
+    --testimonial-person-width: {{ section.settings.person_width }}px;
+    --testimonial-person-height: {{ section.settings.person_height }}px;
+    --testimonial-content-left: {{ section.settings.content_left }}px;
+    --testimonial-content-top: {{ section.settings.content_top }}px;
+    --testimonial-content-width: {{ section.settings.content_box_width }}px;
+    --testimonial-card-width: {{ section.settings.card_width }}px;
+    --testimonial-card-height: {{ section.settings.card_height }}px;
+    --testimonial-card-gap: {{ section.settings.card_top_gap }}px;
+    --testimonial-grass-height: {{ section.settings.grass_height }}px;
+    --testimonial-grass-overlap: {{ section.settings.grass_overlap }}px;
+    --testimonial-panel-bg: {{ section.settings.panel_bg }};
+    --testimonial-card-bg: {{ section.settings.card_bg }};
+    --testimonial-primary: {{ section.settings.primary_green }};
+    --testimonial-heading: {{ section.settings.heading_color }};
+    --testimonial-body: {{ section.settings.body_color }};
+    --testimonial-heading-size: {{ section.settings.heading_size }}px;
+    --testimonial-quote-size: {{ section.settings.quote_size }}px;
+    --testimonial-texture: url('{{ texture_url }}');
     --testimonial-texture-opacity: {{ texture_opacity }};
-    {%- if bg_texture != blank -%}
-      --testimonial-texture: url('{{ bg_texture | image_url: width: 2400 }}');
-    {%- else -%}
-      --testimonial-texture: none;
-    {%- endif -%}
   "
 >
   <div class="lawn-testimonial-custom__inner">
-    <div class="lawn-testimonial-custom__panel" aria-hidden="true"></div>
+    <div class="lawn-testimonial-custom__panel"></div>
 
     <div class="lawn-testimonial-custom__person">
       {%- if person != blank -%}
         {{
           person
-          | image_url: width: 1400
+          | image_url: width: 1500
           | image_tag:
             loading: 'lazy',
             class: 'lawn-testimonial-custom__person-img',
             alt: person_alt,
-            width: 1400,
-            height: 1600
+            width: 1500,
+            height: 1700
         }}
       {%- else -%}
         <img
           class="lawn-testimonial-custom__person-img"
           src="{{ 'testimonial-man.png' | asset_url }}"
           alt="{{ person_alt | escape }}"
-          width="1400"
-          height="1600"
+          width="1500"
+          height="1700"
           loading="lazy"
         >
       {%- endif -%}
@@ -105,7 +107,7 @@
           {%- endif -%}
         </div>
 
-        <span class="lawn-testimonial-custom__quote-mark" aria-hidden="true">”</span>
+        <span class="lawn-testimonial-custom__quote-mark">&rdquo;</span>
 
         {%- if section.settings.quote != blank -%}
           <p class="lawn-testimonial-custom__quote">{{ section.settings.quote }}</p>
@@ -131,7 +133,7 @@
   </div>
 
   {%- if section.settings.show_grass_edge -%}
-    <div class="lawn-testimonial-custom__grass" aria-hidden="true">
+    <div class="lawn-testimonial-custom__grass">
       {%- if grass_edge != blank -%}
         {{
           grass_edge
@@ -162,15 +164,23 @@
     position: relative;
     z-index: 2;
     overflow: visible !important;
+    background: #ffffff;
   }
 
   #lawn-testimonial-{{ section.id }} {
     position: relative;
     z-index: 1;
     min-height: var(--testimonial-height);
+    margin-bottom: calc(var(--testimonial-grass-overlap) * -1);
     overflow: visible;
     background: #ffffff;
     color: var(--testimonial-body);
+  }
+
+  #lawn-testimonial-{{ section.id }} *,
+  #lawn-testimonial-{{ section.id }} *::before,
+  #lawn-testimonial-{{ section.id }} *::after {
+    box-sizing: border-box;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
@@ -190,7 +200,7 @@
     z-index: 1;
     overflow: hidden;
     border-top-left-radius: var(--testimonial-panel-radius);
-    background: var(--testimonial-panel-bg);
+    background-color: var(--testimonial-panel-bg);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel::before {
@@ -203,7 +213,7 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: var(--testimonial-texture-opacity);
-    mix-blend-mode: soft-light;
+    pointer-events: none;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel::after {
@@ -212,15 +222,16 @@
     inset: 0;
     z-index: 2;
     background:
-      radial-gradient(circle at 40% 20%, rgba(255,255,255,0.04), transparent 34%),
-      rgba(0, 45, 30, 0.18);
+      radial-gradient(circle at 35% 14%, rgba(255, 255, 255, 0.06), transparent 32%),
+      rgba(0, 42, 28, 0.12);
+    pointer-events: none;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
     position: absolute;
     left: var(--testimonial-person-left);
     bottom: var(--testimonial-person-bottom);
-    z-index: 3;
+    z-index: 4;
     width: var(--testimonial-person-width);
     height: var(--testimonial-person-height);
     pointer-events: none;
@@ -238,28 +249,28 @@
     position: absolute;
     left: var(--testimonial-content-left);
     top: var(--testimonial-content-top);
-    z-index: 4;
+    z-index: 5;
     width: var(--testimonial-content-width);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
-    margin: 0 0 20px;
+    margin: 0 0 18px;
     color: var(--testimonial-primary);
-    font-family: "Poppins", var(--font-body-family), sans-serif;
+    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
     font-size: 16px;
     line-height: 1.2;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
     margin: 0;
-    max-width: 647px;
+    max-width: 650px;
     color: var(--testimonial-heading);
-    font-family: "Clash Grotesk", var(--font-heading-family), sans-serif;
+    font-family: "Clash Grotesk", "Poppins", var(--font-heading-family), Arial, sans-serif;
     font-size: var(--testimonial-heading-size);
-    line-height: 1.23;
-    font-weight: 700;
+    line-height: 1.2;
+    font-weight: 600;
     letter-spacing: -0.04em;
   }
 
@@ -268,7 +279,7 @@
     width: var(--testimonial-card-width);
     min-height: var(--testimonial-card-height);
     margin-top: var(--testimonial-card-gap);
-    padding: 62px 38px 36px;
+    padding: 66px 38px 36px;
     border-radius: 30px;
     background: var(--testimonial-card-bg);
     color: #ffffff;
@@ -278,7 +289,8 @@
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__avatar {
     position: absolute;
     top: -42px;
-    left: 48px;
+    left: 52px;
+    z-index: 2;
     width: 78px;
     height: 78px;
     padding: 4px;
@@ -297,42 +309,48 @@
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote-mark {
     position: absolute;
-    top: -30px;
-    right: 40px;
+    top: -38px;
+    right: 38px;
+    z-index: 1;
     color: #ffffff;
-    font-family: Georgia, serif;
-    font-size: 118px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 128px;
     line-height: 1;
     font-weight: 700;
+    pointer-events: none;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
+    position: relative;
+    z-index: 2;
     margin: 0;
-    max-width: 535px;
+    max-width: 540px;
     color: #ffffff;
-    font-family: "Poppins", var(--font-body-family), sans-serif;
+    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
     font-size: var(--testimonial-quote-size);
-    line-height: 1.42;
-    font-weight: 400;
+    line-height: 1.45;
+    font-weight: 600;
     font-style: italic;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 28px;
-    margin-top: 30px;
+    margin-top: 32px;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta strong {
     display: block;
     color: #ffffff;
-    font-family: "Poppins", var(--font-body-family), sans-serif;
+    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
     font-size: 25px;
     line-height: 1.1;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.03em;
   }
 
@@ -340,10 +358,10 @@
     display: block;
     margin-top: 5px;
     color: #ffffff;
-    font-family: "Poppins", var(--font-body-family), sans-serif;
+    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
     font-size: 13px;
     line-height: 1.2;
-    font-weight: 400;
+    font-weight: 500;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__stars {
@@ -370,7 +388,8 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: fill;
+    max-width: none;
+    object-fit: cover;
     object-position: center bottom;
   }
 
@@ -400,19 +419,21 @@
 
   @media screen and (max-width: 989px) {
     #lawn-testimonial-{{ section.id }} {
-      overflow: hidden;
       min-height: auto;
-      padding: 54px 20px 130px;
+      margin-bottom: 0;
+      padding: 54px 20px 132px;
+      overflow: hidden;
       background: var(--testimonial-panel-bg);
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
       width: min(100%, 640px);
       height: auto;
+      overflow: visible;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel {
-      inset: -54px -20px -130px;
+      inset: -54px -20px -132px;
       border-radius: 0;
     }
 
@@ -503,7 +524,7 @@
 
 {% schema %}
 {
-  "name": "Lawn — Testimonial",
+  "name": "Lawn \u2014 Testimonial",
   "tag": "section",
   "class": "lawn-testimonial-section",
   "settings": [
@@ -535,7 +556,7 @@
       "max": 40,
       "step": 1,
       "unit": "%",
-      "default": 23
+      "default": 25
     },
     {
       "type": "image_picker",
@@ -618,7 +639,7 @@
       "id": "section_height",
       "label": "Section height",
       "min": 700,
-      "max": 1200,
+      "max": 920,
       "step": 5,
       "unit": "px",
       "default": 905
@@ -661,7 +682,7 @@
       "max": 120,
       "step": 2,
       "unit": "px",
-      "default": 0
+      "default": 32
     },
     {
       "type": "range",
