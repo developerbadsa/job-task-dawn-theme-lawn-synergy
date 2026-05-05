@@ -6,12 +6,48 @@
 
   assign person_alt = section.settings.person_alt | default: 'Customer holding Envy grass seed'
   assign avatar_alt = section.settings.avatar_alt | default: 'Customer avatar'
-  assign texture_opacity = section.settings.texture_opacity | default: 25 | divided_by: 100.0
+
+  assign eyebrow = section.settings.eyebrow | default: 'Real Results'
+  assign heading = section.settings.heading | default: 'What Happens When You Use Better Grass Seed'
+  assign quote = section.settings.quote | default: 'I overseeded last fall and saw germination within days. My lawn filled in thick, dark green, and looks better than neighbors who use standard store seed.'
+  assign author_name = section.settings.author_name | default: 'Helena'
+  assign author_role = section.settings.author_role | default: 'Model'
+  assign stars = section.settings.stars | default: '★★★★★'
+
+  assign layout_width = section.settings.layout_width | default: 1440
+  assign layout_height = section.settings.layout_height | default: 891
+  assign panel_left = section.settings.layout_panel_left | default: 301
+  assign panel_radius = section.settings.layout_panel_radius | default: 50
+
+  assign person_left = section.settings.layout_person_left | default: 18
+  assign person_top = section.settings.layout_person_top | default: 0
+  assign person_width = section.settings.layout_person_width | default: 779
+  assign person_height = section.settings.layout_person_height | default: 905
+
+  assign content_left = section.settings.layout_content_left | default: 410
+  assign content_top = section.settings.layout_content_top | default: 156
+  assign content_width = section.settings.layout_content_width | default: 647
+
+  assign card_width = section.settings.layout_card_width | default: 647
+  assign card_height = section.settings.layout_card_height | default: 328
+  assign card_gap = section.settings.layout_card_gap | default: 50
+  assign grass_height = section.settings.layout_grass_height | default: 148
+
+  assign heading_size = section.settings.type_heading_size | default: 48
+  assign quote_size = section.settings.type_quote_size | default: 24
+
+  assign panel_bg = section.settings.visual_panel_bg | default: '#043320'
+  assign card_bg = section.settings.visual_card_bg | default: '#25AA6C'
+  assign primary_green = section.settings.visual_primary_green | default: '#20B26B'
+  assign heading_color = section.settings.visual_heading_color | default: '#FFFFFF'
+  assign body_color = section.settings.visual_body_color | default: '#FFFFFF'
+
+  assign texture_opacity = section.settings.texture_opacity | default: 18 | times: 0.01
 
   if bg_texture != blank
     assign texture_url = bg_texture | image_url: width: 2400
   else
-    assign texture_url = 'grass-bg.jpg' | asset_url
+    assign texture_url = blank
   endif
 -%}
 
@@ -19,30 +55,29 @@
   id="lawn-testimonial-{{ section.id }}"
   class="lawn-testimonial-custom"
   style="
-    --testimonial-width: {{ section.settings.content_width }}px;
-    --testimonial-height: {{ section.settings.section_height }}px;
-    --testimonial-panel-left: {{ section.settings.panel_left }}px;
-    --testimonial-panel-radius: {{ section.settings.panel_radius }}px;
-    --testimonial-person-left: {{ section.settings.person_left }}px;
-    --testimonial-person-bottom: {{ section.settings.person_bottom }}px;
-    --testimonial-person-width: {{ section.settings.person_width }}px;
-    --testimonial-person-height: {{ section.settings.person_height }}px;
-    --testimonial-content-left: {{ section.settings.content_left }}px;
-    --testimonial-content-top: {{ section.settings.content_top }}px;
-    --testimonial-content-width: {{ section.settings.content_box_width }}px;
-    --testimonial-card-width: {{ section.settings.card_width }}px;
-    --testimonial-card-height: {{ section.settings.card_height }}px;
-    --testimonial-card-gap: {{ section.settings.card_top_gap }}px;
-    --testimonial-grass-height: {{ section.settings.grass_height }}px;
-    --testimonial-grass-overlap: {{ section.settings.grass_overlap }}px;
-    --testimonial-panel-bg: {{ section.settings.panel_bg }};
-    --testimonial-card-bg: {{ section.settings.card_bg }};
-    --testimonial-primary: {{ section.settings.primary_green }};
-    --testimonial-heading: {{ section.settings.heading_color }};
-    --testimonial-body: {{ section.settings.body_color }};
-    --testimonial-heading-size: {{ section.settings.heading_size }}px;
-    --testimonial-quote-size: {{ section.settings.quote_size }}px;
-    --testimonial-texture: url('{{ texture_url }}');
+    --testimonial-width: {{ layout_width }}px;
+    --testimonial-height: {{ layout_height }}px;
+    --testimonial-panel-left: {{ panel_left }}px;
+    --testimonial-panel-radius: {{ panel_radius }}px;
+    --testimonial-person-left: {{ person_left }}px;
+    --testimonial-person-top: {{ person_top }}px;
+    --testimonial-person-width: {{ person_width }}px;
+    --testimonial-person-height: {{ person_height }}px;
+    --testimonial-content-left: {{ content_left }}px;
+    --testimonial-content-top: {{ content_top }}px;
+    --testimonial-content-width: {{ content_width }}px;
+    --testimonial-card-width: {{ card_width }}px;
+    --testimonial-card-height: {{ card_height }}px;
+    --testimonial-card-gap: {{ card_gap }}px;
+    --testimonial-grass-height: {{ grass_height }}px;
+    --testimonial-panel-bg: {{ panel_bg }};
+    --testimonial-card-bg: {{ card_bg }};
+    --testimonial-primary: {{ primary_green }};
+    --testimonial-heading: {{ heading_color }};
+    --testimonial-body: {{ body_color }};
+    --testimonial-heading-size: {{ heading_size }}px;
+    --testimonial-quote-size: {{ quote_size }}px;
+    --testimonial-texture: {% if texture_url != blank %}url('{{ texture_url }}'){% else %}none{% endif %};
     --testimonial-texture-opacity: {{ texture_opacity }};
   "
 >
@@ -53,33 +88,33 @@
       {%- if person != blank -%}
         {{
           person
-          | image_url: width: 1500
+          | image_url: width: 1600
           | image_tag:
             loading: 'lazy',
             class: 'lawn-testimonial-custom__person-img',
             alt: person_alt,
-            width: 1500,
-            height: 1700
+            width: 1600,
+            height: 1900
         }}
       {%- else -%}
         <img
           class="lawn-testimonial-custom__person-img"
           src="{{ 'testimonial-man.png' | asset_url }}"
           alt="{{ person_alt | escape }}"
-          width="1500"
-          height="1700"
+          width="1600"
+          height="1900"
           loading="lazy"
         >
       {%- endif -%}
     </div>
 
     <div class="lawn-testimonial-custom__content">
-      {%- if section.settings.eyebrow != blank -%}
-        <p class="lawn-testimonial-custom__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- if eyebrow != blank -%}
+        <p class="lawn-testimonial-custom__eyebrow">{{ eyebrow }}</p>
       {%- endif -%}
 
-      {%- if section.settings.heading != blank -%}
-        <h2 class="lawn-testimonial-custom__heading">{{ section.settings.heading }}</h2>
+      {%- if heading != blank -%}
+        <h2 class="lawn-testimonial-custom__heading">{{ heading }}</h2>
       {%- endif -%}
 
       <article class="lawn-testimonial-custom__card">
@@ -109,23 +144,23 @@
 
         <span class="lawn-testimonial-custom__quote-mark">&rdquo;</span>
 
-        {%- if section.settings.quote != blank -%}
-          <p class="lawn-testimonial-custom__quote">{{ section.settings.quote }}</p>
+        {%- if quote != blank -%}
+          <p class="lawn-testimonial-custom__quote">{{ quote }}</p>
         {%- endif -%}
 
         <div class="lawn-testimonial-custom__meta">
           <div>
-            {%- if section.settings.author_name != blank -%}
-              <strong>{{ section.settings.author_name }}</strong>
+            {%- if author_name != blank -%}
+              <strong>{{ author_name }}</strong>
             {%- endif -%}
 
-            {%- if section.settings.author_role != blank -%}
-              <small>{{ section.settings.author_role }}</small>
+            {%- if author_role != blank -%}
+              <small>{{ author_role }}</small>
             {%- endif -%}
           </div>
 
-          {%- if section.settings.stars != blank -%}
-            <span class="lawn-testimonial-custom__stars">{{ section.settings.stars }}</span>
+          {%- if stars != blank -%}
+            <span class="lawn-testimonial-custom__stars">{{ stars }}</span>
           {%- endif -%}
         </div>
       </article>
@@ -137,21 +172,21 @@
       {%- if grass_edge != blank -%}
         {{
           grass_edge
-          | image_url: width: 2600
+          | image_url: width: 2800
           | image_tag:
             loading: 'lazy',
             class: 'lawn-testimonial-custom__grass-img',
             alt: '',
-            width: 2600,
-            height: 320
+            width: 2800,
+            height: 360
         }}
       {%- else -%}
         <img
           class="lawn-testimonial-custom__grass-img"
           src="{{ 'testimonial-grass-strip.png' | asset_url }}"
           alt=""
-          width="2600"
-          height="320"
+          width="2800"
+          height="360"
           loading="lazy"
         >
       {%- endif -%}
@@ -163,16 +198,17 @@
   #shopify-section-{{ section.id }} {
     position: relative;
     z-index: 2;
-    overflow: visible !important;
+    overflow: hidden;
     background: #ffffff;
   }
 
   #lawn-testimonial-{{ section.id }} {
     position: relative;
     z-index: 1;
+    width: 100%;
+    height: var(--testimonial-height);
     min-height: var(--testimonial-height);
-    margin-bottom: calc(var(--testimonial-grass-overlap) * -1);
-    overflow: visible;
+    overflow: hidden;
     background: #ffffff;
     color: var(--testimonial-body);
   }
@@ -222,15 +258,16 @@
     inset: 0;
     z-index: 2;
     background:
-      radial-gradient(circle at 35% 14%, rgba(255, 255, 255, 0.06), transparent 32%),
-      rgba(0, 42, 28, 0.12);
+      radial-gradient(circle at 36% 12%, rgba(255, 255, 255, 0.055), transparent 34%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.08)),
+      rgba(0, 32, 22, 0.12);
     pointer-events: none;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
     position: absolute;
+    top: var(--testimonial-person-top);
     left: var(--testimonial-person-left);
-    bottom: var(--testimonial-person-bottom);
     z-index: 4;
     width: var(--testimonial-person-width);
     height: var(--testimonial-person-height);
@@ -241,23 +278,24 @@
     display: block;
     width: 100%;
     height: 100%;
+    max-width: none;
     object-fit: contain;
-    object-position: left bottom;
+    object-position: left top;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__content {
     position: absolute;
-    left: var(--testimonial-content-left);
     top: var(--testimonial-content-top);
+    left: var(--testimonial-content-left);
     z-index: 5;
     width: var(--testimonial-content-width);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
-    margin: 0 0 18px;
+    margin: 0 0 14px;
     color: var(--testimonial-primary);
     font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.2;
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -265,13 +303,13 @@
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
     margin: 0;
-    max-width: 650px;
+    max-width: 647px;
     color: var(--testimonial-heading);
     font-family: "Clash Grotesk", "Poppins", var(--font-heading-family), Arial, sans-serif;
     font-size: var(--testimonial-heading-size);
-    line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -0.04em;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: -0.045em;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
@@ -279,18 +317,18 @@
     width: var(--testimonial-card-width);
     min-height: var(--testimonial-card-height);
     margin-top: var(--testimonial-card-gap);
-    padding: 66px 38px 36px;
-    border-radius: 30px;
+    padding: 66px 38px 34px;
+    border-radius: 28px;
     background: var(--testimonial-card-bg);
     color: #ffffff;
-    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.14);
+    box-shadow: 0 24px 55px rgba(0, 0, 0, 0.12);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__avatar {
     position: absolute;
     top: -42px;
     left: 52px;
-    z-index: 2;
+    z-index: 3;
     width: 78px;
     height: 78px;
     padding: 4px;
@@ -309,12 +347,12 @@
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote-mark {
     position: absolute;
-    top: -38px;
+    top: -42px;
     right: 38px;
-    z-index: 1;
+    z-index: 2;
     color: #ffffff;
     font-family: Georgia, "Times New Roman", serif;
-    font-size: 128px;
+    font-size: 126px;
     line-height: 1;
     font-weight: 700;
     pointer-events: none;
@@ -322,21 +360,21 @@
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     margin: 0;
-    max-width: 540px;
+    max-width: 535px;
     color: #ffffff;
     font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
     font-size: var(--testimonial-quote-size);
     line-height: 1.45;
-    font-weight: 600;
+    font-weight: 500;
     font-style: italic;
     letter-spacing: -0.03em;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
@@ -348,7 +386,7 @@
     display: block;
     color: #ffffff;
     font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 25px;
+    font-size: 24px;
     line-height: 1.1;
     font-weight: 700;
     letter-spacing: -0.03em;
@@ -359,7 +397,7 @@
     margin-top: 5px;
     color: #ffffff;
     font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.2;
     font-weight: 500;
   }
@@ -376,7 +414,7 @@
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__grass {
     position: absolute;
     left: 50%;
-    bottom: calc(var(--testimonial-grass-overlap) * -1);
+    bottom: 0;
     z-index: 8;
     width: 100vw;
     height: var(--testimonial-grass-height);
@@ -393,35 +431,59 @@
     object-position: center bottom;
   }
 
-  @media screen and (max-width: 1279px) {
+  @media screen and (max-width: 1279px) and (min-width: 990px) {
+    #lawn-testimonial-{{ section.id }} {
+      height: 760px;
+      min-height: 760px;
+    }
+
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
       width: 100%;
+      height: 760px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel {
-      left: 18%;
+      left: 21%;
+      border-top-left-radius: 42px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
+      top: 18px;
       left: 0;
-      width: 56vw;
+      width: 54vw;
+      height: 760px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__content {
-      left: 48%;
-      width: min(48vw, var(--testimonial-content-width));
+      top: 122px;
+      left: 44%;
+      width: min(52vw, var(--testimonial-content-width));
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
+      font-size: 42px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
       width: 100%;
+      min-height: 300px;
+      margin-top: 48px;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
+      font-size: 21px;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__grass {
+      height: 132px;
     }
   }
 
   @media screen and (max-width: 989px) {
     #lawn-testimonial-{{ section.id }} {
+      height: auto;
       min-height: auto;
-      margin-bottom: 0;
-      padding: 54px 20px 132px;
+      padding: 52px 20px 128px;
       overflow: hidden;
       background: var(--testimonial-panel-bg);
     }
@@ -429,11 +491,12 @@
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
       width: min(100%, 640px);
       height: auto;
+      margin-inline: auto;
       overflow: visible;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel {
-      inset: -54px -20px -132px;
+      inset: -52px -20px -128px;
       border-radius: 0;
     }
 
@@ -445,13 +508,16 @@
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
+      z-index: 4;
       max-width: 430px;
       height: auto;
-      margin: 0 auto 38px;
+      margin: 0 auto 36px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person-img {
+      width: 100%;
       height: auto;
+      object-fit: contain;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__content {
@@ -465,7 +531,7 @@
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
       width: 100%;
       min-height: auto;
-      margin-top: 72px;
+      margin-top: 70px;
       padding: 58px 26px 30px;
     }
 
@@ -510,6 +576,7 @@
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote-mark {
+      top: -30px;
       right: 24px;
       font-size: 88px;
     }
@@ -521,10 +588,9 @@
     }
   }
 </style>
-
 {% schema %}
 {
-  "name": "Lawn \u2014 Testimonial",
+  "name": "Lawn — Testimonial",
   "tag": "section",
   "class": "lawn-testimonial-section",
   "settings": [
@@ -556,7 +622,7 @@
       "max": 40,
       "step": 1,
       "unit": "%",
-      "default": 25
+      "default": 18
     },
     {
       "type": "image_picker",
@@ -626,163 +692,153 @@
     },
     {
       "type": "range",
-      "id": "content_width",
-      "label": "Content width",
+      "id": "layout_width",
+      "label": "Layout width",
       "min": 1000,
-      "max": 1500,
+      "max": 1800,
       "step": 10,
       "unit": "px",
-      "default": 1270
+      "default": 1440
     },
     {
       "type": "range",
-      "id": "section_height",
+      "id": "layout_height",
       "label": "Section height",
-      "min": 700,
-      "max": 920,
-      "step": 5,
+      "min": 840,
+      "max": 940,
+      "step": 1,
       "unit": "px",
-      "default": 905
+      "default": 891
     },
     {
       "type": "range",
-      "id": "panel_left",
+      "id": "layout_panel_left",
       "label": "Green panel left offset",
-      "min": 0,
-      "max": 420,
-      "step": 5,
+      "min": 250,
+      "max": 350,
+      "step": 1,
       "unit": "px",
-      "default": 250
+      "default": 301
     },
     {
       "type": "range",
-      "id": "panel_radius",
+      "id": "layout_panel_radius",
       "label": "Green panel radius",
       "min": 0,
-      "max": 60,
-      "step": 2,
+      "max": 90,
+      "step": 1,
       "unit": "px",
-      "default": 30
+      "default": 50
     },
     {
       "type": "range",
-      "id": "person_left",
+      "id": "layout_person_left",
       "label": "Person left position",
       "min": 0,
-      "max": 120,
-      "step": 2,
+      "max": 100,
+      "step": 1,
       "unit": "px",
       "default": 18
     },
     {
       "type": "range",
-      "id": "person_bottom",
-      "label": "Person bottom position",
+      "id": "layout_person_top",
+      "label": "Person top position",
       "min": 0,
-      "max": 120,
-      "step": 2,
+      "max": 100,
+      "step": 1,
       "unit": "px",
-      "default": 32
+      "default": 0
     },
     {
       "type": "range",
-      "id": "person_width",
+      "id": "layout_person_width",
       "label": "Person width",
-      "min": 500,
-      "max": 900,
-      "step": 5,
+      "min": 730,
+      "max": 830,
+      "step": 1,
       "unit": "px",
-      "default": 780
+      "default": 779
     },
     {
       "type": "range",
-      "id": "person_height",
+      "id": "layout_person_height",
       "label": "Person height",
-      "min": 650,
-      "max": 1100,
-      "step": 5,
+      "min": 855,
+      "max": 955,
+      "step": 1,
       "unit": "px",
       "default": 905
     },
     {
       "type": "range",
-      "id": "content_left",
-      "label": "Text left position",
-      "min": 420,
-      "max": 780,
-      "step": 5,
+      "id": "layout_content_left",
+      "label": "Content left position",
+      "min": 360,
+      "max": 460,
+      "step": 1,
       "unit": "px",
-      "default": 590
+      "default": 410
     },
     {
       "type": "range",
-      "id": "content_top",
-      "label": "Text top position",
-      "min": 80,
-      "max": 300,
-      "step": 5,
+      "id": "layout_content_top",
+      "label": "Content top position",
+      "min": 110,
+      "max": 210,
+      "step": 1,
       "unit": "px",
-      "default": 150
+      "default": 156
     },
     {
       "type": "range",
-      "id": "content_box_width",
-      "label": "Text box width",
-      "min": 500,
-      "max": 760,
-      "step": 4,
+      "id": "layout_content_width",
+      "label": "Content width",
+      "min": 597,
+      "max": 697,
+      "step": 1,
       "unit": "px",
-      "default": 648
+      "default": 647
     },
     {
       "type": "range",
-      "id": "card_width",
+      "id": "layout_card_width",
       "label": "Quote card width",
-      "min": 500,
-      "max": 760,
-      "step": 4,
+      "min": 597,
+      "max": 697,
+      "step": 1,
       "unit": "px",
-      "default": 648
+      "default": 647
     },
     {
       "type": "range",
-      "id": "card_height",
+      "id": "layout_card_height",
       "label": "Quote card height",
-      "min": 260,
-      "max": 420,
-      "step": 4,
+      "min": 278,
+      "max": 378,
+      "step": 1,
       "unit": "px",
       "default": 328
     },
     {
       "type": "range",
-      "id": "card_top_gap",
+      "id": "layout_card_gap",
       "label": "Quote card top gap",
-      "min": 40,
-      "max": 130,
-      "step": 2,
-      "unit": "px",
-      "default": 88
-    },
-    {
-      "type": "range",
-      "id": "grass_height",
-      "label": "Bottom grass height",
-      "min": 100,
-      "max": 260,
-      "step": 4,
-      "unit": "px",
-      "default": 180
-    },
-    {
-      "type": "range",
-      "id": "grass_overlap",
-      "label": "Bottom grass overflow",
       "min": 0,
-      "max": 80,
-      "step": 2,
+      "max": 100,
+      "step": 1,
       "unit": "px",
-      "default": 22
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "layout_grass_height",
+      "label": "Bottom grass height",
+      "min": 98,
+      "max": 198,
+      "step": 1,
+      "unit": "px",
+      "default": 148
     },
     {
       "type": "header",
@@ -790,17 +846,17 @@
     },
     {
       "type": "range",
-      "id": "heading_size",
+      "id": "type_heading_size",
       "label": "Heading size",
       "min": 36,
       "max": 70,
       "step": 1,
       "unit": "px",
-      "default": 52
+      "default": 48
     },
     {
       "type": "range",
-      "id": "quote_size",
+      "id": "type_quote_size",
       "label": "Quote size",
       "min": 16,
       "max": 30,
@@ -814,31 +870,31 @@
     },
     {
       "type": "color",
-      "id": "panel_bg",
+      "id": "visual_panel_bg",
       "label": "Dark green background",
-      "default": "#00452E"
+      "default": "#043320"
     },
     {
       "type": "color",
-      "id": "card_bg",
+      "id": "visual_card_bg",
       "label": "Quote card background",
       "default": "#25AA6C"
     },
     {
       "type": "color",
-      "id": "primary_green",
+      "id": "visual_primary_green",
       "label": "Eyebrow green",
       "default": "#20B26B"
     },
     {
       "type": "color",
-      "id": "heading_color",
+      "id": "visual_heading_color",
       "label": "Heading color",
       "default": "#FFFFFF"
     },
     {
       "type": "color",
-      "id": "body_color",
+      "id": "visual_body_color",
       "label": "Body color",
       "default": "#FFFFFF"
     }
