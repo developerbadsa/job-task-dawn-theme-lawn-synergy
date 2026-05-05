@@ -1,10 +1,18 @@
 {%- liquid
-  comment Resolve the product without overwriting the global product object endcomment
-  assign current_product = nil
-  if template.name == 'product' and product != blank
+  comment Resolve current_product safely without overwriting the global product endcomment
+  if template.name == 'product' and product != blank and product.id != blank
     assign current_product = product
   elsif section.settings.product != blank
-    assign current_product = all_products[section.settings.product]
+    assign linked_product = all_products[section.settings.product]
+    if linked_product != blank and linked_product.id != blank
+      assign current_product = linked_product
+    endif
+  endif
+
+  comment has_product is the single source of truth for "we have a real product to bind to" endcomment
+  assign has_product = false
+  if current_product.id != blank
+    assign has_product = true
   endif
 
   comment Section setting fallbacks endcomment
@@ -19,24 +27,49 @@
   assign feature_blocks = section.blocks | where: 'type', 'feature'
   assign accordion_blocks = section.blocks | where: 'type', 'accordion'
 
-  comment Determine if we should render real variant cards endcomment
+  comment Decide whether to render real variant cards endcomment
   assign use_real_variants = false
-  if current_product != blank and current_product.variants.size > 1
+  if has_product and current_product.variants.size > 1
     assign use_real_variants = true
   endif
 
   comment Selected variant for initial state endcomment
-  assign selected_variant = nil
-  if current_product != blank
+  if has_product
     assign selected_variant = current_product.selected_or_first_available_variant
   endif
 
-  comment Resolve main image source endcomment
+  comment Resolve hero title (product title wins when allowed) endcomment
+  assign use_product_title = section.settings.use_product_title
+  if use_product_title == nil
+    assign use_product_title = true
+  endif
+  if has_product and use_product_title
+    assign hero_title = current_product.title
+  else
+    assign hero_title = section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend'
+  endif
+
+  comment Resolve hero lead (optional product description) endcomment
+  if has_product and section.settings.use_product_description and current_product.description != blank
+    assign hero_lead = current_product.description
+    assign hero_lead_is_html = true
+  else
+    assign hero_lead = section.settings.lead | default: 'Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.'
+    assign hero_lead_is_html = false
+  endif
+
+  comment Resolve main image source: section setting > product featured image > asset endcomment
   assign main_image = section.settings.main_image
   assign main_image_from_product = false
-  if main_image == blank and current_product != blank and current_product.featured_image != blank
+  if main_image == blank and has_product and current_product.featured_image != blank
     assign main_image = current_product.featured_image
     assign main_image_from_product = true
+  endif
+
+  comment Build a flat list of product image candidates for thumb fallback endcomment
+  assign product_images_count = 0
+  if has_product
+    assign product_images_count = current_product.media.size
   endif
 -%}
 
@@ -51,7 +84,7 @@
             assign thumb_from_asset = false
             assign product_media_item = nil
 
-            if thumb_image == blank and current_product != blank
+            if thumb_image == blank and has_product and product_images_count > thumb_idx
               assign product_media_item = current_product.media[thumb_idx]
               if product_media_item != blank and product_media_item.preview_image != blank
                 assign thumb_image = product_media_item.preview_image
@@ -157,15 +190,15 @@
       </div>
     {%- endif -%}
 
-    <h1>
-      {%- if current_product != blank -%}
-        {{ current_product.title }}
-      {%- else -%}
-        {{ section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend' }}
-      {%- endif -%}
-    </h1>
+    <h1>{{ hero_title }}</h1>
 
-    <p class="lead">{{ section.settings.lead | default: 'Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.' }}</p>
+    <p class="lead">
+      {%- if hero_lead_is_html -%}
+        {{ hero_lead }}
+      {%- else -%}
+        {{ hero_lead }}
+      {%- endif -%}
+    </p>
 
     <ul class="feature-list">
       {%- for block in feature_blocks -%}
@@ -174,7 +207,7 @@
     </ul>
 
     <div class="price-row">
-      {%- if current_product != blank -%}
+      {%- if has_product -%}
         <span class="sale-price" data-product-price>{{ selected_variant.price | money }}</span>
         {%- if selected_variant.compare_at_price > selected_variant.price -%}
           <span class="old-price" data-product-compare-price>{{ selected_variant.compare_at_price | money }}</span>
@@ -201,8 +234,9 @@
               if variant.id == selected_variant.id
                 assign is_selected = true
               endif
-              assign badge_text = sblock.settings.badge
+              assign size_label = sblock.settings.size | default: variant.title
               assign coverage_text = sblock.settings.coverage
+              assign badge_text = sblock.settings.badge
             -%}
             <button
               class="size-card{% if is_selected %} is-selected{% endif %}{% if badge_text != blank %} has-badge{% endif %}{% unless variant.available %} is-unavailable{% endunless %}"
@@ -217,7 +251,7 @@
               {%- if badge_text != blank -%}
                 <em>{{ badge_text }}</em>
               {%- endif -%}
-              <strong>{{ variant.title }}</strong>
+              <strong>{{ size_label }}</strong>
               {%- if coverage_text != blank -%}
                 <span>{{ coverage_text }}</span>
               {%- else -%}
@@ -246,7 +280,7 @@
       </div>
     </div>
 
-    {%- if current_product != blank -%}
+    {%- if has_product -%}
       {%- assign form_id = 'lawn-hero-product-form-' | append: section.id -%}
       {%- form 'product', current_product, id: form_id, class: 'lawn-product-form', novalidate: 'novalidate' -%}
         <input type="hidden" name="id" value="{{ selected_variant.id }}" data-product-variant-input>
@@ -426,15 +460,29 @@
       "default": "Rated By 12,520+ Customers"
     },
     {
+      "type": "checkbox",
+      "id": "use_product_title",
+      "label": "Use real product title when product is set",
+      "default": true,
+      "info": "When enabled, the H1 uses the linked/page product title. Disable to always use the custom Title below."
+    },
+    {
       "type": "text",
       "id": "title",
-      "label": "Title (used when no product is linked)",
+      "label": "Title (override / fallback)",
       "default": "Envy Premium Tall Fescue Grass Seed Blend"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_product_description",
+      "label": "Use real product description as lead",
+      "default": false,
+      "info": "When enabled and product is set, replaces the Lead text below with product.description."
     },
     {
       "type": "textarea",
       "id": "lead",
-      "label": "Lead description",
+      "label": "Lead description (fallback)",
       "default": "Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance."
     },
     {
