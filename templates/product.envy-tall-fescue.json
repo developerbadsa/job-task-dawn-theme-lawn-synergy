@@ -427,7 +427,7 @@
         "person_image": "shopify://shop_images/bae93f15abcc31d803feb74b69e8708af9269eea.png",
         "person_alt": "Customer holding Envy grass seed",
         "bg_texture_image": "shopify://shop_images/855afd5350b6527749bad7f0647a46245e99a9f3.jpg",
-        "texture_opacity": 25,
+        "texture_opacity": 40,
         "grass_edge_image": "shopify://shop_images/Frame_2147225451.png",
         "show_grass_edge": true,
         "avatar_image": "shopify://shop_images/e7a1b2b61c334120a33ffe264f356b06169f47ce.png",
@@ -524,6 +524,7 @@
         "placeholder": "Mail Address",
         "button_label": "Subscribe",
         "success_text": "Thanks for subscribing!",
+        "bag_image": "shopify://shop_images/image-removebg-preview.png",
         "show_default_bag": true
       }
     }
