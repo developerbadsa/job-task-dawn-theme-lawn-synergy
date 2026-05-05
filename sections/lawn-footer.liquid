@@ -1,6 +1,7 @@
 {%- liquid
   assign logo = section.settings.logo
   assign logo_width = section.settings.logo_width | default: 200
+  assign logo_style = 'width: ' | append: logo_width | append: 'px; height: auto;'
   assign payment_strip = section.settings.payment_strip
 -%}
 
@@ -8,14 +9,25 @@
   <div class="container footer-grid">
     <div>
       {%- if logo != blank -%}
-        {{ logo | image_url: width: 600 | image_tag:
-          class: 'footer-logo',
-          loading: 'lazy',
-          alt: shop.name,
-          style: 'width: ' | append: logo_width | append: 'px;'
+        {{
+          logo
+          | image_url: width: 600
+          | image_tag:
+            class: 'footer-logo',
+            loading: 'lazy',
+            alt: shop.name,
+            style: logo_style
         }}
       {%- else -%}
-        <img class="footer-logo" src="{{ 'lawn-synergy-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="{{ logo_width }}" height="60">
+        <img
+          class="footer-logo"
+          src="{{ 'lawn-synergy-logo.png' | asset_url }}"
+          alt="{{ shop.name | escape }}"
+          style="{{ logo_style }}"
+          width="{{ logo_width }}"
+          height="60"
+          loading="lazy"
+        >
       {%- endif -%}
     </div>
 
@@ -24,16 +36,22 @@
         {%- when 'link_list' -%}
           <div {{ block.shopify_attributes }}>
             <h3>{{ block.settings.heading }}</h3>
+
             {%- assign rows = block.settings.links | newline_to_br | split: '<br />' -%}
             {%- for row in rows -%}
               {%- assign trimmed = row | strip -%}
-              {%- if trimmed == blank -%}{%- continue -%}{%- endif -%}
+              {%- if trimmed == blank -%}
+                {%- continue -%}
+              {%- endif -%}
+
               {%- assign parts = trimmed | split: '|' -%}
               {%- assign label = parts[0] | strip -%}
               {%- assign url = parts[1] | default: '#' | strip -%}
+
               <a href="{{ url }}">{{ label }}</a>
             {%- endfor -%}
           </div>
+
         {%- when 'text' -%}
           <div {{ block.shopify_attributes }}>
             <h3>{{ block.settings.heading }}</h3>
@@ -44,16 +62,30 @@
   </div>
 
   <div class="footer-bottom container">
-    <p>{{ section.settings.copyright | default: '©2026.' }} <strong>{{ section.settings.brand_name | default: shop.name | upcase }}</strong> {{ section.settings.rights | default: 'All Rights Reserved.' }}</p>
+    <p>
+      {{ section.settings.copyright | default: '©2026.' }}
+      <strong>{{ section.settings.brand_name | default: shop.name | upcase }}</strong>
+      {{ section.settings.rights | default: 'All Rights Reserved.' }}
+    </p>
+
     {%- if payment_strip != blank -%}
-      {{ payment_strip | image_url: width: 600 | image_tag:
-        loading: 'lazy',
-        alt: 'Payment methods',
-        width: 600,
-        height: 60
+      {{
+        payment_strip
+        | image_url: width: 600
+        | image_tag:
+          loading: 'lazy',
+          alt: 'Payment methods',
+          width: 600,
+          height: 60
       }}
     {%- elsif section.settings.show_default_payments -%}
-      <img src="{{ 'payment-strip.png' | asset_url }}" alt="Payment methods" loading="lazy" width="460" height="46">
+      <img
+        src="{{ 'payment-strip.png' | asset_url }}"
+        alt="Payment methods"
+        loading="lazy"
+        width="460"
+        height="46"
+      >
     {%- endif -%}
   </div>
 </footer>
@@ -158,9 +190,27 @@
     {
       "name": "Lawn — Footer",
       "blocks": [
-        { "type": "link_list", "settings": { "heading": "QUICK LINKS", "links": "Home|/\nAbout Us|/pages/about\nContact|/pages/contact" } },
-        { "type": "link_list", "settings": { "heading": "BRAND POLICIES", "links": "Privacy Policy|/policies/privacy-policy\nRefund Policy|/policies/refund-policy\nShipping Policy|/policies/shipping-policy\nTerms of Service|/policies/terms-of-service" } },
-        { "type": "text", "settings": { "heading": "OUR BRAND", "text": "Lawn Synergy was built by real lawn and landscape professionals with 25+ years of experience managing over 2,000 high-end residential properties. We're not a big-box brand we're turf experts who want to help you get the lawn you deserve." } }
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "QUICK LINKS",
+            "links": "Home|/\nAbout Us|/pages/about\nContact|/pages/contact"
+          }
+        },
+        {
+          "type": "link_list",
+          "settings": {
+            "heading": "BRAND POLICIES",
+            "links": "Privacy Policy|/policies/privacy-policy\nRefund Policy|/policies/refund-policy\nShipping Policy|/policies/shipping-policy\nTerms of Service|/policies/terms-of-service"
+          }
+        },
+        {
+          "type": "text",
+          "settings": {
+            "heading": "OUR BRAND",
+            "text": "Lawn Synergy was built by real lawn and landscape professionals with 25+ years of experience managing over 2,000 high-end residential properties. We're not a big-box brand we're turf experts who want to help you get the lawn you deserve."
+          }
+        }
       ]
     }
   ]
