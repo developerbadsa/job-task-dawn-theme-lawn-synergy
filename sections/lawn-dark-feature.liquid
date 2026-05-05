@@ -446,6 +446,99 @@
     }
   }
 </style>
+<style>
+  .lawn-premium-upgrade-wrapper {
+    position: relative !important;
+    z-index: 10 !important;
+    overflow: visible !important;
+  }
+
+  #premium-upgrade-{{ section.id }} {
+    position: relative !important;
+    overflow: visible !important;
+    z-index: 10 !important;
+    height: var(--section-height) !important;
+    min-height: var(--section-height) !important;
+    background: var(--section-bg) !important;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade-section__bg {
+    overflow: hidden !important;
+    z-index: 0 !important;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade-section__texture {
+    opacity: var(--texture-opacity) !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade-section__bg::after {
+    background:
+      radial-gradient(circle at 16% 13%, rgba(255, 255, 255, 0.08), transparent 30%),
+      linear-gradient(90deg, rgba(0, 55, 34, 0.78) 0%, rgba(0, 55, 34, 0.7) 100%) !important;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade-section__inner {
+    position: relative !important;
+    z-index: 3 !important;
+    width: min(100% - 32px, var(--content-width)) !important;
+    height: var(--section-height) !important;
+    margin: 0 auto !important;
+    padding-top: var(--top-space) !important;
+    overflow: visible !important;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade-section__media {
+    position: relative !important;
+    z-index: 4 !important;
+    overflow: hidden !important;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade-section__content {
+    position: relative !important;
+    z-index: 5 !important;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
+    position: absolute !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: -34px !important;
+    z-index: 30 !important;
+    display: block !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: var(--bottom-grass-height) !important;
+    min-height: 154px !important;
+    transform: translateX(-50%) !important;
+    object-fit: cover !important;
+    object-position: center bottom !important;
+    pointer-events: none !important;
+  }
+
+  @media screen and (max-width: 989px) {
+    #premium-upgrade-{{ section.id }} {
+      overflow: hidden !important;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
+      bottom: -18px !important;
+      height: 118px !important;
+      min-height: 118px !important;
+      width: 1200px !important;
+    }
+  }
+
+  @media screen and (max-width: 575px) {
+    #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
+      bottom: -14px !important;
+      height: 96px !important;
+      min-height: 96px !important;
+      width: 900px !important;
+    }
+  }
+</style>
 
 {% schema %}
 {
