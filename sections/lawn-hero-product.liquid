@@ -1,11 +1,18 @@
 {%- liquid
-  comment Resolve current_product safely without overwriting the global product endcomment
-  if template.name == 'product' and product != blank and product.id != blank
+  assign current_product = nil
+
+  if product != blank and product.id != blank
     assign current_product = product
   elsif section.settings.product != blank
-    assign linked_product = all_products[section.settings.product]
-    if linked_product != blank and linked_product.id != blank
-      assign current_product = linked_product
+    assign product_setting = section.settings.product
+
+    if product_setting.id != blank
+      assign current_product = product_setting
+    else
+      assign linked_product = all_products[product_setting]
+      if linked_product != blank and linked_product.id != blank
+        assign current_product = linked_product
+      endif
     endif
   endif
 
@@ -27,15 +34,14 @@
   assign feature_blocks = section.blocks | where: 'type', 'feature'
   assign accordion_blocks = section.blocks | where: 'type', 'accordion'
 
-  comment Decide whether to render real variant cards endcomment
-  assign use_real_variants = false
-  if has_product and current_product.variants.size > 1
-    assign use_real_variants = true
-  endif
-
   comment Selected variant for initial state endcomment
   if has_product
     assign selected_variant = current_product.selected_or_first_available_variant
+  endif
+
+  assign use_product_media = section.settings.use_product_media
+  if use_product_media == nil
+    assign use_product_media = true
   endif
 
   comment Resolve hero title (product title wins when allowed) endcomment
@@ -49,21 +55,28 @@
     assign hero_title = section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend'
   endif
 
+  assign use_product_description = section.settings.use_product_description
+  if use_product_description == nil
+    assign use_product_description = true
+  endif
+
   comment Resolve hero lead (optional product description) endcomment
-  if has_product and section.settings.use_product_description and current_product.description != blank
-    assign hero_lead = current_product.description
-    assign hero_lead_is_html = true
+  if has_product and use_product_description and current_product.description != blank
+    assign hero_lead = current_product.description | strip_html | truncatewords: 32
+    assign hero_lead_is_html = false
   else
     assign hero_lead = section.settings.lead | default: 'Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.'
     assign hero_lead_is_html = false
   endif
 
-  comment Resolve main image source: section setting > product featured image > asset endcomment
-  assign main_image = section.settings.main_image
+  comment Resolve main image source: product featured image > section setting > asset endcomment
+  assign main_image = nil
   assign main_image_from_product = false
-  if main_image == blank and has_product and current_product.featured_image != blank
+  if has_product and use_product_media and current_product.featured_image != blank
     assign main_image = current_product.featured_image
     assign main_image_from_product = true
+  elsif section.settings.main_image != blank
+    assign main_image = section.settings.main_image
   endif
 
   comment Build a flat list of product image candidates for thumb fallback endcomment
@@ -71,13 +84,49 @@
   if has_product
     assign product_images_count = current_product.media.size
   endif
+
+  assign show_product_media_gallery = false
+  if has_product and use_product_media and product_images_count > 0
+    assign show_product_media_gallery = true
+  endif
+
+  assign show_size_area = true
+  if has_product and current_product.has_only_default_variant
+    assign show_size_area = false
+  endif
+
+  assign use_real_variants = false
+  if has_product and current_product.variants.size > 0 and show_size_area
+    assign use_real_variants = true
+  endif
+
+  assign use_size_block_labels = section.settings.use_size_block_labels
 -%}
 
 <section class="hero product-section container" data-lawn-hero data-section-id="{{ section.id }}">
   <div class="product-media">
     <div class="gallery">
       <div class="thumbs" aria-label="Product gallery thumbnails">
-        {%- for block in thumb_blocks -%}
+        {%- if show_product_media_gallery -%}
+          {%- for media in current_product.media -%}
+            {%- if media.preview_image != blank -%}
+              <button
+                class="thumb{% if forloop.first %} is-active{% endif %}"
+                type="button"
+                data-thumb-image="{{ media.preview_image | image_url: width: 1200 }}"
+                data-thumb-alt="{{ media.alt | default: current_product.title | escape }}"
+              >
+                {{ media.preview_image | image_url: width: 200 | image_tag:
+                  loading: 'lazy',
+                  alt: media.alt | default: current_product.title,
+                  width: 200,
+                  height: 200
+                }}
+              </button>
+            {%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- for block in thumb_blocks -%}
           {%- liquid
             assign thumb_idx = forloop.index0
             assign thumb_image = block.settings.image
@@ -122,7 +171,8 @@
               }}
             {%- endif -%}
           </button>
-        {%- endfor -%}
+          {%- endfor -%}
+        {%- endif -%}
       </div>
 
       <div class="main-product-card" data-lawn-main-image>
@@ -192,13 +242,15 @@
 
     <h1>{{ hero_title }}</h1>
 
-    <p class="lead">
-      {%- if hero_lead_is_html -%}
+    {%- if hero_lead_is_html -%}
+      <div class="lead rte">
         {{ hero_lead }}
-      {%- else -%}
+      </div>
+    {%- else -%}
+      <p class="lead">
         {{ hero_lead }}
-      {%- endif -%}
-    </p>
+      </p>
+    {%- endif -%}
 
     <ul class="feature-list">
       {%- for block in feature_blocks -%}
@@ -222,6 +274,7 @@
       {%- endif -%}
     </div>
 
+    {%- if show_size_area -%}
     <div class="size-area">
       <h2>{{ section.settings.size_heading | default: 'Select Your Size' }}</h2>
       <div class="size-grid" role="radiogroup" aria-label="Select size">
@@ -234,7 +287,10 @@
               if variant.id == selected_variant.id
                 assign is_selected = true
               endif
-              assign size_label = sblock.settings.size | default: variant.title
+              assign size_label = variant.title
+              if use_size_block_labels and sblock.settings.size != blank
+                assign size_label = sblock.settings.size
+              endif
               assign coverage_text = sblock.settings.coverage
               assign badge_text = sblock.settings.badge
             -%}
@@ -279,6 +335,7 @@
         {%- endif -%}
       </div>
     </div>
+    {%- endif -%}
 
     {%- if has_product -%}
       {%- assign form_id = 'lawn-hero-product-form-' | append: section.id -%}
@@ -306,7 +363,14 @@
           </p>
         {%- endif -%}
 
-        <button class="add-cart" type="submit" name="add" data-add-to-cart {%- unless selected_variant.available %} disabled{%- endunless %}>
+        <button
+          class="add-cart"
+          type="submit"
+          name="add"
+          data-add-to-cart
+          data-add-label="{{ section.settings.cta_label | default: 'Add To Cart' | escape }}"
+          {%- unless selected_variant.available %} disabled{%- endunless %}
+        >
           {%- if selected_variant.available -%}
             {{ section.settings.cta_label | default: 'Add To Cart' }}
           {%- else -%}
@@ -361,13 +425,21 @@
 
     <div class="product-accordions">
       {%- for block in accordion_blocks -%}
+        {%- liquid
+          assign accordion_content = block.settings.content
+          if accordion_content == blank and has_product and current_product.description != blank
+            if block.settings.title contains 'Product Details'
+              assign accordion_content = current_product.description
+            endif
+          endif
+        -%}
         <details class="product-accordion" {{ block.shopify_attributes }}>
           <summary>
             <span>{{ block.settings.title }}</span>
             <i></i>
           </summary>
-          {%- if block.settings.content != blank -%}
-            <div class="product-accordion__content">{{ block.settings.content }}</div>
+          {%- if accordion_content != blank -%}
+            <div class="product-accordion__content rte">{{ accordion_content }}</div>
           {%- endif -%}
         </details>
       {%- endfor -%}
@@ -396,10 +468,17 @@
       "content": "Main media"
     },
     {
+      "type": "checkbox",
+      "id": "use_product_media",
+      "label": "Use real product media when product is set",
+      "default": true,
+      "info": "When enabled, Shopify product images replace the custom image and thumbnail fallback."
+    },
+    {
       "type": "image_picker",
       "id": "main_image",
       "label": "Main product image",
-      "info": "Falls back to product featured image, then to envy-tall-fescue-design.png"
+      "info": "Used only when real product media is disabled or no product image exists."
     },
     {
       "type": "text",
@@ -476,8 +555,8 @@
       "type": "checkbox",
       "id": "use_product_description",
       "label": "Use real product description as lead",
-      "default": false,
-      "info": "When enabled and product is set, replaces the Lead text below with product.description."
+      "default": true,
+      "info": "When enabled and product is set, the lead uses a short clean summary from product.description."
     },
     {
       "type": "textarea",
@@ -504,6 +583,13 @@
     {
       "type": "header",
       "content": "Size selector"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_size_block_labels",
+      "label": "Use custom size block labels for real variants",
+      "default": false,
+      "info": "Keep disabled to show actual Shopify variant titles."
     },
     {
       "type": "text",

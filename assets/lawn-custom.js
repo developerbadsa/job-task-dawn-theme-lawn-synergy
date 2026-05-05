@@ -14,6 +14,9 @@
     var priceEl = hero.querySelector("[data-product-price]");
     var compareEl = hero.querySelector("[data-product-compare-price]");
     var addToCartBtn = hero.querySelector("[data-add-to-cart]");
+    var addToCartLabel = addToCartBtn
+      ? addToCartBtn.getAttribute("data-add-label") || addToCartBtn.textContent.trim() || "Add To Cart"
+      : "Add To Cart";
     var thumbs = hero.querySelectorAll(".thumb[data-thumb-image]");
     var mainImg = hero.querySelector("[data-lawn-main-image] img");
 
@@ -60,7 +63,9 @@
         if (addToCartBtn) {
           var available = card.getAttribute("data-variant-available") !== "false";
           addToCartBtn.disabled = !available;
-          if (!available) addToCartBtn.textContent = "Sold Out";
+          addToCartBtn.textContent = available
+            ? addToCartLabel
+            : (window.variantStrings && window.variantStrings.soldOut) || "Sold Out";
         }
       });
     });
