@@ -43,32 +43,43 @@
 >
   <div class="lawn-upgrade-section__background" aria-hidden="true">
     {%- if texture_image != blank -%}
-      {{
-        texture_image
-        | image_url: width: 2400
-        | image_tag:
-          class: 'lawn-upgrade-section__texture',
-          loading: 'lazy',
-          alt: '',
-          width: 2400,
-          height: 1300
-      }}
+      <img
+        class="lawn-upgrade-section__texture"
+        src="{{ texture_image | image_url: width: 2400 }}"
+        alt=""
+        loading="lazy"
+        width="2400"
+        height="1300">
+    {%- else -%}
+      <img
+        class="lawn-upgrade-section__texture"
+        src="{{ 'grass-bg.jpg' | asset_url }}"
+        alt=""
+        loading="lazy"
+        width="2400"
+        height="1300"
+        onerror="this.style.display='none'">
     {%- endif -%}
   </div>
 
   <div class="lawn-upgrade-section__container">
     <div class="lawn-upgrade-section__image-wrap">
       {%- if main_image != blank -%}
-        {{
-          main_image
-          | image_url: width: 1400
-          | image_tag:
-            class: 'lawn-upgrade-section__image',
-            loading: 'lazy',
-            alt: section.settings.image_alt,
-            width: 1400,
-            height: 1800
-        }}
+        <img
+          class="lawn-upgrade-section__image"
+          src="{{ main_image | image_url: width: 1400 }}"
+          alt="{{ section.settings.image_alt | escape }}"
+          loading="lazy"
+          width="1400"
+          height="1800">
+      {%- else -%}
+        <img
+          class="lawn-upgrade-section__image"
+          src="{{ 'upgrade-bag.png' | asset_url }}"
+          alt="{{ section.settings.image_alt | escape }}"
+          loading="lazy"
+          width="1400"
+          height="1800">
       {%- endif -%}
     </div>
 
@@ -133,17 +144,24 @@
     </div>
   </div>
 
-  {%- if bottom_grass != blank and section.settings.show_bottom_grass -%}
-    {{
-      bottom_grass
-      | image_url: width: 2600
-      | image_tag:
-        class: 'lawn-upgrade-section__bottom-grass',
-        loading: 'lazy',
-        alt: '',
-        width: 2600,
-        height: 320
-    }}
+  {%- if section.settings.show_bottom_grass -%}
+    {%- if bottom_grass != blank -%}
+      <img
+        class="lawn-upgrade-section__bottom-grass"
+        src="{{ bottom_grass | image_url: width: 2600 }}"
+        alt=""
+        loading="lazy"
+        width="2600"
+        height="320">
+    {%- else -%}
+      <img
+        class="lawn-upgrade-section__bottom-grass"
+        src="{{ 'grass-strip.png' | asset_url }}"
+        alt=""
+        loading="lazy"
+        width="2600"
+        height="320">
+    {%- endif -%}
   {%- endif -%}
 </section>
 
@@ -171,6 +189,7 @@
     z-index: 0;
     background: var(--section-bg);
     pointer-events: none;
+    overflow: hidden;
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__texture {
@@ -182,17 +201,20 @@
     object-fit: cover !important;
     opacity: var(--texture-opacity) !important;
     visibility: visible !important;
-    filter: saturate(0.85) contrast(1.08);
+    z-index: 1;
+    filter: saturate(0.9) contrast(1.05);
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__background::after {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 2;
     background:
-      radial-gradient(circle at 18% 10%, rgba(255, 255, 255, 0.08), transparent 28%),
-      linear-gradient(90deg, rgba(0, 64, 38, 0.82) 0%, rgba(0, 58, 35, 0.94) 54%, rgba(0, 65, 39, 0.9) 100%);
+      radial-gradient(circle at 18% 10%, rgba(255, 255, 255, 0.06), transparent 32%),
+      linear-gradient(90deg, rgba(0, 50, 30, 0.55) 0%, rgba(0, 50, 30, 0.4) 100%);
     opacity: var(--overlay-opacity);
+    pointer-events: none;
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__container {
@@ -243,6 +265,7 @@
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__eyebrow {
     margin: 0 0 14px;
     color: var(--eyebrow-color);
+    font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.2;
     font-weight: 500;
@@ -253,29 +276,32 @@
     margin: 0;
     max-width: 596px;
     color: var(--heading-color);
-    font-size: 44px;
-    line-height: 1.14;
-    font-weight: 800;
-    letter-spacing: -0.045em;
+    font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
+    font-size: 52px;
+    line-height: 1.15;
+    font-weight: 600;
+    letter-spacing: -0.4px;
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__body {
     margin-top: 16px;
     max-width: 560px;
     color: var(--text-color);
+    font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.55;
-    font-weight: 500;
-    letter-spacing: -0.018em;
+    font-weight: 400;
+    letter-spacing: -0.01em;
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__list-heading {
     margin: 28px 0 16px;
     color: var(--heading-color);
+    font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
     font-size: 18px;
     line-height: 1.25;
-    font-weight: 800;
-    letter-spacing: -0.025em;
+    font-weight: 600;
+    letter-spacing: -0.4px;
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__list {
@@ -292,10 +318,11 @@
     gap: 10px;
     margin: 0;
     color: var(--text-color);
+    font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
     font-size: 16px;
     line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -0.018em;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__check {
@@ -330,10 +357,11 @@
     background: var(--button-bg);
     color: var(--button-color);
     text-decoration: none;
+    font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
     font-size: 24px;
     line-height: 1;
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-weight: 600;
+    letter-spacing: -0.4px;
     cursor: pointer;
     appearance: none;
     box-shadow: none;
@@ -399,6 +427,7 @@
     #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__heading {
       max-width: none;
       font-size: 36px;
+      line-height: 1.18;
     }
 
     #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__bottom-grass {
@@ -688,20 +717,20 @@
       "id": "texture_opacity",
       "label": "Texture opacity",
       "min": 0,
-      "max": 50,
+      "max": 80,
       "step": 1,
       "unit": "%",
-      "default": 22
+      "default": 38
     },
     {
       "type": "range",
       "id": "overlay_opacity",
       "label": "Dark overlay strength",
-      "min": 30,
+      "min": 0,
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 82
+      "default": 28
     },
     {
       "type": "header",
