@@ -1283,39 +1283,55 @@ p {
   color: #fff;
 }
 
+.footer .container {
+  width: min(100% - 100px, 1134px);
+}
+
 .footer-grid {
   display: grid;
-  grid-template-columns: 280px 180px 220px 1fr;
-  gap: 60px;
+  grid-template-columns: 150px 123px 137px 270px;
+  justify-content: space-between;
+  column-gap: 0;
+  row-gap: 50px;
   padding-bottom: 50px;
+  align-items: start;
 }
 
 .footer-logo {
-  width: 200px;
+  width: 150px;
+  height: auto;
+  object-fit: contain;
 }
 
 .footer h3 {
-  margin: 0 0 26px;
+  margin: 0;
   color: #fff;
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
 }
 
 .footer a {
   display: block;
-  margin-bottom: 18px;
   color: #fff;
-  font-size: 15px;
-  font-weight: 500;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 52px;
+  letter-spacing: -0.04em;
 }
 
 .footer p {
   margin: 0;
   color: #fff;
-  font-size: 14px;
-  line-height: 1.7;
+  font-family: "Poppins", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  line-height: 26px;
   font-weight: 400;
+  letter-spacing: -0.04em;
 }
 
 .footer-bottom {
@@ -1328,10 +1344,15 @@ p {
 
 .footer-bottom p {
   font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0;
 }
 
-.footer-bottom img {
+.footer-bottom img,
+.footer-payment-strip {
   width: 230px;
+  height: auto;
+  flex: 0 0 auto;
 }
 
 /* Responsive */
@@ -1343,8 +1364,7 @@ p {
   .product-section,
   .difference-grid,
   .dark-grid,
-  .testimonial-grid,
-  .footer-grid {
+  .testimonial-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1421,6 +1441,10 @@ p {
 }
 
 @media (max-width: 760px) {
+  .footer .container {
+    width: min(100% - 40px, var(--max));
+  }
+
   .promo {
     height: 34px;
     font-size: 10px;
@@ -1432,11 +1456,37 @@ p {
   }
 
   .brand img {
-    width: 132px;
+    width: min(132px, 32vw) !important;
+    height: auto;
   }
 
   .nav-actions {
+    gap: 6px;
+  }
+
+  .cart-button,
+  .icon-button {
+    height: 40px;
+  }
+
+  .icon-button {
+    width: 40px;
+  }
+
+  .cart-button {
     gap: 8px;
+    padding: 0 8px;
+  }
+
+  .cart-count {
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+  }
+
+  .header-action-icon {
+    width: 20px;
+    height: 20px;
   }
 
   .cart-button span:nth-child(2) {
@@ -1533,7 +1583,13 @@ p {
   }
 
   .footer-grid {
+    grid-template-columns: 1fr;
+    justify-content: start;
     gap: 36px;
+  }
+
+  .footer .container {
+    width: min(100% - 32px, 1134px);
   }
 
   .footer-bottom {
@@ -1542,6 +1598,12 @@ p {
     gap: 20px;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .footer-bottom img,
+  .footer-payment-strip,
+  .footer-logo {
+    max-width: 100%;
   }
 }
 

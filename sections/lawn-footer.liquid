@@ -1,6 +1,8 @@
 {%- liquid
   assign logo = section.settings.logo
-  assign logo_width = section.settings.logo_width | default: 200
+  assign logo_width = section.settings.logo_width | default: 150
+  assign logo_image_width = logo_width | times: 3
+  assign logo_style = 'width: ' | append: logo_width | append: 'px; height: auto;'
   assign payment_strip = section.settings.payment_strip
 -%}
 
@@ -8,11 +10,11 @@
   <div class="container footer-grid">
     <div>
       {%- if logo != blank -%}
-        {{ logo | image_url: width: 600 | image_tag:
+        {{ logo | image_url: width: logo_image_width | image_tag:
           class: 'footer-logo',
           loading: 'lazy',
           alt: shop.name,
-          style: 'width: ' | append: logo_width | append: 'px;'
+          style: logo_style
         }}
       {%- else -%}
         <img class="footer-logo" src="{{ 'lawn-synergy-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" style="width: {{ logo_width }}px;" width="{{ logo_width }}" height="60">
@@ -47,13 +49,14 @@
     <p>{{ section.settings.copyright | default: '©2026.' }} <strong>{{ section.settings.brand_name | default: shop.name | upcase }}</strong> {{ section.settings.rights | default: 'All Rights Reserved.' }}</p>
     {%- if payment_strip != blank -%}
       {{ payment_strip | image_url: width: 600 | image_tag:
+        class: 'footer-payment-strip',
         loading: 'lazy',
         alt: 'Payment methods',
         width: 600,
         height: 60
       }}
     {%- elsif section.settings.show_default_payments -%}
-      <img src="{{ 'payment-strip.png' | asset_url }}" alt="Payment methods" loading="lazy" width="460" height="46">
+      <img class="footer-payment-strip" src="{{ 'payment-strip.png' | asset_url }}" alt="Payment methods" loading="lazy" width="323" height="35">
     {%- endif -%}
   </div>
 </footer>
@@ -80,7 +83,7 @@
       "min": 80,
       "max": 320,
       "step": 4,
-      "default": 200
+      "default": 150
     },
     {
       "type": "header",
