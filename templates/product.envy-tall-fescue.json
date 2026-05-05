@@ -15,24 +15,28 @@
         "trust2": {
           "type": "trust",
           "settings": {
+            "icon": "shipping",
             "label": "Quality Assured"
           }
         },
         "trust3": {
           "type": "trust",
           "settings": {
+            "icon": "shipping",
             "label": "Secure Checkout"
           }
         },
         "trust4": {
           "type": "trust",
           "settings": {
+            "icon": "shipping",
             "label": "Easy Returns"
           }
         },
         "trust_PJPeak": {
           "type": "trust",
           "settings": {
+            "icon": "shipping",
             "label": "Easy Returns"
           }
         },
@@ -90,41 +94,46 @@
         "acc1": {
           "type": "accordion",
           "settings": {
+            "icon": "details",
             "title": "Product Details",
-            "content": "",
-            "metafield_key": ""
+            "metafield_key": "",
+            "content": ""
           }
         },
         "acc2": {
           "type": "accordion",
           "settings": {
+            "icon": "details",
             "title": "Spreader Settings",
-            "content": "",
-            "metafield_key": ""
+            "metafield_key": "",
+            "content": ""
           }
         },
         "acc3": {
           "type": "accordion",
           "settings": {
+            "icon": "details",
             "title": "What's Inside The Blend?",
-            "content": "",
-            "metafield_key": ""
+            "metafield_key": "",
+            "content": ""
           }
         },
         "acc4": {
           "type": "accordion",
           "settings": {
+            "icon": "details",
             "title": "When To Use",
-            "content": "",
-            "metafield_key": ""
+            "metafield_key": "",
+            "content": ""
           }
         },
         "acc5": {
           "type": "accordion",
           "settings": {
+            "icon": "details",
             "title": "Grow A Thicker Greener Lawn",
-            "content": "",
-            "metafield_key": ""
+            "metafield_key": "",
+            "content": ""
           }
         }
       },
@@ -149,35 +158,51 @@
       "settings": {
         "product": "",
         "use_product_media": true,
+        "use_product_title": true,
+        "use_product_description": true,
         "main_image_alt": "Envy Premium Tall Fescue product graphic",
-        "show_dots": true,
-        "dot_count": 5,
-        "active_dot": 3,
-        "show_trust": true,
-        "show_vendor": false,
-        "show_sku": false,
-        "show_rating": true,
+        "title": "Envy Premium Tall Fescue Grass Seed Blend",
+        "lead": "Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.",
         "rating_stars": "★★★★★",
         "rating_text": "Rated By 12,520+ Customers",
-        "use_product_title": true,
-        "title": "Envy Premium Tall Fescue Grass Seed Blend",
-        "use_product_description": true,
-        "lead": "Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.",
         "sale_price": "$49.99",
-        "old_price": "$56.25",
-        "use_size_block_labels": false,
+        "compare_price": "$56.25",
+        "max_width": 1272,
+        "left_column_width": 520,
+        "right_column_width": 426,
+        "column_gap": 20,
+        "padding_top": 27,
+        "padding_bottom": 35,
+        "main_image_fit": "cover",
+        "max_thumbnails": 5,
+        "background_color": "#ffffff",
+        "green_color": "#24a96b",
+        "dark_color": "#073c27",
+        "orange_color": "#ff5a1f",
+        "text_color": "#1b1b1b",
+        "muted_color": "#777777",
+        "line_color": "#e8efe9",
+        "show_rating": true,
+        "show_dots": true,
+        "active_dot": 3,
+        "show_trust_badges": true,
+        "show_sku": false,
         "size_heading": "Select Your Size",
-        "qty_label": "Quantity:",
-        "default_qty": 2,
+        "force_block_size_labels": false,
+        "max_variant_cards": 3,
+        "quantity_label": "Quantity:",
+        "default_quantity": 2,
         "urgency_text": "Selling Fast",
         "program_text": "Automatic Lawn Care Program:",
         "program_link_label": "Join the Program",
         "program_link": "",
         "cta_label": "Add To Cart",
+        "sold_out_label": "Sold Out",
         "show_shipping_line": true,
         "shipping_left": "Free Shipping on orders $45+",
         "shipping_right": "Enjoy or return within 30 Days",
-        "show_payments": true,
+        "show_payment_icons": true,
+        "use_shopify_payment_icons": true,
         "payment_labels": "AMEX,Pay,G Pay,MC,MC,VISA"
       }
     },
