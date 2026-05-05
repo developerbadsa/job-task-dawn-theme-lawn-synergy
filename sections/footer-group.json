@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "Footer",
   "type": "footer",
@@ -27,9 +36,14 @@
           }
         }
       },
-      "block_order": ["col_quick_links", "col_policies", "col_brand"],
+      "block_order": [
+        "col_quick_links",
+        "col_policies",
+        "col_brand"
+      ],
       "settings": {
-        "logo_width": 200,
+        "logo": "shopify://shop_images/4fabf483f8d50b4bffe86dfe1d9a9432d12cb10e.png",
+        "logo_width": 120,
         "copyright": "©2026.",
         "brand_name": "LAWN SYNERGY",
         "rights": "All Rights Reserved.",
@@ -37,5 +51,7 @@
       }
     }
   },
-  "order": ["lawn_footer"]
+  "order": [
+    "lawn_footer"
+  ]
 }
