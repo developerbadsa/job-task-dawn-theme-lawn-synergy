@@ -1,8 +1,6 @@
 {%- liquid
   assign logo = section.settings.logo
-  assign logo_width = section.settings.logo_width | default: 150
-  assign logo_image_width = logo_width | times: 3
-  assign logo_height = logo_width | divided_by: logo.aspect_ratio | round
+  assign logo_width = section.settings.logo_width | default: 200
   assign payment_strip = section.settings.payment_strip
 -%}
 
@@ -10,17 +8,14 @@
   <div class="container footer-grid">
     <div>
       {%- if logo != blank -%}
-        <img
-          class="footer-logo"
-          src="{{ logo | image_url: width: logo_image_width }}"
-          alt="{{ shop.name | escape }}"
-          width="{{ logo_width }}"
-          height="{{ logo_height }}"
-          loading="lazy"
-          style="width: {{ logo_width }}px;"
-        >
+        {{ logo | image_url: width: 600 | image_tag:
+          class: 'footer-logo',
+          loading: 'lazy',
+          alt: shop.name,
+          style: 'width: ' | append: logo_width | append: 'px;'
+        }}
       {%- else -%}
-        <img class="footer-logo" src="{{ 'lawn-synergy-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" style="width: {{ logo_width }}px;" width="{{ logo_width }}" height="60">
+        <img class="footer-logo" src="{{ 'lawn-synergy-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" width="{{ logo_width }}" height="60">
       {%- endif -%}
     </div>
 
@@ -52,14 +47,13 @@
     <p>{{ section.settings.copyright | default: '©2026.' }} <strong>{{ section.settings.brand_name | default: shop.name | upcase }}</strong> {{ section.settings.rights | default: 'All Rights Reserved.' }}</p>
     {%- if payment_strip != blank -%}
       {{ payment_strip | image_url: width: 600 | image_tag:
-        class: 'footer-payment-strip',
         loading: 'lazy',
         alt: 'Payment methods',
         width: 600,
         height: 60
       }}
     {%- elsif section.settings.show_default_payments -%}
-      <img class="footer-payment-strip" src="{{ 'payment-strip.png' | asset_url }}" alt="Payment methods" loading="lazy" width="323" height="35">
+      <img src="{{ 'payment-strip.png' | asset_url }}" alt="Payment methods" loading="lazy" width="460" height="46">
     {%- endif -%}
   </div>
 </footer>
@@ -86,7 +80,7 @@
       "min": 80,
       "max": 320,
       "step": 4,
-      "default": 150
+      "default": 200
     },
     {
       "type": "header",
