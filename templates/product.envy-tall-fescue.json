@@ -286,6 +286,17 @@
     },
     "dark_feature": {
       "type": "lawn-dark-feature",
+      "blocks": {
+        "point_QnK734": {
+          "type": "point",
+          "settings": {
+            "text": "You Want A Darker Green, More Attractive Lawn"
+          }
+        }
+      },
+      "block_order": [
+        "point_QnK734"
+      ],
       "settings": {
         "main_image": "shopify://shop_images/a2a48fb8dc1e6454669f19bb9abc157c34f5b533.png",
         "texture_image": "shopify://shop_images/855afd5350b6527749bad7f0647a46245e99a9f3.jpg",
@@ -300,21 +311,21 @@
         "button_label": "Add To Cart",
         "sold_out_label": "Sold Out",
         "button_link": "",
-
         "button_width": 254,
         "button_height": 64,
         "content_width": 1270,
         "section_height": 825,
-        "top_space": 108,
-
         "side_space": 0,
+        "top_space": 108,
         "image_width": 630,
         "image_height": 800,
         "image_radius": 20,
         "column_gap": 40,
+        "copy_width": 596,
         "copy_offset": 54,
         "show_bottom_grass": true,
         "bottom_grass_height": 154,
+        "bottom_grass_bleed": 32,
         "background_color": "#063b23",
         "texture_opacity": 18,
         "overlay_opacity": 30,
