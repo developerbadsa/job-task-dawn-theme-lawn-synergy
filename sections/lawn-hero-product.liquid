@@ -521,8 +521,59 @@
         {%- liquid
           assign accordion_content = block.settings.content
           assign metafield_key = block.settings.metafield_key
+          assign accordion_title_lower = block.settings.title | downcase | strip
 
-          # If a key is selected and the block has no content, pull from product metafield
+          # Auto-derive metafield key from the accordion title if none was selected
+          if metafield_key == blank
+            case accordion_title_lower
+              when 'product details'
+                assign metafield_key = 'product_details'
+              when 'description'
+                assign metafield_key = 'product_details'
+              when 'spreader settings'
+                assign metafield_key = 'spreader_settings'
+              when "what's inside the blend?"
+                assign metafield_key = 'whats_inside'
+              when "what's inside the blend"
+                assign metafield_key = 'whats_inside'
+              when "what's inside"
+                assign metafield_key = 'whats_inside'
+              when "whats inside the blend?"
+                assign metafield_key = 'whats_inside'
+              when "whats inside the blend"
+                assign metafield_key = 'whats_inside'
+              when "whats inside"
+                assign metafield_key = 'whats_inside'
+              when 'when to use'
+                assign metafield_key = 'when_to_use'
+              when 'how to use'
+                assign metafield_key = 'when_to_use'
+              when 'grow a thicker greener lawn'
+                assign metafield_key = 'grow_tips'
+              when 'grow tips'
+                assign metafield_key = 'grow_tips'
+              when 'growing tips'
+                assign metafield_key = 'grow_tips'
+              when 'ingredients'
+                assign metafield_key = 'ingredients'
+              when 'shipping & returns'
+                assign metafield_key = 'shipping_returns'
+              when 'shipping and returns'
+                assign metafield_key = 'shipping_returns'
+              when 'shipping'
+                assign metafield_key = 'shipping_returns'
+              when 'returns'
+                assign metafield_key = 'shipping_returns'
+              when 'faq'
+                assign metafield_key = 'faq'
+              when "faq's"
+                assign metafield_key = 'faq'
+              when 'faqs'
+                assign metafield_key = 'faq'
+            endcase
+          endif
+
+          # Pull rich text from product metafield (lawn namespace) when the block has no manual content
           if accordion_content == blank and has_product and metafield_key != blank
             assign mf_val = current_product.metafields.lawn[metafield_key]
             if mf_val != blank
@@ -530,10 +581,9 @@
             endif
           endif
 
-          # Auto-fallback: when title looks like "Product Details" and no content/metafield, use product description
+          # Final fallback: for the "Product Details" item, use product description
           if accordion_content == blank and has_product
-            assign title_lower = block.settings.title | downcase
-            if title_lower contains 'product details' or title_lower contains 'description'
+            if accordion_title_lower contains 'product details' or accordion_title_lower contains 'description'
               if current_product.description != blank
                 assign accordion_content = current_product.description
               endif
