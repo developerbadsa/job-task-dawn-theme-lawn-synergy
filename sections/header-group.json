@@ -70,14 +70,17 @@
         "logo": "shopify://shop_images/image_2256_1.png",
         "logo_width": 176,
         "cart_label": "Cart",
+        "cart_icon": "shopify://shop_images/Buy_2.png",
         "cart_icon_alt": "Cart",
-        "icon_size": 18,
+        "icon_size": 14,
         "show_wishlist": true,
         "wishlist_label": "Wishlist",
+        "wishlist_icon": "shopify://shop_images/Heart_1.png",
         "wishlist_icon_alt": "Wishlist",
         "wishlist_url": "",
         "show_account": true,
         "account_label": "Account",
+        "account_icon": "shopify://shop_images/Profile.png",
         "account_icon_alt": "Account"
       }
     }
