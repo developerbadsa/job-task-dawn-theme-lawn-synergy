@@ -402,11 +402,7 @@
         "show_grass_hill": true,
         "grass_hill_image": "shopify://shop_images/0f2da063c03b82221ec1cea1539c95e9ea37821d.png",
         "max_width": 1270,
-        "section_height": 820,
-        "header_top": 104,
-        "side_space": 80,
-        "heading_width": 700,
-        "lead_width": 700,
+        "section_height": 950,
         "step_image_size": 194,
         "grass_hill_width": 560,
         "grass_hill_push_right": 0,
@@ -414,9 +410,7 @@
         "bg_color": "#ffffff",
         "green_color": "#12b76a",
         "accent_color": "#fc5810",
-        "heading_color": "#043320",
-        "text_color": "#42473e",
-        "muted_color": "#124236"
+        "heading_color": "#043320"
       }
     },
     "testimonial": {
