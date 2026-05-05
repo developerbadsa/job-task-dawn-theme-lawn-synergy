@@ -2,6 +2,29 @@
   assign main_image = section.settings.main_image
   assign texture_image = section.settings.texture_image
   assign bottom_grass = section.settings.bottom_grass
+  assign image_alt = section.settings.image_alt | default: section.settings.bag_alt | default: 'Envy Tall Fescue bag in grass'
+  assign button_label = section.settings.button_label | default: section.settings.cta_label | default: 'Add To Cart'
+  assign button_link = section.settings.button_link | default: section.settings.cta_link | default: '#'
+  assign show_bottom_grass = section.settings.show_bottom_grass
+
+  if show_bottom_grass == blank and section.settings.show_grass_edge != blank
+    assign show_bottom_grass = section.settings.show_grass_edge
+  endif
+
+  assign content_width = section.settings.content_width | default: 812
+  assign section_height = section.settings.section_height | default: section.settings.section_min_height | default: 640
+  assign top_space = section.settings.top_space | default: 104
+  assign side_space = section.settings.side_space | default: 0
+  assign image_width = section.settings.image_width | default: section.settings.media_width | default: 400
+  assign image_height = section.settings.image_height | default: section.settings.media_height | default: 467
+  assign image_radius = section.settings.image_radius | default: section.settings.media_radius | default: 0
+  assign column_gap = section.settings.column_gap | default: section.settings.grid_gap | default: 28
+  assign copy_offset = section.settings.copy_offset | default: 0
+  assign texture_opacity = section.settings.texture_opacity | default: 22
+  assign overlay_opacity = section.settings.overlay_opacity | default: 18
+  assign bottom_grass_height = section.settings.bottom_grass_height | default: 100
+  assign button_width = section.settings.button_width | default: 183
+  assign button_height = section.settings.button_height | default: 45
   assign form_product = product
 
   if section.settings.product != blank
@@ -21,18 +44,20 @@
   class="lawn-upgrade-section"
   style="
     --section-bg: {{ section.settings.background_color }};
-    --content-width: {{ section.settings.content_width }}px;
-    --section-height: {{ section.settings.section_height }}px;
-    --top-space: {{ section.settings.top_space }}px;
-    --side-space: {{ section.settings.side_space }}px;
-    --image-width: {{ section.settings.image_width }}px;
-    --image-height: {{ section.settings.image_height }}px;
-    --image-radius: {{ section.settings.image_radius }}px;
-    --column-gap: {{ section.settings.column_gap }}px;
-    --copy-offset: {{ section.settings.copy_offset }}px;
-    --texture-opacity: {{ section.settings.texture_opacity | divided_by: 100.0 }};
-    --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
-    --bottom-grass-height: {{ section.settings.bottom_grass_height }}px;
+    --content-width: {{ content_width }}px;
+    --section-height: {{ section_height }}px;
+    --top-space: {{ top_space }}px;
+    --side-space: {{ side_space }}px;
+    --image-width: {{ image_width }}px;
+    --image-height: {{ image_height }}px;
+    --image-radius: {{ image_radius }}px;
+    --column-gap: {{ column_gap }}px;
+    --copy-offset: {{ copy_offset }}px;
+    --texture-opacity: {{ texture_opacity | divided_by: 100.0 }};
+    --overlay-opacity: {{ overlay_opacity | divided_by: 100.0 }};
+    --bottom-grass-height: {{ bottom_grass_height }}px;
+    --button-width: {{ button_width }}px;
+    --button-height: {{ button_height }}px;
     --eyebrow-color: {{ section.settings.eyebrow_color }};
     --heading-color: {{ section.settings.heading_color }};
     --text-color: {{ section.settings.text_color }};
@@ -47,7 +72,7 @@
         class="lawn-upgrade-section__texture"
         src="{{ texture_image | image_url: width: 2400 }}"
         alt=""
-        loading="lazy"
+        loading="eager"
         width="2400"
         height="1300">
     {%- else -%}
@@ -55,10 +80,9 @@
         class="lawn-upgrade-section__texture"
         src="{{ 'grass-bg.jpg' | asset_url }}"
         alt=""
-        loading="lazy"
-        width="2400"
-        height="1300"
-        onerror="this.style.display='none'">
+        loading="eager"
+        width="1600"
+        height="360">
     {%- endif -%}
   </div>
 
@@ -68,16 +92,16 @@
         <img
           class="lawn-upgrade-section__image"
           src="{{ main_image | image_url: width: 1400 }}"
-          alt="{{ section.settings.image_alt | escape }}"
-          loading="lazy"
+          alt="{{ image_alt | escape }}"
+          loading="eager"
           width="1400"
           height="1800">
       {%- else -%}
         <img
           class="lawn-upgrade-section__image"
           src="{{ 'upgrade-bag.png' | asset_url }}"
-          alt="{{ section.settings.image_alt | escape }}"
-          loading="lazy"
+          alt="{{ image_alt | escape }}"
+          loading="eager"
           width="1400"
           height="1800">
       {%- endif -%}
@@ -105,7 +129,7 @@
       {%- if section.blocks.size > 0 -%}
         <ul class="lawn-upgrade-section__list" role="list">
           {%- for block in section.blocks -%}
-            {%- if block.type == 'point' and block.settings.text != blank -%}
+            {%- if block.settings.text != blank -%}
               <li class="lawn-upgrade-section__point" {{ block.shopify_attributes }}>
                 <span class="lawn-upgrade-section__check" aria-hidden="true">
                   <svg viewBox="0 0 12 12" focusable="false">
@@ -119,7 +143,7 @@
         </ul>
       {%- endif -%}
 
-      {%- if section.settings.button_label != blank -%}
+      {%- if button_label != blank -%}
         {%- if section.settings.button_action == 'add_to_cart' and form_product != blank and form_variant != blank -%}
           {%- form 'product', form_product, id: product_form_id, class: 'lawn-upgrade-section__form' -%}
             <input type="hidden" name="id" value="{{ form_variant.id }}">
@@ -129,22 +153,22 @@
               {% unless form_variant.available %}disabled{% endunless %}
             >
               {%- if form_variant.available -%}
-                {{ section.settings.button_label }}
+                {{ button_label }}
               {%- else -%}
                 {{ section.settings.sold_out_label }}
               {%- endif -%}
             </button>
           {%- endform -%}
         {%- else -%}
-          <a class="lawn-upgrade-section__button" href="{{ section.settings.button_link | default: '#' }}">
-            {{ section.settings.button_label }}
+          <a class="lawn-upgrade-section__button" href="{{ button_link }}">
+            {{ button_label }}
           </a>
         {%- endif -%}
       {%- endif -%}
     </div>
   </div>
 
-  {%- if section.settings.show_bottom_grass -%}
+  {%- if show_bottom_grass -%}
     {%- if bottom_grass != blank -%}
       <img
         class="lawn-upgrade-section__bottom-grass"
@@ -187,7 +211,9 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    background: var(--section-bg);
+    background:
+      linear-gradient(rgba(0, 73, 42, 0.25), rgba(0, 73, 42, 0.25)),
+      var(--section-bg);
     pointer-events: none;
     overflow: hidden;
   }
@@ -211,8 +237,8 @@
     inset: 0;
     z-index: 2;
     background:
-      radial-gradient(circle at 18% 10%, rgba(255, 255, 255, 0.06), transparent 32%),
-      linear-gradient(90deg, rgba(0, 50, 30, 0.55) 0%, rgba(0, 50, 30, 0.4) 100%);
+      radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.08), transparent 31%),
+      linear-gradient(90deg, rgba(0, 45, 27, 0.48) 0%, rgba(0, 45, 27, 0.34) 100%);
     opacity: var(--overlay-opacity);
     pointer-events: none;
   }
@@ -257,7 +283,7 @@
     position: relative;
     z-index: 4;
     width: 100%;
-    max-width: 596px;
+    max-width: 386px;
     padding-top: var(--copy-offset);
     color: var(--text-color);
   }
@@ -274,7 +300,7 @@
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__heading {
     margin: 0;
-    max-width: 596px;
+    max-width: 386px;
     color: var(--heading-color);
     font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
     font-size: 52px;
@@ -285,7 +311,7 @@
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__body {
     margin-top: 16px;
-    max-width: 560px;
+    max-width: 386px;
     color: var(--text-color);
     font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
     font-size: 16px;
@@ -347,8 +373,8 @@
   }
 
   #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__button {
-    width: {{ section.settings.button_width }}px;
-    min-height: {{ section.settings.button_height }}px;
+    width: var(--button-width);
+    min-height: var(--button-height);
     margin-top: 33px;
     display: inline-grid;
     place-items: center;
@@ -358,7 +384,7 @@
     color: var(--button-color);
     text-decoration: none;
     font-family: "Clash Grotesk", "Poppins", system-ui, sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     line-height: 1;
     font-weight: 600;
     letter-spacing: -0.4px;
@@ -395,11 +421,11 @@
     }
 
     #lawn-upgrade-{{ section.id }} .lawn-upgrade-section__container {
-      grid-template-columns: minmax(500px, var(--image-width)) minmax(0, 1fr);
+      grid-template-columns: var(--image-width) minmax(0, 1fr);
     }
   }
 
-  @media screen and (max-width: 989px) {
+  @media screen and (max-width: 749px) {
     #lawn-upgrade-{{ section.id }} {
       height: auto;
       min-height: 0;
@@ -572,21 +598,21 @@
       "type": "range",
       "id": "button_width",
       "label": "Button width",
-      "min": 200,
+      "min": 160,
       "max": 320,
-      "step": 2,
+      "step": 1,
       "unit": "px",
-      "default": 254
+      "default": 183
     },
     {
       "type": "range",
       "id": "button_height",
       "label": "Button height",
-      "min": 48,
+      "min": 40,
       "max": 80,
       "step": 1,
       "unit": "px",
-      "default": 64
+      "default": 45
     },
     {
       "type": "header",
@@ -596,21 +622,21 @@
       "type": "range",
       "id": "content_width",
       "label": "Content width",
-      "min": 1000,
-      "max": 1400,
-      "step": 4,
+      "min": 760,
+      "max": 1320,
+      "step": 1,
       "unit": "px",
-      "default": 1272
+      "default": 812
     },
     {
       "type": "range",
       "id": "section_height",
       "label": "Section height",
-      "min": 640,
-      "max": 920,
-      "step": 4,
+      "min": 520,
+      "max": 820,
+      "step": 1,
       "unit": "px",
-      "default": 824
+      "default": 640
     },
     {
       "type": "range",
@@ -618,9 +644,9 @@
       "label": "Top spacing",
       "min": 40,
       "max": 160,
-      "step": 2,
+      "step": 1,
       "unit": "px",
-      "default": 108
+      "default": 104
     },
     {
       "type": "range",
@@ -636,21 +662,21 @@
       "type": "range",
       "id": "image_width",
       "label": "Left image width",
-      "min": 500,
-      "max": 700,
-      "step": 2,
+      "min": 320,
+      "max": 640,
+      "step": 1,
       "unit": "px",
-      "default": 630
+      "default": 400
     },
     {
       "type": "range",
       "id": "image_height",
       "label": "Left image height",
-      "min": 720,
-      "max": 920,
-      "step": 10,
+      "min": 360,
+      "max": 720,
+      "step": 1,
       "unit": "px",
-      "default": 800
+      "default": 467
     },
     {
       "type": "range",
@@ -660,7 +686,7 @@
       "max": 32,
       "step": 1,
       "unit": "px",
-      "default": 20
+      "default": 0
     },
     {
       "type": "range",
@@ -668,9 +694,9 @@
       "label": "Column gap",
       "min": 20,
       "max": 90,
-      "step": 2,
+      "step": 1,
       "unit": "px",
-      "default": 40
+      "default": 28
     },
     {
       "type": "range",
@@ -678,9 +704,9 @@
       "label": "Text top offset",
       "min": 0,
       "max": 120,
-      "step": 2,
+      "step": 1,
       "unit": "px",
-      "default": 54
+      "default": 0
     },
     {
       "type": "header",
@@ -698,9 +724,9 @@
       "label": "Bottom grass height",
       "min": 80,
       "max": 220,
-      "step": 2,
+      "step": 1,
       "unit": "px",
-      "default": 154
+      "default": 100
     },
     {
       "type": "header",
@@ -720,7 +746,7 @@
       "max": 80,
       "step": 1,
       "unit": "%",
-      "default": 38
+      "default": 22
     },
     {
       "type": "range",
@@ -730,7 +756,7 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 28
+      "default": 18
     },
     {
       "type": "header",
