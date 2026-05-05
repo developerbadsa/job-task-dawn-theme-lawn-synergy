@@ -6,37 +6,44 @@
 
   assign person_alt = section.settings.person_alt | default: 'Customer holding Envy grass seed'
   assign avatar_alt = section.settings.avatar_alt | default: 'Customer avatar'
-  assign texture_opacity = section.settings.texture_opacity | times: 0.01
+  assign texture_opacity = section.settings.texture_opacity | default: 23 | times: 0.01
 -%}
 
 <section
   id="lawn-testimonial-{{ section.id }}"
   class="lawn-testimonial-custom"
   style="
-    --testimonial-width: {{ section.settings.content_width }}px;
-    --testimonial-height: {{ section.settings.section_height }}px;
-    --testimonial-panel-left: {{ section.settings.panel_left }}px;
-    --testimonial-panel-radius: {{ section.settings.panel_radius }}px;
-    --testimonial-person-left: {{ section.settings.person_left }}px;
-    --testimonial-person-bottom: {{ section.settings.person_bottom }}px;
-    --testimonial-person-width: {{ section.settings.person_width }}px;
-    --testimonial-person-height: {{ section.settings.person_height }}px;
-    --testimonial-content-left: {{ section.settings.content_left }}px;
-    --testimonial-content-top: {{ section.settings.content_top }}px;
-    --testimonial-content-width: {{ section.settings.content_box_width }}px;
-    --testimonial-card-width: {{ section.settings.card_width }}px;
-    --testimonial-card-height: {{ section.settings.card_height }}px;
-    --testimonial-card-gap: {{ section.settings.card_top_gap }}px;
-    --testimonial-grass-height: {{ section.settings.grass_height }}px;
-    --testimonial-grass-overlap: {{ section.settings.grass_overlap }}px;
-    --testimonial-panel-bg: {{ section.settings.panel_bg }};
-    --testimonial-card-bg: {{ section.settings.card_bg }};
-    --testimonial-primary: {{ section.settings.primary_green }};
-    --testimonial-heading: {{ section.settings.heading_color }};
-    --testimonial-body: {{ section.settings.body_color }};
-    --testimonial-heading-size: {{ section.settings.heading_size }}px;
-    --testimonial-quote-size: {{ section.settings.quote_size }}px;
+    --testimonial-width: {{ section.settings.content_width | default: 1270 }}px;
+    --testimonial-height: {{ section.settings.section_height | default: 905 }}px;
+    --testimonial-panel-left: {{ section.settings.panel_left | default: 250 }}px;
+    --testimonial-panel-radius: {{ section.settings.panel_radius | default: 30 }}px;
+
+    --testimonial-person-left: {{ section.settings.person_left | default: 18 }}px;
+    --testimonial-person-bottom: {{ section.settings.person_bottom | default: 0 }}px;
+    --testimonial-person-width: {{ section.settings.person_width | default: 780 }}px;
+    --testimonial-person-height: {{ section.settings.person_height | default: 905 }}px;
+
+    --testimonial-content-left: {{ section.settings.content_left | default: 590 }}px;
+    --testimonial-content-top: {{ section.settings.content_top | default: 150 }}px;
+    --testimonial-content-width: {{ section.settings.content_box_width | default: 648 }}px;
+
+    --testimonial-card-width: {{ section.settings.card_width | default: 648 }}px;
+    --testimonial-card-height: {{ section.settings.card_height | default: 328 }}px;
+    --testimonial-card-gap: {{ section.settings.card_top_gap | default: 88 }}px;
+
+    --testimonial-grass-height: {{ section.settings.grass_height | default: 180 }}px;
+    --testimonial-grass-overlap: {{ section.settings.grass_overlap | default: 22 }}px;
+
+    --testimonial-panel-bg: {{ section.settings.panel_bg | default: '#00452E' }};
+    --testimonial-card-bg: {{ section.settings.card_bg | default: '#25AA6C' }};
+    --testimonial-primary: {{ section.settings.primary_green | default: '#20B26B' }};
+    --testimonial-heading: {{ section.settings.heading_color | default: '#FFFFFF' }};
+    --testimonial-body: {{ section.settings.body_color | default: '#FFFFFF' }};
+
+    --testimonial-heading-size: {{ section.settings.heading_size | default: 52 }}px;
+    --testimonial-quote-size: {{ section.settings.quote_size | default: 24 }}px;
     --testimonial-texture-opacity: {{ texture_opacity }};
+
     {%- if bg_texture != blank -%}
       --testimonial-texture: url('{{ bg_texture | image_url: width: 2400 }}');
     {%- else -%}
@@ -190,16 +197,18 @@
     z-index: 1;
     overflow: hidden;
     border-top-left-radius: var(--testimonial-panel-radius);
-    background: var(--testimonial-panel-bg);
+    background-color: var(--testimonial-panel-bg);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel::before {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 1;
     background-image: var(--testimonial-texture);
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     opacity: var(--testimonial-texture-opacity);
     mix-blend-mode: screen;
   }
@@ -208,7 +217,8 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: rgba(0, 45, 30, 0.22);
+    z-index: 2;
+    background: rgba(0, 55, 36, 0.38);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
@@ -238,7 +248,7 @@
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
-    margin: 0 0 20px;
+    margin: 0 0 18px;
     color: var(--testimonial-primary);
     font-family: "Poppins", var(--font-body-family), sans-serif;
     font-size: 16px;
@@ -526,7 +536,7 @@
       "max": 40,
       "step": 1,
       "unit": "%",
-      "default": 17
+      "default": 23
     },
     {
       "type": "image_picker",
@@ -609,7 +619,7 @@
       "id": "section_height",
       "label": "Section height",
       "min": 700,
-      "max": 1200,
+      "max": 920,
       "step": 5,
       "unit": "px",
       "default": 905
@@ -669,7 +679,7 @@
       "id": "person_height",
       "label": "Person height",
       "min": 650,
-      "max": 1100,
+      "max": 920,
       "step": 5,
       "unit": "px",
       "default": 905
@@ -698,7 +708,7 @@
       "type": "range",
       "id": "content_box_width",
       "label": "Text box width",
-      "min": 500,
+      "min": 480,
       "max": 760,
       "step": 4,
       "unit": "px",
