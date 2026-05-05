@@ -286,66 +286,36 @@
     },
     "dark_feature": {
       "type": "lawn-dark-feature",
-      "blocks": {
-        "f1": {
-          "type": "feature",
-          "settings": {
-            "text": "You Want A Darker Green, More Attractive Lawn"
-          }
-        },
-        "f2": {
-          "type": "feature",
-          "settings": {
-            "text": "Your Lawn Feels Thin Or Uneven"
-          }
-        },
-        "f3": {
-          "type": "feature",
-          "settings": {
-            "text": "You Want Better Density And A More Uniform Finish"
-          }
-        },
-        "f4": {
-          "type": "feature",
-          "settings": {
-            "text": "You Want Better Than Basic Seed"
-          }
-        }
-      },
-      "block_order": [
-        "f1",
-        "f2",
-        "f3",
-        "f4"
-      ],
       "settings": {
-        "bag_alt": "Envy Tall Fescue bag in grass",
+        "main_image": "shopify://shop_images/a2a48fb8dc1e6454669f19bb9abc157c34f5b533.png",
+        "texture_image": "shopify://shop_images/855afd5350b6527749bad7f0647a46245e99a9f3.jpg",
+        "bottom_grass": "shopify://shop_images/Frame_2147225451.png",
+        "image_alt": "Envy Tall Fescue bag in grass",
         "eyebrow": "Premium Upgrade",
         "heading": "The Best Lawn Starts With The Right Seed",
         "body": "If You Want A Lawn That Actually Stands Out - Thicker, Darker, And More Uniform It All Starts With The Seed You Choose. Envy Premium Tall Fescue Is Our Highest-End Blend, Built For Homeowners Who Are Tired Of Thin, Patchy Grass And Want A Lawn That Looks Better, Fills In Thicker, And Performs Consistently Year After Year.",
         "list_heading": "This Is The Right Seed For You If:",
         "button_action": "link",
         "product": "",
-        "cta_label": "Add To Cart",
+        "button_label": "Add To Cart",
         "sold_out_label": "Sold Out",
-        "cta_link": "",
-        "content_width": 812,
-        "section_min_height": 640,
-        "padding_top": 68,
-        "padding_bottom": 88,
-        "grid_gap": 28,
-        "copy_top_offset": 24,
-        "media_width": 400,
-        "media_height": 484,
-        "media_radius": 10,
-        "show_grass_edge": true,
-        "grass_edge_height": 150,
-        "grass_edge_bottom": -8,
-        "grass_edge_opacity": 100,
+        "button_link": "",
+        "button_width": 254,
+        "button_height": 64,
+        "content_width": 1272,
+        "section_height": 824,
+        "top_space": 108,
+        "side_space": 0,
+        "image_width": 630,
+        "image_height": 800,
+        "image_radius": 20,
+        "column_gap": 40,
+        "copy_offset": 54,
+        "show_bottom_grass": true,
+        "bottom_grass_height": 154,
         "background_color": "#063b23",
-        "overlay_color": "#00351f",
-        "overlay_opacity": 30,
         "texture_opacity": 18,
+        "overlay_opacity": 30,
         "eyebrow_color": "#2bd679",
         "heading_color": "#ffffff",
         "text_color": "#ffffff",
