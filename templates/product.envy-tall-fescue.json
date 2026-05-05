@@ -335,7 +335,7 @@
         "button_width": 254,
         "button_height": 64,
         "content_width": 1270,
-        "section_height": 940,
+        "section_height": 920,
         "side_space": 0,
         "top_space": 108,
         "image_width": 630,
@@ -402,29 +402,37 @@
         "show_grass_hill": true,
         "grass_hill_image": "shopify://shop_images/0f2da063c03b82221ec1cea1539c95e9ea37821d.png",
         "max_width": 1270,
-        "section_height": 950,
+        "section_height": 920,
         "step_image_size": 194,
         "grass_hill_width": 560,
         "grass_hill_push_right": 0,
         "grass_hill_drop": 0,
         "bg_color": "#ffffff",
         "green_color": "#12b76a",
-        "accent_color": "#fc5810",
-        "heading_color": "#043320"
+        "accent_color": "#fc5810"
       }
     },
     "testimonial": {
       "type": "lawn-testimonial",
       "settings": {
+        "person_image": "",
         "person_alt": "Customer holding Envy grass seed",
+        "bg_texture_image": "shopify://shop_images/855afd5350b6527749bad7f0647a46245e99a9f3.jpg",
+        "grass_edge_image": "shopify://shop_images/Frame_2147225451.png",
+        "show_grass_edge": true,
+        "avatar_image": "",
+        "avatar_alt": "Customer avatar",
         "eyebrow": "Real Results",
         "heading": "What Happens When You Use Better Grass Seed",
-        "avatar_alt": "",
         "quote": "I overseeded last fall and saw germination within days. My lawn filled in thick, dark green, and looks better than neighbors who use standard store seed.",
         "author_name": "Helena",
         "author_role": "Model",
         "stars": "★★★★★",
-        "show_grass_edge": true
+        "panel_bg": "#00452E",
+        "card_bg": "#25AA6C",
+        "primary_green": "#20B26B",
+        "heading_color": "#FFFFFF",
+        "body_color": "#FFFFFF"
       }
     },
     "faq": {
