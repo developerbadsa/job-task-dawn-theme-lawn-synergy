@@ -300,11 +300,13 @@
         "button_label": "Add To Cart",
         "sold_out_label": "Sold Out",
         "button_link": "",
+
         "button_width": 254,
         "button_height": 64,
-        "content_width": 1272,
-        "section_height": 824,
+        "content_width": 1270,
+        "section_height": 825,
         "top_space": 108,
+
         "side_space": 0,
         "image_width": 630,
         "image_height": 800,
