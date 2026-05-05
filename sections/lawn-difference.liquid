@@ -1,422 +1,529 @@
 {%- liquid
-  assign section_title = section.settings.heading | default: 'What Makes Envy Different From Other Grass Seeds?'
-  assign section_eyebrow = section.settings.eyebrow | default: 'Premium Difference'
-  assign photo_alt = section.settings.photo_alt | default: 'Lawn specialist holding grass seed product'
+  assign photo = section.settings.photo
+  assign badge_image = section.settings.badge_image
 -%}
 
-<section id="PremiumDifference-{{ section.id }}" class="premium-difference-section">
-  <div class="premium-difference__stage">
-    <div class="premium-difference__header">
-      {%- if section_eyebrow != blank -%}
-        <p class="premium-difference__eyebrow">{{ section_eyebrow }}</p>
+<section
+  id="difference-{{ section.id }}"
+  class="difference-section"
+  style="
+    --section-bg: {{ section.settings.background_color }};
+    --container-width: {{ section.settings.container_width }}px;
+    --text-color: {{ section.settings.text_color }};
+    --accent-color: {{ section.settings.accent_color }};
+    --card-bg: {{ section.settings.card_background }};
+    --green-card-bg: {{ section.settings.green_card_background }};
+    --card-radius: {{ section.settings.card_radius }}px;
+  "
+>
+  <div class="difference-section__inner">
+    <div class="difference-section__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="difference-section__eyebrow">{{ section.settings.eyebrow }}</p>
       {%- endif -%}
 
-      {%- if section_title != blank -%}
-        <h2 class="premium-difference__heading">{{ section_title }}</h2>
-      {%- endif -%}
-    </div>
-
-    <article class="premium-difference-card premium-difference-card--one">
-      <span class="premium-difference-card__icon" aria-hidden="true">
-        {%- case section.settings.card_1_icon -%}
-          {%- when 'chart' -%}
-            <svg viewBox="0 0 32 32"><path d="M8 22v-6M15 22V9M22 22V5"/><path d="M6 25h20M20 7l4-4 3 4"/></svg>
-          {%- when 'seed' -%}
-            <svg viewBox="0 0 32 32"><path d="M11 18c-4 1-6 4-6 7 4 1 8-1 10-5"/><path d="M20 13c-3-3-3-7 0-10 4 2 5 6 3 10"/><path d="M19 22c2-4 6-5 10-3-1 5-5 7-10 6"/></svg>
-          {%- else -%}
-            <svg viewBox="0 0 32 32"><path d="M7 23c1.2-7 3.4-11.8 7.4-16"/><path d="M15 23c.4-6 2-10.5 5.2-14"/><path d="M22 23c-.2-5.2.9-9.5 3.8-13"/><path d="M5 24h22"/></svg>
-        {%- endcase -%}
-      </span>
-      <svg class="premium-difference-card__mark" viewBox="0 0 120 96" aria-hidden="true">
-        <path d="M9 88c4-29 16-55 39-77M45 90c-1-26 8-49 29-69M82 90c-5-22 2-42 22-60"/>
-        <path d="M26 88C23 65 15 48 1 36M58 91C54 63 42 43 23 28M99 89C93 63 79 45 59 33"/>
-      </svg>
-      <h3>{{ section.settings.card_1_title | default: 'Thicker, Denser Turf' }}</h3>
-      <p>{{ section.settings.card_1_text | default: 'Selected For Improved Lawn Density, Creating A Smoother, Thicker, More Uniform Appearance Across Your Entire Lawn.' }}</p>
-    </article>
-
-    <article class="premium-difference-card premium-difference-card--two">
-      <span class="premium-difference-card__icon" aria-hidden="true">
-        {%- case section.settings.card_2_icon -%}
-          {%- when 'chart' -%}
-            <svg viewBox="0 0 32 32"><path d="M8 22v-6M15 22V9M22 22V5"/><path d="M6 25h20M20 7l4-4 3 4"/></svg>
-          {%- when 'seed' -%}
-            <svg viewBox="0 0 32 32"><path d="M11 18c-4 1-6 4-6 7 4 1 8-1 10-5"/><path d="M20 13c-3-3-3-7 0-10 4 2 5 6 3 10"/><path d="M19 22c2-4 6-5 10-3-1 5-5 7-10 6"/></svg>
-          {%- else -%}
-            <svg viewBox="0 0 32 32"><path d="M7 23c1.2-7 3.4-11.8 7.4-16"/><path d="M15 23c.4-6 2-10.5 5.2-14"/><path d="M22 23c-.2-5.2.9-9.5 3.8-13"/><path d="M5 24h22"/></svg>
-        {%- endcase -%}
-      </span>
-      <svg class="premium-difference-card__mark" viewBox="0 0 120 96" aria-hidden="true">
-        <path d="M9 88c4-29 16-55 39-77M45 90c-1-26 8-49 29-69M82 90c-5-22 2-42 22-60"/>
-        <path d="M26 88C23 65 15 48 1 36M58 91C54 63 42 43 23 28M99 89C93 63 79 45 59 33"/>
-      </svg>
-      <h3>{{ section.settings.card_2_title | default: 'Ultra-Dark Green' }}</h3>
-      <p>{{ section.settings.card_2_text | default: 'Elite Varieties Chosen For Deep, Rich Green Color That Stands Out Beautifully In Any Lawn Setting.' }}</p>
-    </article>
-
-    <article class="premium-difference-card premium-difference-card--three">
-      <span class="premium-difference-card__icon" aria-hidden="true">
-        {%- case section.settings.card_3_icon -%}
-          {%- when 'grass' -%}
-            <svg viewBox="0 0 32 32"><path d="M7 23c1.2-7 3.4-11.8 7.4-16"/><path d="M15 23c.4-6 2-10.5 5.2-14"/><path d="M22 23c-.2-5.2.9-9.5 3.8-13"/><path d="M5 24h22"/></svg>
-          {%- when 'seed' -%}
-            <svg viewBox="0 0 32 32"><path d="M11 18c-4 1-6 4-6 7 4 1 8-1 10-5"/><path d="M20 13c-3-3-3-7 0-10 4 2 5 6 3 10"/><path d="M19 22c2-4 6-5 10-3-1 5-5 7-10 6"/></svg>
-          {%- else -%}
-            <svg viewBox="0 0 32 32"><path d="M8 22v-6M15 22V9M22 22V5"/><path d="M6 25h20M20 7l4-4 3 4"/></svg>
-        {%- endcase -%}
-      </span>
-      <svg class="premium-difference-card__mark" viewBox="0 0 120 96" aria-hidden="true">
-        <path d="M9 88c4-29 16-55 39-77M45 90c-1-26 8-49 29-69M82 90c-5-22 2-42 22-60"/>
-        <path d="M26 88C23 65 15 48 1 36M58 91C54 63 42 43 23 28M99 89C93 63 79 45 59 33"/>
-      </svg>
-      <h3>{{ section.settings.card_3_title | default: 'Improved Fill-In' }}</h3>
-      <p>{{ section.settings.card_3_text | default: 'Helps Reduce Thin, Patchy Areas Faster Compared To Standard Tall Fescue Blends Used In Lawns.' }}</p>
-    </article>
-
-    <article class="premium-difference-card premium-difference-card--four premium-difference-card--green">
-      <span class="premium-difference-card__icon" aria-hidden="true">
-        {%- case section.settings.card_4_icon -%}
-          {%- when 'chart' -%}
-            <svg viewBox="0 0 32 32"><path d="M8 22v-6M15 22V9M22 22V5"/><path d="M6 25h20M20 7l4-4 3 4"/></svg>
-          {%- when 'grass' -%}
-            <svg viewBox="0 0 32 32"><path d="M7 23c1.2-7 3.4-11.8 7.4-16"/><path d="M15 23c.4-6 2-10.5 5.2-14"/><path d="M22 23c-.2-5.2.9-9.5 3.8-13"/><path d="M5 24h22"/></svg>
-          {%- else -%}
-            <svg viewBox="0 0 32 32"><path d="M11 18c-4 1-6 4-6 7 4 1 8-1 10-5"/><path d="M20 13c-3-3-3-7 0-10 4 2 5 6 3 10"/><path d="M19 22c2-4 6-5 10-3-1 5-5 7-10 6"/></svg>
-        {%- endcase -%}
-      </span>
-      <svg class="premium-difference-card__mark" viewBox="0 0 120 96" aria-hidden="true">
-        <path d="M9 88c4-29 16-55 39-77M45 90c-1-26 8-49 29-69M82 90c-5-22 2-42 22-60"/>
-        <path d="M26 88C23 65 15 48 1 36M58 91C54 63 42 43 23 28M99 89C93 63 79 45 59 33"/>
-      </svg>
-      <h3>{{ section.settings.card_4_title | default: '0% Weed Seed' }}</h3>
-      <p>{{ section.settings.card_4_text | default: 'Clean, High-Quality Seed With Zero Weed Seeds And No Unnecessary Fillers For Better Lawn Results.' }}</p>
-    </article>
-
-    <div class="premium-difference__photo">
-      {%- if section.settings.photo != blank -%}
-        {{ section.settings.photo | image_url: width: 1000 | image_tag: loading: 'lazy', alt: photo_alt, widths: '480, 740, 1000', sizes: '(min-width: 750px) 370px, 100vw' }}
-      {%- else -%}
-        {{ 'image' | placeholder_svg_tag: 'premium-difference__placeholder' }}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="difference-section__heading">{{ section.settings.heading }}</h2>
       {%- endif -%}
     </div>
 
-    {%- if section.settings.show_badge -%}
-      <div class="premium-difference__badge" aria-hidden="true">
-        <svg viewBox="0 0 76 76">
-          <circle cx="38" cy="38" r="35"/>
-          <path d="M18 56c2-18 8-32 19-42M36 57c0-16 5-29 17-39M53 57c-3-15 1-27 12-36"/>
-          <path d="M20 57C18 43 13 34 6 27M42 58C39 41 31 29 19 21M64 56C60 42 51 30 39 25"/>
-        </svg>
+    <div class="difference-section__layout">
+      <div class="difference-section__cards">
+        {%- for block in section.blocks limit: 4 -%}
+          {%- if block.type == 'card' -%}
+            {%- liquid
+              assign is_green = false
+              if block.settings.style == 'green'
+                assign is_green = true
+              endif
+              if forloop.index == 4
+                assign is_green = true
+              endif
+            -%}
+
+            <article
+              class="difference-card difference-card--{{ forloop.index }}{% if is_green %} difference-card--green{% endif %}"
+              {{ block.shopify_attributes }}
+            >
+              <span class="difference-card__icon" aria-hidden="true">
+                {%- if block.settings.icon_image != blank -%}
+                  {{
+                    block.settings.icon_image
+                    | image_url: width: 96
+                    | image_tag:
+                      class: 'difference-card__icon-img',
+                      loading: 'lazy',
+                      alt: '',
+                      width: 96,
+                      height: 96
+                  }}
+                {%- elsif block.settings.icon_class == 'chart-icon' -%}
+                  <svg viewBox="0 0 48 48" focusable="false">
+                    <path d="M12 34h5V23h-5v11Zm10 0h5V16h-5v18Zm10 0h5V10h-5v24Z" />
+                    <path d="M11 15.5 19 9l7 6 11-10 2.5 2.8L26.2 20 19 13.8l-5.8 4.7L11 15.5Z" />
+                  </svg>
+                {%- elsif block.settings.icon_class == 'seed-icon' -%}
+                  <svg viewBox="0 0 48 48" focusable="false">
+                    <path d="M18.8 15.6c4.4-3.4 9.3-3.3 11 .2 1.7 3.4-.4 8.8-4.8 12.2-4.4 3.4-9.3 3.3-11-.2-1.7-3.4.4-8.8 4.8-12.2Zm15.7 11.2c3.8.9 6.5 3.9 5.9 6.6-.7 2.7-4.4 4.1-8.2 3.2-3.9-.9-6.5-3.9-5.9-6.6.6-2.7 4.3-4.1 8.2-3.2Zm-20.4 7.1c2.9-1.6 6.2-1 7.4 1.2 1.2 2.2-.2 5.3-3.1 6.9-2.9 1.6-6.2 1-7.4-1.2-1.2-2.3.2-5.3 3.1-6.9Z" />
+                  </svg>
+                {%- else -%}
+                  <svg viewBox="0 0 48 48" focusable="false">
+                    <path d="M10 36c1.6-11.6 5.8-20 13.8-27.5C21.8 19 21.6 27.7 23 36h-4.5c-.9-5.8-.7-11.2.7-17.5C15.6 23 13.2 28.9 12 36h-2Zm15.5 0c-1.1-9.4 1.1-18 7.4-26.8-.3 9.2 1.2 17.5 5.1 26.8h-5c-2.3-6.3-3.3-12.1-3.1-18.4-2.3 5.7-2.9 11.7-1.8 18.4h-2.6Zm-11.9 0c5.4-7.5 12.4-12.5 22-14.9-5.9 4.2-10.9 9.1-14.5 14.9h-7.5Z" />
+                  </svg>
+                {%- endif -%}
+              </span>
+
+              <span class="difference-card__watermark" aria-hidden="true">
+                <svg viewBox="0 0 170 130" focusable="false">
+                  <path d="M18 118c10-43 29-75 61-103-13 41-17 76-10 103" />
+                  <path d="M58 118c-1-43 13-80 44-113-3 39 5 77 25 113" />
+                  <path d="M8 118c31-38 70-64 125-78-33 22-58 47-75 78" />
+                  <path d="M102 118c-2-32 7-61 31-90 1 33 10 63 29 90" />
+                </svg>
+              </span>
+
+              {%- if block.settings.title != blank -%}
+                <h3 class="difference-card__title">{{ block.settings.title }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <p class="difference-card__text">{{ block.settings.text }}</p>
+              {%- endif -%}
+            </article>
+          {%- endif -%}
+        {%- endfor -%}
       </div>
-    {%- endif -%}
+
+      <div class="difference-section__photo-wrap">
+        {%- if photo != blank -%}
+          {{
+            photo
+            | image_url: width: 1200
+            | image_tag:
+              class: 'difference-section__photo',
+              loading: 'lazy',
+              alt: section.settings.photo_alt,
+              width: 1200,
+              height: 1400
+          }}
+        {%- else -%}
+          <img
+            class="difference-section__photo"
+            src="{{ 'difference-man.png' | asset_url }}"
+            alt="{{ section.settings.photo_alt | escape }}"
+            width="1200"
+            height="1400"
+            loading="lazy"
+          >
+        {%- endif -%}
+      </div>
+
+      <div class="difference-section__badge" aria-hidden="true">
+        {%- if badge_image != blank -%}
+          {{
+            badge_image
+            | image_url: width: 180
+            | image_tag:
+              class: 'difference-section__badge-img',
+              loading: 'lazy',
+              alt: '',
+              width: 180,
+              height: 180
+          }}
+        {%- else -%}
+          <svg viewBox="0 0 96 96" focusable="false">
+            <path d="M18 78c2.8-21.6 10.8-38.5 27.2-55-5.2 20.5-6 38.7-1.8 55h-8.2c-2.7-12.1-2.7-24.2.1-36.4-7.1 10.1-11.1 21.8-12.7 36.4H18Z" />
+            <path d="M47.6 78c-4.1-23.1 1.1-43.8 17-62.5-.8 22.6 3.8 43.2 14.1 62.5h-9.6c-6.5-12.8-9.9-25.4-10.5-38.4-4.5 11.3-5.5 23.8-3 38.4h-8Z" />
+            <path d="M13 78c16.4-21.7 37.4-36.3 66.5-43.5-17.5 11.1-31.9 25.4-42.6 43.5H13Z" />
+          </svg>
+        {%- endif -%}
+      </div>
+    </div>
   </div>
 </section>
 
-{% style %}
-  #PremiumDifference-{{ section.id }} {
-    --premium-difference-bg: {{ section.settings.background_color | default: '#EFF9F4' }};
-    --premium-difference-dark: {{ section.settings.dark_color | default: '#063D2B' }};
-    --premium-difference-green: {{ section.settings.green_color | default: '#22B86F' }};
-    --premium-difference-card-green: {{ section.settings.card_green_color | default: '#63C69A' }};
-    --premium-difference-text: {{ section.settings.text_color | default: '#21352E' }};
-    --premium-difference-white: #ffffff;
-    background: var(--premium-difference-bg);
-    color: var(--premium-difference-text);
-    font-family: var(--font-body-family, Inter, Arial, sans-serif);
+<style>
+  #difference-{{ section.id }} {
+    position: relative;
     overflow: hidden;
+    background: var(--section-bg);
+    padding: 118px 24px 112px;
+    color: var(--text-color);
   }
 
-  #PremiumDifference-{{ section.id }} *,
-  #PremiumDifference-{{ section.id }} *::before,
-  #PremiumDifference-{{ section.id }} *::after {
+  #difference-{{ section.id }} * {
     box-sizing: border-box;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__stage {
-    position: relative;
-    width: min({{ section.settings.max_width }}px, 100vw);
-    height: {{ section.settings.section_height }}px;
+  #difference-{{ section.id }} .difference-section__inner {
+    max-width: var(--container-width);
     margin: 0 auto;
+    position: relative;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__header {
+  #difference-{{ section.id }} .difference-section__header {
+    max-width: 740px;
+    margin: 0;
+  }
+
+  #difference-{{ section.id }} .difference-section__eyebrow {
+    margin: 0 0 14px;
+    color: var(--accent-color);
+    font-size: 16px;
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  #difference-{{ section.id }} .difference-section__heading {
+    margin: 0;
+    max-width: 720px;
+    color: var(--text-color);
+    font-size: 48px;
+    line-height: 1.14;
+    font-weight: 800;
+    letter-spacing: -0.045em;
+  }
+
+  #difference-{{ section.id }} .difference-section__layout {
+    position: relative;
+    height: 704px;
+    margin-top: 48px;
+  }
+
+  #difference-{{ section.id }} .difference-section__cards {
     position: absolute;
-    top: 78px;
-    left: 52px;
-    width: 560px;
+    inset: 0;
+    z-index: 4;
+  }
+
+  #difference-{{ section.id }} .difference-card {
+    position: absolute;
+    width: 323px;
+    height: 299px;
+    padding: 33px 22px 24px;
+    border-radius: var(--card-radius);
+    background: var(--card-bg);
+    overflow: hidden;
+    box-shadow: 0 20px 42px rgba(15, 72, 47, 0.04);
+  }
+
+  #difference-{{ section.id }} .difference-card--1 {
+    left: 0;
+    top: 26px;
+  }
+
+  #difference-{{ section.id }} .difference-card--2 {
+    left: 356px;
+    top: 84px;
     z-index: 5;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__eyebrow {
-    margin: 0 0 9px;
-    color: var(--premium-difference-green);
-    font-size: 12px;
-    line-height: 1.15;
-    font-weight: 600;
-    letter-spacing: -.1px;
+  #difference-{{ section.id }} .difference-card--3 {
+    left: 0;
+    top: 354px;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__heading {
-    max-width: 545px;
-    margin: 0;
-    color: var(--premium-difference-dark);
-    font-family: var(--font-heading-family, Inter, Arial, sans-serif);
-    font-size: 32px;
-    line-height: 1.22;
-    font-weight: 900;
-    letter-spacing: -1.35px;
+  #difference-{{ section.id }} .difference-card--4 {
+    left: 356px;
+    top: 384px;
+    z-index: 6;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference-card {
-    position: absolute;
-    z-index: 10;
-    width: 205px;
-    height: 190px;
-    padding: 80px 14px 18px;
-    border-radius: 10px;
-    background: var(--premium-difference-white);
-    color: var(--premium-difference-text);
-    overflow: hidden;
+  #difference-{{ section.id }} .difference-card--green {
+    background: var(--green-card-bg);
+    color: #ffffff;
+    box-shadow: 0 23px 42px rgba(19, 105, 69, 0.22);
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference-card--one {
-    left: 52px;
-    top: 210px;
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card--two {
-    left: 277px;
-    top: 248px;
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card--three {
-    left: 52px;
-    top: 418px;
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card--four {
-    left: 277px;
-    top: 456px;
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card--green {
-    background: var(--premium-difference-card-green);
-    color: #fff;
-    box-shadow: 0 18px 28px rgba(36, 114, 82, .23);
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card__icon {
-    position: absolute;
-    top: 28px;
-    left: 13px;
+  #difference-{{ section.id }} .difference-card__icon {
+    position: relative;
     z-index: 2;
-    width: 50px;
-    height: 50px;
-    display: grid;
+    width: 56px;
+    height: 56px;
+    display: inline-grid;
     place-items: center;
     border-radius: 999px;
-    background: #fff;
-    color: var(--premium-difference-green);
-    box-shadow: 0 8px 18px rgba(7, 60, 43, .09);
+    background: #ffffff;
+    color: var(--accent-color);
+    box-shadow: 0 8px 20px rgba(7, 59, 40, 0.08);
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference-card--green .premium-difference-card__icon {
-    color: var(--premium-difference-green);
+  #difference-{{ section.id }} .difference-card__icon svg {
+    width: 34px;
+    height: 34px;
+    fill: currentColor;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference-card__icon svg {
-    width: 26px;
-    height: 26px;
+  #difference-{{ section.id }} .difference-card__icon-img {
     display: block;
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+  }
+
+  #difference-{{ section.id }} .difference-card__watermark {
+    position: absolute;
+    right: -3px;
+    top: 44px;
+    width: 156px;
+    height: 130px;
+    color: #ccefe1;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  #difference-{{ section.id }} .difference-card--green .difference-card__watermark {
+    color: #47b985;
+    opacity: 0.48;
+  }
+
+  #difference-{{ section.id }} .difference-card__watermark svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  #difference-{{ section.id }} .difference-card__watermark path {
     fill: none;
     stroke: currentColor;
-    stroke-width: 2.2;
+    stroke-width: 5;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference-card__mark {
-    position: absolute;
-    top: 31px;
-    right: 4px;
-    width: 98px;
-    height: 82px;
-    fill: none;
-    stroke: var(--premium-difference-green);
-    stroke-width: 4.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: .10;
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card--green .premium-difference-card__mark {
-    stroke: #198957;
-    opacity: .06;
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card h3 {
+  #difference-{{ section.id }} .difference-card__title {
     position: relative;
     z-index: 2;
-    margin: 0 0 11px;
-    color: var(--premium-difference-dark);
-    font-family: var(--font-heading-family, Inter, Arial, sans-serif);
-    font-size: 17px;
-    line-height: 1.18;
-    font-weight: 900;
-    letter-spacing: -.55px;
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference-card--green h3 {
-    color: #fff;
-    font-size: 20px;
+    margin: 36px 0 13px;
+    color: currentColor;
+    font-size: 24px;
     line-height: 1.05;
-    letter-spacing: -.7px;
+    font-weight: 800;
+    letter-spacing: -0.045em;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference-card p {
+  #difference-{{ section.id }} .difference-card--green .difference-card__title {
+    margin-top: 35px;
+  }
+
+  #difference-{{ section.id }} .difference-card__text {
     position: relative;
     z-index: 2;
     margin: 0;
-    color: #263730;
-    font-size: 11.5px;
-    line-height: 1.55;
-    font-weight: 600;
-    letter-spacing: -.08px;
+    max-width: 250px;
+    color: currentColor;
+    font-size: 15px;
+    line-height: 1.52;
+    font-weight: 500;
+    letter-spacing: -0.018em;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference-card--green p {
-    color: #fff;
-    font-size: 12px;
-    line-height: 1.55;
-    font-weight: 600;
+  #difference-{{ section.id }} .difference-card--green .difference-card__text {
+    max-width: 258px;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__photo {
+  #difference-{{ section.id }} .difference-section__photo-wrap {
     position: absolute;
-    left: 465px;
-    top: 193px;
-    z-index: 3;
-    width: 370px;
-    height: 428px;
-    border-radius: 11px;
+    z-index: 2;
+    right: 50px;
+    top: 0;
+    width: 582px;
+    height: 673px;
     overflow: hidden;
-    background: #dceee6;
+    border-radius: 20px;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__photo img,
-  #PremiumDifference-{{ section.id }} .premium-difference__photo svg {
+  #difference-{{ section.id }} .difference-section__photo {
+    display: block;
     width: 100%;
     height: 100%;
-    display: block;
     object-fit: cover;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__placeholder {
-    background: #dceee6;
-    color: rgba(6, 61, 43, .22);
-  }
-
-  #PremiumDifference-{{ section.id }} .premium-difference__badge {
+  #difference-{{ section.id }} .difference-section__badge {
     position: absolute;
-    left: 789px;
-    top: 270px;
-    z-index: 12;
-    width: 86px;
-    height: 86px;
+    z-index: 8;
+    right: -12px;
+    top: 125px;
+    width: 112px;
+    height: 112px;
     display: grid;
     place-items: center;
     border-radius: 999px;
-    background: #fff;
-    box-shadow: 0 4px 14px rgba(4, 45, 31, .04);
+    background: #ffffff;
+    color: var(--accent-color);
+    box-shadow: 0 12px 28px rgba(11, 74, 49, 0.08);
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__badge svg {
-    width: 78px;
-    height: 78px;
-    fill: none;
+  #difference-{{ section.id }} .difference-section__badge::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border-radius: inherit;
+    border: 1px dashed var(--accent-color);
+    opacity: 0.75;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__badge circle {
-    stroke: var(--premium-difference-green);
-    stroke-width: 1;
-    stroke-dasharray: 2.4 3;
+  #difference-{{ section.id }} .difference-section__badge svg {
+    position: relative;
+    z-index: 2;
+    width: 72px;
+    height: 72px;
+    fill: currentColor;
   }
 
-  #PremiumDifference-{{ section.id }} .premium-difference__badge path {
-    stroke: var(--premium-difference-green);
-    stroke-width: 1.45;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+  #difference-{{ section.id }} .difference-section__badge-img {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 74px;
+    height: 74px;
+    object-fit: contain;
   }
 
-  @media (max-width: 940px) {
-    #PremiumDifference-{{ section.id }} .premium-difference__stage {
-      transform-origin: top center;
+  @media screen and (max-width: 1340px) {
+    #difference-{{ section.id }} {
+      padding-left: 42px;
+      padding-right: 42px;
+    }
+
+    #difference-{{ section.id }} .difference-section__inner {
+      max-width: 1180px;
+    }
+
+    #difference-{{ section.id }} .difference-section__photo-wrap {
+      right: 0;
+      width: 540px;
+      height: 624px;
+    }
+
+    #difference-{{ section.id }} .difference-section__badge {
+      right: -38px;
+    }
+
+    #difference-{{ section.id }} .difference-card {
+      width: 300px;
+      height: 278px;
+      padding: 30px 20px 22px;
+    }
+
+    #difference-{{ section.id }} .difference-card--2,
+    #difference-{{ section.id }} .difference-card--4 {
+      left: 330px;
+    }
+
+    #difference-{{ section.id }} .difference-card__title {
+      font-size: 22px;
+    }
+
+    #difference-{{ section.id }} .difference-card__text {
+      font-size: 14px;
     }
   }
 
-  @media (max-width: 749px) {
-    #PremiumDifference-{{ section.id }} {
-      padding: 48px 20px 56px;
+  @media screen and (max-width: 989px) {
+    #difference-{{ section.id }} {
+      padding: 70px 20px 78px;
     }
 
-    #PremiumDifference-{{ section.id }} .premium-difference__stage {
-      width: 100%;
+    #difference-{{ section.id }} .difference-section__heading {
+      font-size: 36px;
+      max-width: 620px;
+    }
+
+    #difference-{{ section.id }} .difference-section__layout {
       height: auto;
-      display: grid;
-      gap: 18px;
+      margin-top: 38px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 28px;
     }
 
-    #PremiumDifference-{{ section.id }} .premium-difference__header,
-    #PremiumDifference-{{ section.id }} .premium-difference-card,
-    #PremiumDifference-{{ section.id }} .premium-difference__photo,
-    #PremiumDifference-{{ section.id }} .premium-difference__badge {
+    #difference-{{ section.id }} .difference-section__cards,
+    #difference-{{ section.id }} .difference-section__photo-wrap,
+    #difference-{{ section.id }} .difference-section__badge {
       position: relative;
       inset: auto;
     }
 
-    #PremiumDifference-{{ section.id }} .premium-difference__header {
-      width: 100%;
-      margin-bottom: 6px;
-    }
-
-    #PremiumDifference-{{ section.id }} .premium-difference__heading {
-      max-width: 100%;
-      font-size: 30px;
-      line-height: 1.17;
-    }
-
-    #PremiumDifference-{{ section.id }} .premium-difference__photo {
-      order: 2;
+    #difference-{{ section.id }} .difference-section__photo-wrap {
       width: 100%;
       height: auto;
-      aspect-ratio: 370 / 428;
+      aspect-ratio: 582 / 673;
+      max-width: 582px;
     }
 
-    #PremiumDifference-{{ section.id }} .premium-difference-card {
-      order: 3;
+    #difference-{{ section.id }} .difference-section__badge {
+      position: absolute;
+      right: -10px;
+      top: 74px;
+      width: 92px;
+      height: 92px;
+    }
+
+    #difference-{{ section.id }} .difference-section__cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    #difference-{{ section.id }} .difference-card,
+    #difference-{{ section.id }} .difference-card--1,
+    #difference-{{ section.id }} .difference-card--2,
+    #difference-{{ section.id }} .difference-card--3,
+    #difference-{{ section.id }} .difference-card--4 {
+      position: relative;
+      left: auto;
+      top: auto;
       width: 100%;
       height: auto;
-      min-height: 174px;
-      padding: 82px 18px 22px;
-    }
-
-    #PremiumDifference-{{ section.id }} .premium-difference__badge {
-      display: none;
+      min-height: 260px;
     }
   }
-{% endstyle %}
+
+  @media screen and (max-width: 575px) {
+    #difference-{{ section.id }} {
+      padding: 54px 16px 62px;
+    }
+
+    #difference-{{ section.id }} .difference-section__eyebrow {
+      font-size: 14px;
+    }
+
+    #difference-{{ section.id }} .difference-section__heading {
+      font-size: 30px;
+      line-height: 1.18;
+    }
+
+    #difference-{{ section.id }} .difference-section__cards {
+      grid-template-columns: 1fr;
+    }
+
+    #difference-{{ section.id }} .difference-card {
+      min-height: 250px;
+    }
+
+    #difference-{{ section.id }} .difference-section__badge {
+      width: 78px;
+      height: 78px;
+      top: 48px;
+    }
+
+    #difference-{{ section.id }} .difference-section__badge svg,
+    #difference-{{ section.id }} .difference-section__badge-img {
+      width: 52px;
+      height: 52px;
+    }
+  }
+</style>
 
 {% schema %}
 {
-  "name": "Premium Difference",
+  "name": "Lawn — Difference",
   "tag": "section",
-  "class": "section-premium-difference",
+  "class": "lawn-difference-section",
   "settings": [
-    {
-      "type": "header",
-      "content": "Content"
-    },
     {
       "type": "text",
       "id": "eyebrow",
@@ -432,127 +539,42 @@
     {
       "type": "image_picker",
       "id": "photo",
-      "label": "Main image"
+      "label": "Right photo"
+    },
+    {
+      "type": "image_picker",
+      "id": "badge_image",
+      "label": "Circle badge image"
     },
     {
       "type": "text",
       "id": "photo_alt",
-      "label": "Image alt text",
-      "default": "Lawn specialist holding grass seed product"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_badge",
-      "label": "Show round badge",
-      "default": true
+      "label": "Photo alt text",
+      "default": "Lawn specialist holding Envy grass seed"
     },
     {
       "type": "header",
-      "content": "Card 1"
+      "content": "Layout"
     },
     {
-      "type": "select",
-      "id": "card_1_icon",
-      "label": "Icon",
-      "options": [
-        { "value": "grass", "label": "Grass" },
-        { "value": "chart", "label": "Chart" },
-        { "value": "seed", "label": "Seed" }
-      ],
-      "default": "grass"
+      "type": "range",
+      "id": "container_width",
+      "label": "Container width",
+      "min": 1000,
+      "max": 1440,
+      "step": 10,
+      "unit": "px",
+      "default": 1280
     },
     {
-      "type": "text",
-      "id": "card_1_title",
-      "label": "Title",
-      "default": "Thicker, Denser Turf"
-    },
-    {
-      "type": "textarea",
-      "id": "card_1_text",
-      "label": "Description",
-      "default": "Selected For Improved Lawn Density, Creating A Smoother, Thicker, More Uniform Appearance Across Your Entire Lawn."
-    },
-    {
-      "type": "header",
-      "content": "Card 2"
-    },
-    {
-      "type": "select",
-      "id": "card_2_icon",
-      "label": "Icon",
-      "options": [
-        { "value": "grass", "label": "Grass" },
-        { "value": "chart", "label": "Chart" },
-        { "value": "seed", "label": "Seed" }
-      ],
-      "default": "grass"
-    },
-    {
-      "type": "text",
-      "id": "card_2_title",
-      "label": "Title",
-      "default": "Ultra-Dark Green"
-    },
-    {
-      "type": "textarea",
-      "id": "card_2_text",
-      "label": "Description",
-      "default": "Elite Varieties Chosen For Deep, Rich Green Color That Stands Out Beautifully In Any Lawn Setting."
-    },
-    {
-      "type": "header",
-      "content": "Card 3"
-    },
-    {
-      "type": "select",
-      "id": "card_3_icon",
-      "label": "Icon",
-      "options": [
-        { "value": "grass", "label": "Grass" },
-        { "value": "chart", "label": "Chart" },
-        { "value": "seed", "label": "Seed" }
-      ],
-      "default": "chart"
-    },
-    {
-      "type": "text",
-      "id": "card_3_title",
-      "label": "Title",
-      "default": "Improved Fill-In"
-    },
-    {
-      "type": "textarea",
-      "id": "card_3_text",
-      "label": "Description",
-      "default": "Helps Reduce Thin, Patchy Areas Faster Compared To Standard Tall Fescue Blends Used In Lawns."
-    },
-    {
-      "type": "header",
-      "content": "Card 4"
-    },
-    {
-      "type": "select",
-      "id": "card_4_icon",
-      "label": "Icon",
-      "options": [
-        { "value": "grass", "label": "Grass" },
-        { "value": "chart", "label": "Chart" },
-        { "value": "seed", "label": "Seed" }
-      ],
-      "default": "seed"
-    },
-    {
-      "type": "text",
-      "id": "card_4_title",
-      "label": "Title",
-      "default": "0% Weed Seed"
-    },
-    {
-      "type": "textarea",
-      "id": "card_4_text",
-      "label": "Description",
-      "default": "Clean, High-Quality Seed With Zero Weed Seeds And No Unnecessary Fillers For Better Lawn Results."
+      "type": "range",
+      "id": "card_radius",
+      "label": "Card radius",
+      "min": 8,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
     },
     {
       "type": "header",
@@ -566,56 +588,134 @@
     },
     {
       "type": "color",
-      "id": "dark_color",
-      "label": "Dark green text",
-      "default": "#063D2B"
-    },
-    {
-      "type": "color",
-      "id": "green_color",
-      "label": "Accent green",
-      "default": "#22B86F"
-    },
-    {
-      "type": "color",
-      "id": "card_green_color",
-      "label": "Green card background",
-      "default": "#63C69A"
-    },
-    {
-      "type": "color",
       "id": "text_color",
-      "label": "Body text",
-      "default": "#21352E"
+      "label": "Text",
+      "default": "#073B28"
     },
     {
-      "type": "header",
-      "content": "Desktop layout"
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#18B873"
     },
     {
-      "type": "range",
-      "id": "max_width",
-      "label": "Design width",
-      "min": 760,
-      "max": 1400,
-      "step": 10,
-      "unit": "px",
-      "default": 1200
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#FFFFFF"
     },
     {
-      "type": "range",
-      "id": "section_height",
-      "label": "Section height",
-      "min": 600,
-      "max": 800,
-      "step": 2,
-      "unit": "px",
-      "default": 720
+      "type": "color",
+      "id": "green_card_background",
+      "label": "Green card background",
+      "default": "#5CC493"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Benefit card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Custom icon"
+        },
+        {
+          "type": "select",
+          "id": "icon_class",
+          "label": "Icon style",
+          "options": [
+            {
+              "value": "grass-icon",
+              "label": "Grass"
+            },
+            {
+              "value": "chart-icon",
+              "label": "Chart"
+            },
+            {
+              "value": "seed-icon",
+              "label": "Seed"
+            }
+          ],
+          "default": "grass-icon"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Thicker, Denser Turf"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Selected For Improved Lawn Density, Creating A Smoother, Thicker, More Uniform Appearance Across Your Entire Lawn."
+        },
+        {
+          "type": "checkbox",
+          "id": "offset",
+          "label": "Offset card downward",
+          "default": false
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Color style",
+          "options": [
+            {
+              "value": "default",
+              "label": "White"
+            },
+            {
+              "value": "green",
+              "label": "Green"
+            }
+          ],
+          "default": "default"
+        }
+      ]
     }
   ],
   "presets": [
     {
-      "name": "Premium Difference"
+      "name": "Lawn — Difference",
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "icon_class": "grass-icon",
+            "title": "Thicker, Denser Turf",
+            "text": "Selected For Improved Lawn Density, Creating A Smoother, Thicker, More Uniform Appearance Across Your Entire Lawn."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon_class": "grass-icon",
+            "title": "Ultra-Dark Green",
+            "text": "Elite Varieties Chosen For Deep, Rich Green Color That Stands Out Beautifully In Any Lawn Setting."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon_class": "chart-icon",
+            "title": "Improved Fill-In",
+            "text": "Helps Reduce Thin, Patchy Areas Faster Compared To Standard Tall Fescue Blends Used In Lawns."
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "icon_class": "seed-icon",
+            "title": "0% Weed Seed",
+            "text": "Clean, High-Quality Seed With Zero Weed Seeds And No Unnecessary Fillers For Better Lawn Results.",
+            "style": "green"
+          }
+        }
+      ]
     }
   ]
 }
