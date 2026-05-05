@@ -1,49 +1,410 @@
 {%- liquid
-  assign step_classes = 'step-one,step-two,step-three' | split: ','
+  assign step_count = 0
 -%}
 
-<section class="steps container">
-  {%- if section.settings.eyebrow != blank -%}
-    <p class="eyebrow">{{ section.settings.eyebrow }}</p>
-  {%- endif -%}
-  <h2>{{ section.settings.heading | default: 'How Envy Works To Build Better Lawns' }}</h2>
-  {%- if section.settings.lead != blank -%}
-    <p class="section-lead">{{ section.settings.lead }}</p>
-  {%- endif -%}
+<section
+  id="lawn-steps-{{ section.id }}"
+  class="lawn-steps"
+  style="
+    --steps-bg: {{ section.settings.bg_color }};
+    --steps-green: {{ section.settings.green_color }};
+    --steps-accent: {{ section.settings.accent_color }};
+    --steps-text: {{ section.settings.text_color }};
+    --steps-muted: {{ section.settings.muted_color }};
+    --steps-max-width: {{ section.settings.max_width }}px;
+    --steps-min-height: {{ section.settings.section_height }}px;
+    --steps-padding-top: {{ section.settings.padding_top }}px;
+    --steps-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --steps-side-padding: {{ section.settings.side_padding }}px;
+    --steps-image-size: {{ section.settings.step_image_size }}px;
+    --steps-hill-width: {{ section.settings.grass_hill_width }}px;
+  "
+>
+  <div class="lawn-steps__container">
+    <div class="lawn-steps__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="lawn-steps__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
 
-  {%- if section.settings.show_curve -%}
-    <div class="steps-line" aria-hidden="true"></div>
-  {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="lawn-steps__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
 
-  {%- for block in section.blocks -%}
-    {%- if block.type == 'step' -%}
-      {%- assign idx = forloop.index0 -%}
-      {%- assign extra_class = step_classes[idx] -%}
-      <div class="step {{ extra_class }}" {{ block.shopify_attributes }}>
-        <span class="step-img">
-          {%- if block.settings.image != blank -%}
-            {{ block.settings.image | image_url: width: 400 | image_tag:
-              loading: 'lazy',
-              alt: '',
-              width: 400,
-              height: 400
+      {%- if section.settings.lead != blank -%}
+        <p class="lawn-steps__lead">{{ section.settings.lead }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="lawn-steps__stage">
+      {%- if section.settings.show_curve -%}
+        <svg class="lawn-steps__curve" viewBox="0 0 620 230" fill="none" aria-hidden="true">
+          <path d="M7 130 C105 151 139 139 190 71 C241 3 282 2 339 57 C388 105 407 73 450 25 C493 -23 549 10 613 7" stroke="var(--steps-green)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      {%- endif -%}
+
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'step' -%}
+          {%- assign step_count = step_count | plus: 1 -%}
+
+          <article
+            class="lawn-steps__item lawn-steps__item--{{ step_count }}"
+            {{ block.shopify_attributes }}
+          >
+            <div class="lawn-steps__image-wrap">
+              <span class="lawn-steps__image-ring">
+                {%- if block.settings.image != blank -%}
+                  {{
+                    block.settings.image
+                    | image_url: width: 420
+                    | image_tag:
+                      loading: 'lazy',
+                      class: 'lawn-steps__image',
+                      alt: block.settings.image_alt,
+                      width: 420,
+                      height: 420
+                  }}
+                {%- else -%}
+                  {%- assign fallback_image = 'step' | append: step_count | append: '-grass-clean.png' -%}
+                  <img
+                    class="lawn-steps__image"
+                    src="{{ fallback_image | asset_url }}"
+                    alt="{{ block.settings.image_alt | escape }}"
+                    width="420"
+                    height="420"
+                    loading="lazy"
+                  >
+                {%- endif -%}
+              </span>
+
+              <span class="lawn-steps__number">
+                {{ block.settings.number | default: step_count }}
+              </span>
+            </div>
+
+            {%- if block.settings.title != blank -%}
+              <h3 class="lawn-steps__title">{{ block.settings.title }}</h3>
+            {%- endif -%}
+
+            {%- if block.settings.text != blank -%}
+              <p class="lawn-steps__text">{{ block.settings.text }}</p>
+            {%- endif -%}
+          </article>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if section.settings.show_grass_hill -%}
+        <div class="lawn-steps__hill" aria-hidden="true">
+          {%- if section.settings.grass_hill_image != blank -%}
+            {{
+              section.settings.grass_hill_image
+              | image_url: width: 900
+              | image_tag:
+                loading: 'lazy',
+                class: 'lawn-steps__hill-img',
+                alt: '',
+                width: 900,
+                height: 900
             }}
           {%- else -%}
-            {%- assign default_step_img = 'step' | append: forloop.index | append: '-grass-clean.png' -%}
-            <img src="{{ default_step_img | asset_url }}" alt="" width="400" height="400">
+            <img
+              class="lawn-steps__hill-img"
+              src="{{ 'grass-hill.png' | asset_url }}"
+              alt=""
+              width="900"
+              height="900"
+              loading="lazy"
+            >
           {%- endif -%}
-        </span>
-        <b>{{ block.settings.number | default: forloop.index }}</b>
-        <h3>{{ block.settings.title }}</h3>
-        <p>{{ block.settings.text }}</p>
-      </div>
-    {%- endif -%}
-  {%- endfor -%}
-
-  {%- if section.settings.show_grass_hill -%}
-    <img class="grass-hill" src="{{ 'grass-hill.png' | asset_url }}" alt="" width="360" height="360" loading="lazy">
-  {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
 </section>
+
+<style>
+  #lawn-steps-{{ section.id }} {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: var(--steps-bg);
+    color: var(--steps-text);
+    padding-top: var(--steps-padding-top);
+    padding-bottom: var(--steps-padding-bottom);
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__container {
+    width: min(100% - calc(var(--steps-side-padding) * 2), var(--steps-max-width));
+    min-height: var(--steps-min-height);
+    margin-inline: auto;
+    position: relative;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__header {
+    position: relative;
+    z-index: 5;
+    max-width: 590px;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__eyebrow {
+    margin: 0 0 13px;
+    color: var(--steps-green);
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__heading {
+    margin: 0;
+    max-width: 565px;
+    color: var(--steps-text);
+    font-size: clamp(34px, 3.25vw, 48px);
+    line-height: 1.12;
+    font-weight: 850;
+    letter-spacing: -0.045em;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__lead {
+    margin: 22px 0 0;
+    max-width: 610px;
+    color: var(--steps-muted);
+    font-size: 17px;
+    line-height: 1.58;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__stage {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__curve {
+    position: absolute;
+    z-index: 1;
+    width: 53.6%;
+    max-width: 680px;
+    height: auto;
+    left: 19.6%;
+    top: 234px;
+    pointer-events: none;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__item {
+    position: absolute;
+    z-index: 3;
+    width: 300px;
+    text-align: center;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__item--1 {
+    left: 52px;
+    top: 342px;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__item--2 {
+    left: 406px;
+    top: 220px;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__item--3 {
+    right: 103px;
+    top: 129px;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__image-wrap {
+    position: relative;
+    width: var(--steps-image-size);
+    height: var(--steps-image-size);
+    margin: 0 auto 31px;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__image-ring {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 2px dashed var(--steps-green);
+    border-radius: 50%;
+    padding: 8px;
+    background: #fff;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__number {
+    position: absolute;
+    right: 23px;
+    bottom: -15px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--steps-accent);
+    color: #fff;
+    font-size: 25px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    box-shadow: 0 8px 18px rgba(252, 88, 16, 0.22);
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__title {
+    margin: 0;
+    color: var(--steps-text);
+    font-size: 27px;
+    line-height: 1.16;
+    font-weight: 850;
+    letter-spacing: -0.045em;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__text {
+    margin: 16px auto 0;
+    max-width: 292px;
+    color: #333333;
+    font-size: 16px;
+    line-height: 1.45;
+    font-weight: 500;
+    letter-spacing: -0.012em;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__hill {
+    position: absolute;
+    z-index: 0;
+    right: -132px;
+    bottom: -132px;
+    width: var(--steps-hill-width);
+    pointer-events: none;
+  }
+
+  #lawn-steps-{{ section.id }} .lawn-steps__hill-img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  @media screen and (max-width: 1180px) {
+    #lawn-steps-{{ section.id }} .lawn-steps__container {
+      min-height: calc(var(--steps-min-height) * 0.92);
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__item--1 {
+      left: 2%;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__item--2 {
+      left: 35%;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__item--3 {
+      right: 2%;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__hill {
+      right: -175px;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    #lawn-steps-{{ section.id }} {
+      padding-top: 58px;
+      padding-bottom: 70px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__container {
+      min-height: auto;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__stage {
+      position: relative;
+      inset: auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 44px;
+      margin-top: 54px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__curve,
+    #lawn-steps-{{ section.id }} .lawn-steps__hill {
+      display: none;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__item,
+    #lawn-steps-{{ section.id }} .lawn-steps__item--1,
+    #lawn-steps-{{ section.id }} .lawn-steps__item--2,
+    #lawn-steps-{{ section.id }} .lawn-steps__item--3 {
+      position: relative;
+      inset: auto;
+      width: min(100%, 360px);
+      margin-inline: auto;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__heading {
+      font-size: clamp(34px, 8vw, 44px);
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__lead {
+      font-size: 16px;
+    }
+  }
+
+  @media screen and (max-width: 575px) {
+    #lawn-steps-{{ section.id }} {
+      padding-top: 46px;
+      padding-bottom: 56px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__eyebrow {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__heading {
+      font-size: 32px;
+      line-height: 1.13;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__lead {
+      margin-top: 17px;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__stage {
+      margin-top: 42px;
+      gap: 38px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__image-wrap {
+      width: 142px;
+      height: 142px;
+      margin-bottom: 27px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__number {
+      width: 40px;
+      height: 40px;
+      right: 20px;
+      bottom: -13px;
+      font-size: 23px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__title {
+      font-size: 25px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__text {
+      font-size: 15px;
+    }
+  }
+</style>
 
 {% schema %}
 {
@@ -52,10 +413,14 @@
   "class": "lawn-steps-section",
   "settings": [
     {
+      "type": "header",
+      "content": "Content"
+    },
+    {
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow",
-      "default": "How It Works"
+      "default": "How It Words"
     },
     {
       "type": "text",
@@ -70,6 +435,10 @@
       "default": "This Blend Works In Three Simple Steps To Grow Thicker, Greener, Stronger Lawns Without Complexity Or Confusion."
     },
     {
+      "type": "header",
+      "content": "Images"
+    },
+    {
       "type": "checkbox",
       "id": "show_curve",
       "label": "Show curved connector line",
@@ -78,8 +447,121 @@
     {
       "type": "checkbox",
       "id": "show_grass_hill",
-      "label": "Show grass hill graphic",
+      "label": "Show bottom grass graphic",
       "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "grass_hill_image",
+      "label": "Bottom grass graphic"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Section max width",
+      "min": 900,
+      "max": 1400,
+      "step": 5,
+      "unit": "px",
+      "default": 1270
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Desktop section height",
+      "min": 560,
+      "max": 860,
+      "step": 5,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 20,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 74
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "side_padding",
+      "label": "Side padding",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "step_image_size",
+      "label": "Step image size",
+      "min": 110,
+      "max": 190,
+      "step": 2,
+      "unit": "px",
+      "default": 148
+    },
+    {
+      "type": "range",
+      "id": "grass_hill_width",
+      "label": "Bottom grass width",
+      "min": 300,
+      "max": 700,
+      "step": 5,
+      "unit": "px",
+      "default": 470
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "green_color",
+      "label": "Primary green",
+      "default": "#20B26B"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Number badge",
+      "default": "#FC5810"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading text",
+      "default": "#043B26"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Lead text",
+      "default": "#244A3E"
     }
   ],
   "max_blocks": 3,
@@ -88,10 +570,35 @@
       "type": "step",
       "name": "Step",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Image" },
-        { "type": "text", "id": "number", "label": "Number", "default": "1" },
-        { "type": "text", "id": "title", "label": "Title", "default": "Fast Germination" },
-        { "type": "textarea", "id": "text", "label": "Description", "default": "Quick Early Growth Fills Bare Areas Fast And Helps Reduce Weed Invasion During Establishment Stages." }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Step image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image alt text",
+          "default": "Grass growth step"
+        },
+        {
+          "type": "text",
+          "id": "number",
+          "label": "Number",
+          "default": "1"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Fast Germination"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Description",
+          "default": "Quick Early Growth Fills Bare Areas Fast And Helps Reduce Weed Invasion During Establishment Stages."
+        }
       ]
     }
   ],
@@ -99,9 +606,30 @@
     {
       "name": "Lawn — Steps",
       "blocks": [
-        { "type": "step", "settings": { "number": "1", "title": "Fast Germination", "text": "Quick Early Growth Fills Bare Areas Fast And Helps Reduce Weed Invasion During Establishment Stages." } },
-        { "type": "step", "settings": { "number": "2", "title": "Deep Roots", "text": "Stronger Root Systems Improve Drought Tolerance, Enhance Nutrient Uptake, And Support Long-Term Lawn Health." } },
-        { "type": "step", "settings": { "number": "3", "title": "Thick Growth", "text": "Dense Turf Growth Crowds Out Weeds Naturally And Creates A Smooth, Full, Uniform Lawn Appearance." } }
+        {
+          "type": "step",
+          "settings": {
+            "number": "1",
+            "title": "Fast Germination",
+            "text": "Quick Early Growth Fills Bare Areas Fast And Helps Reduce Weed Invasion During Establishment Stages."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "number": "2",
+            "title": "Deep Roots",
+            "text": "Stronger Root Systems Improve Drought Tolerance, Enhance Nutrient Uptake, And Support Long-Term Lawn Health."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "number": "3",
+            "title": "Thick Growth",
+            "text": "Dense Turf Growth Crowds Out Weeds Naturally And Creates A Smooth, Full, Uniform Lawn Appearance."
+          }
+        }
       ]
     }
   ]
