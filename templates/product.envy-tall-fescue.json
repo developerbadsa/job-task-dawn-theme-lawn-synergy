@@ -266,6 +266,9 @@
         "card_wfi8EU",
         "card_GCHBBV"
       ],
+      "custom_css": [
+        "article.difference-card.difference-card--4.difference-card--green {margin-top: 21px;}"
+      ],
       "settings": {
         "eyebrow": "Premium Difference",
         "heading": "What Makes Envy Different From Other Grass Seeds?",
