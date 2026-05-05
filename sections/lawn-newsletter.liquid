@@ -9,281 +9,297 @@
 
 {% style %}
   #lawn-newsletter-{{ section.id }} {
-    width: min(1128px, calc(100% - 112px));
-    min-height: 328px;
-    margin: 0 auto;
-    padding: 45px 44px 62px;
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
-    border-radius: 12px;
-    background: #27ad70;
+    width: 1128px !important;
+    max-width: calc(100vw - 112px) !important;
+    height: 328px !important;
+    min-height: 328px !important;
+    margin: 0 auto !important;
+    padding: 45px 44px 0 44px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    border-radius: 12px !important;
+    background: #27ad70 !important;
   }
 
+  #lawn-newsletter-{{ section.id }},
   #lawn-newsletter-{{ section.id }} * {
-    box-sizing: border-box;
+    box-sizing: border-box !important;
   }
 
   #lawn-newsletter-{{ section.id }} .newsletter-copy {
-    width: 663px;
-    max-width: 62%;
-    position: relative;
-    z-index: 3;
+    width: 663px !important;
+    max-width: 663px !important;
+    position: relative !important;
+    z-index: 3 !important;
   }
 
-  #lawn-newsletter-{{ section.id }} .newsletter-copy h2 {
-    width: 663px;
-    max-width: 100%;
-    margin: 0 0 7px;
-    color: #ffffff;
-    font-family: "Clash Grotesk", var(--font-heading-family), var(--font-body-family), Arial, sans-serif;
-    font-size: 52px;
-    line-height: 64px;
-    font-weight: 600;
-    letter-spacing: -0.4px;
-    text-transform: none;
+  #lawn-newsletter-{{ section.id }} .newsletter-title {
+    width: 663px !important;
+    max-width: 663px !important;
+    margin: 0 0 7px 0 !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    font-family: "Clash Grotesk", "ClashGrotesk", var(--font-heading-family), Arial, sans-serif !important;
+    font-size: 52px !important;
+    line-height: 64px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.4px !important;
+    text-transform: none !important;
   }
 
-  #lawn-newsletter-{{ section.id }} .newsletter-copy p {
-    width: 650px;
-    max-width: 100%;
-    margin: 0;
-    color: #ffffff;
-    font-family: "Clash Grotesk", var(--font-body-family), Arial, sans-serif;
-    font-size: 17px;
-    line-height: 28px;
-    font-weight: 400;
-    letter-spacing: -0.1px;
+  #lawn-newsletter-{{ section.id }} .newsletter-text {
+    width: 663px !important;
+    max-width: 663px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    font-family: "Clash Grotesk", "ClashGrotesk", var(--font-body-family), Arial, sans-serif !important;
+    font-size: 17px !important;
+    line-height: 28px !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.1px !important;
   }
 
-  #lawn-newsletter-{{ section.id }} .newsletter-form-wrap {
-    margin: 31px 0 0;
-    padding: 0;
+  #lawn-newsletter-{{ section.id }} .newsletter-form {
+    width: 640px !important;
+    max-width: 640px !important;
+    height: 72px !important;
+    margin: 31px 0 0 0 !important;
+    padding: 0 4px 0 27px !important;
+    display: flex !important;
+    align-items: center !important;
+    position: relative !important;
+    z-index: 4 !important;
+    border: 1px solid rgba(255, 255, 255, 0.85) !important;
+    border-radius: 50px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
   }
 
-  #lawn-newsletter-{{ section.id }} .newsletter-form-field {
-    width: 540px;
-    max-width: 100%;
-    height: 72px;
-    padding: 0 4px 0 27px;
-    display: flex;
-    align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.82);
-    border-radius: 50px;
-    background: rgba(255, 255, 255, 0.08);
+  #lawn-newsletter-{{ section.id }} .newsletter-form input[type="email"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 22px 0 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    font-family: "Clash Grotesk", "ClashGrotesk", var(--font-body-family), Arial, sans-serif !important;
+    font-size: 15px !important;
+    line-height: 20px !important;
+    font-weight: 400 !important;
   }
 
-  #lawn-newsletter-{{ section.id }} .newsletter-form-field input[type="email"] {
-    width: 100%;
-    min-width: 0;
-    height: 100%;
-    padding: 0 18px 0 0;
-    border: 0;
-    outline: 0;
-    box-shadow: none;
-    background: transparent;
-    color: #ffffff;
-    font-family: "Clash Grotesk", var(--font-body-family), Arial, sans-serif;
-    font-size: 15px;
-    line-height: 20px;
-    font-weight: 400;
+  #lawn-newsletter-{{ section.id }} .newsletter-form input[type="email"]::placeholder {
+    color: rgba(255, 255, 255, 0.72) !important;
+    opacity: 1 !important;
   }
 
-  #lawn-newsletter-{{ section.id }} .newsletter-form-field input[type="email"]::placeholder {
-    color: rgba(255, 255, 255, 0.72);
-    opacity: 1;
-  }
-
-  #lawn-newsletter-{{ section.id }} .newsletter-form-field button {
-    width: 230px;
-    flex: 0 0 230px;
-    height: 64px;
-    margin: 0;
-    padding: 0 24px;
-    border: 0;
-    border-radius: 50px;
-    background: #fc5810;
-    color: #ffffff;
-    font-family: "Clash Grotesk", var(--font-heading-family), var(--font-body-family), Arial, sans-serif;
-    font-size: 24px;
-    line-height: 32px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
-    cursor: pointer;
-    transition: transform 0.2s ease, opacity 0.2s ease;
-  }
-
-  #lawn-newsletter-{{ section.id }} .newsletter-form-field button:hover {
-    transform: translateY(-1px);
-    opacity: 0.96;
+  #lawn-newsletter-{{ section.id }} .newsletter-form button {
+    width: 259px !important;
+    min-width: 259px !important;
+    flex: 0 0 259px !important;
+    height: 64px !important;
+    margin: 0 !important;
+    padding: 0 24px !important;
+    border: 0 !important;
+    border-radius: 50px !important;
+    background: #fc5810 !important;
+    color: #ffffff !important;
+    font-family: "Clash Grotesk", "ClashGrotesk", var(--font-heading-family), Arial, sans-serif !important;
+    font-size: 24px !important;
+    line-height: 32px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.2px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    box-shadow: none !important;
+    appearance: none !important;
   }
 
   #lawn-newsletter-{{ section.id }} .newsletter-message {
-    width: 540px;
-    max-width: 100%;
-    margin: 12px 0 0;
-    color: #ffffff;
-    font-family: "Clash Grotesk", var(--font-body-family), Arial, sans-serif;
-    font-size: 14px;
-    line-height: 20px;
+    width: 640px !important;
+    max-width: 640px !important;
+    margin: 12px 0 0 0 !important;
+    color: #ffffff !important;
+    font-size: 14px !important;
+    line-height: 20px !important;
+    font-family: "Clash Grotesk", "ClashGrotesk", var(--font-body-family), Arial, sans-serif !important;
   }
 
   #lawn-newsletter-{{ section.id }} .newsletter-message ul {
-    margin: 0;
-    padding-left: 18px;
+    margin: 0 !important;
+    padding-left: 18px !important;
   }
 
   #lawn-newsletter-{{ section.id }} .newsletter-bag {
-    width: 475px;
-    max-width: none;
-    height: auto;
-    position: absolute;
-    right: 71px;
-    bottom: 0;
-    z-index: 2;
-    display: block;
-    pointer-events: none;
-    user-select: none;
+    width: 475px !important;
+    max-width: none !important;
+    height: auto !important;
+    position: absolute !important;
+    right: 71px !important;
+    bottom: 0 !important;
+    z-index: 2 !important;
+    display: block !important;
+    pointer-events: none !important;
+    user-select: none !important;
   }
 
-  @media screen and (max-width: 1100px) {
+  @media screen and (max-width: 1199px) {
     #lawn-newsletter-{{ section.id }} {
-      width: calc(100% - 56px);
-      padding: 42px 36px 54px;
+      width: calc(100vw - 56px) !important;
+      max-width: calc(100vw - 56px) !important;
+    }
+
+    #lawn-newsletter-{{ section.id }} .newsletter-title {
+      font-size: 44px !important;
+      line-height: 54px !important;
+    }
+
+    #lawn-newsletter-{{ section.id }} .newsletter-text {
+      font-size: 15px !important;
+      line-height: 24px !important;
     }
 
     #lawn-newsletter-{{ section.id }} .newsletter-copy {
-      max-width: 64%;
+      width: 610px !important;
+      max-width: 58% !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-copy h2 {
-      font-size: 44px;
-      line-height: 54px;
+    #lawn-newsletter-{{ section.id }} .newsletter-form {
+      width: 540px !important;
+      max-width: 540px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-copy p {
-      font-size: 15px;
-      line-height: 24px;
+    #lawn-newsletter-{{ section.id }} .newsletter-form button {
+      width: 220px !important;
+      min-width: 220px !important;
+      flex-basis: 220px !important;
     }
 
     #lawn-newsletter-{{ section.id }} .newsletter-bag {
-      width: 410px;
-      right: 28px;
+      width: 430px !important;
+      right: 35px !important;
     }
   }
 
   @media screen and (max-width: 749px) {
     #lawn-newsletter-{{ section.id }} {
-      width: calc(100% - 28px);
-      min-height: 455px;
-      padding: 30px 22px 215px;
-      border-radius: 14px;
+      width: calc(100vw - 28px) !important;
+      max-width: calc(100vw - 28px) !important;
+      height: auto !important;
+      min-height: 455px !important;
+      padding: 30px 22px 215px 22px !important;
+      border-radius: 14px !important;
     }
 
     #lawn-newsletter-{{ section.id }} .newsletter-copy {
-      width: 100%;
-      max-width: none;
+      width: 100% !important;
+      max-width: 100% !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-copy h2 {
-      width: 100%;
-      font-size: 34px;
-      line-height: 42px;
-      letter-spacing: -0.3px;
-      margin-bottom: 8px;
+    #lawn-newsletter-{{ section.id }} .newsletter-title {
+      width: 100% !important;
+      max-width: 100% !important;
+      font-size: 34px !important;
+      line-height: 42px !important;
+      letter-spacing: -0.3px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-copy p {
-      width: 100%;
-      font-size: 14px;
-      line-height: 22px;
+    #lawn-newsletter-{{ section.id }} .newsletter-text {
+      width: 100% !important;
+      max-width: 100% !important;
+      font-size: 14px !important;
+      line-height: 22px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-form-wrap {
-      margin-top: 26px;
+    #lawn-newsletter-{{ section.id }} .newsletter-form {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 60px !important;
+      margin-top: 26px !important;
+      padding-left: 18px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-form-field {
-      width: 100%;
-      height: 60px;
-      padding-left: 18px;
+    #lawn-newsletter-{{ section.id }} .newsletter-form input[type="email"] {
+      font-size: 13px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-form-field input[type="email"] {
-      font-size: 13px;
-    }
-
-    #lawn-newsletter-{{ section.id }} .newsletter-form-field button {
-      width: 145px;
-      flex-basis: 145px;
-      height: 52px;
-      font-size: 18px;
-      line-height: 24px;
-      padding-inline: 14px;
+    #lawn-newsletter-{{ section.id }} .newsletter-form button {
+      width: 145px !important;
+      min-width: 145px !important;
+      flex-basis: 145px !important;
+      height: 52px !important;
+      font-size: 18px !important;
+      line-height: 24px !important;
+      padding-inline: 14px !important;
     }
 
     #lawn-newsletter-{{ section.id }} .newsletter-bag {
-      width: 330px;
-      right: -20px;
-      bottom: 0;
+      width: 330px !important;
+      right: -20px !important;
+      bottom: 0 !important;
     }
   }
 
   @media screen and (max-width: 420px) {
     #lawn-newsletter-{{ section.id }} {
-      min-height: 430px;
-      padding: 28px 18px 198px;
+      min-height: 430px !important;
+      padding: 28px 18px 198px 18px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-copy h2 {
-      font-size: 30px;
-      line-height: 38px;
+    #lawn-newsletter-{{ section.id }} .newsletter-title {
+      font-size: 30px !important;
+      line-height: 38px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-form-field {
-      height: 58px;
-      padding-left: 16px;
+    #lawn-newsletter-{{ section.id }} .newsletter-form {
+      height: 58px !important;
+      padding-left: 16px !important;
     }
 
-    #lawn-newsletter-{{ section.id }} .newsletter-form-field button {
-      width: 128px;
-      flex-basis: 128px;
-      height: 50px;
-      font-size: 16px;
+    #lawn-newsletter-{{ section.id }} .newsletter-form button {
+      width: 128px !important;
+      min-width: 128px !important;
+      flex-basis: 128px !important;
+      height: 50px !important;
+      font-size: 16px !important;
     }
 
     #lawn-newsletter-{{ section.id }} .newsletter-bag {
-      width: 292px;
-      right: -28px;
+      width: 292px !important;
+      right: -28px !important;
     }
   }
 {% endstyle %}
 
-<section id="lawn-newsletter-{{ section.id }}" class="newsletter container">
+<section id="lawn-newsletter-{{ section.id }}" class="newsletter">
   <div class="newsletter-copy">
-    <h2>{{ heading }}</h2>
+    <h2 class="newsletter-title">{{ heading }}</h2>
 
     {%- if body != blank -%}
-      <p>{{ body }}</p>
+      <p class="newsletter-text">{{ body }}</p>
     {%- endif -%}
 
-    {%- form 'customer', class: 'newsletter-form-wrap' -%}
+    {%- form 'customer', class: 'newsletter-form' -%}
       <input type="hidden" name="contact[tags]" value="newsletter">
 
-      <div class="newsletter-form-field">
-        <input
-          type="email"
-          name="contact[email]"
-          id="LawnNewsletterEmail-{{ section.id }}"
-          placeholder="{{ placeholder | escape }}"
-          aria-label="{{ placeholder | escape }}"
-          autocorrect="off"
-          autocapitalize="off"
-          autocomplete="email"
-          required
-        >
-        <button type="submit">{{ button_label }}</button>
-      </div>
+      <input
+        type="email"
+        name="contact[email]"
+        id="LawnNewsletterEmail-{{ section.id }}"
+        placeholder="{{ placeholder | escape }}"
+        aria-label="{{ placeholder | escape }}"
+        autocorrect="off"
+        autocapitalize="off"
+        autocomplete="email"
+        required
+      >
+
+      <button type="submit">{{ button_label }}</button>
 
       {%- if form.posted_successfully? -%}
         <div class="newsletter-message">{{ success_text }}</div>
@@ -298,7 +314,7 @@
   {%- if bag != blank -%}
     {{
       bag
-      | image_url: width: 1000
+      | image_url: width: 1100
       | image_tag:
         class: 'newsletter-bag',
         loading: 'lazy',
