@@ -23,14 +23,16 @@
     --section-bg: {{ section.settings.background_color }};
     --section-height: {{ section.settings.section_height }}px;
     --content-width: {{ section.settings.content_width }}px;
+    --side-space: {{ section.settings.side_space }}px;
     --top-space: {{ section.settings.top_space }}px;
     --image-width: {{ section.settings.image_width }}px;
     --image-height: {{ section.settings.image_height }}px;
     --image-radius: {{ section.settings.image_radius }}px;
     --column-gap: {{ section.settings.column_gap }}px;
-    --content-top-offset: {{ section.settings.content_top_offset }}px;
-    --content-width-copy: {{ section.settings.content_copy_width }}px;
+    --copy-width: {{ section.settings.copy_width }}px;
+    --copy-offset: {{ section.settings.copy_offset }}px;
     --bottom-grass-height: {{ section.settings.bottom_grass_height }}px;
+    --bottom-grass-bleed: {{ section.settings.bottom_grass_bleed }}px;
     --texture-opacity: {{ section.settings.texture_opacity | divided_by: 100.0 }};
     --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
     --eyebrow-color: {{ section.settings.eyebrow_color }};
@@ -74,7 +76,7 @@
       {%- endif -%}
 
       {%- if section.settings.heading != blank -%}
-        <h2 class="premium-upgrade-section__heading">{{ section.settings.heading }}</h2>
+        <h2 class="premium-upgrade-section__heading">{{ section.settings.heading | newline_to_br }}</h2>
       {%- endif -%}
 
       {%- if section.settings.body != blank -%}
@@ -145,9 +147,10 @@
     position: relative;
     isolation: isolate;
     width: 100%;
-    height: var(--section-height);
+    height: calc(var(--section-height) + var(--bottom-grass-bleed));
+    margin-bottom: calc(var(--bottom-grass-bleed) * -1);
     overflow: hidden;
-    background: var(--section-bg);
+    background: transparent;
   }
 
   #premium-upgrade-{{ section.id }} *,
@@ -158,7 +161,10 @@
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__bg {
     position: absolute;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--section-height);
     z-index: 0;
     overflow: hidden;
     background: var(--section-bg);
@@ -168,13 +174,13 @@
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__texture {
     position: absolute;
     inset: 0;
+    z-index: 1;
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
     opacity: var(--texture-opacity);
-    filter: saturate(0.9) contrast(1.05);
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__bg::after {
@@ -182,33 +188,32 @@
     position: absolute;
     inset: 0;
     z-index: 2;
-    background:
-      radial-gradient(circle at 15% 12%, rgba(255, 255, 255, 0.06), transparent 34%),
-      linear-gradient(90deg, rgba(0, 55, 34, 0.72) 0%, rgba(0, 55, 34, 0.66) 100%);
-    opacity: var(--overlay-opacity);
+    background: rgba(0, 58, 36, var(--overlay-opacity));
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__inner {
     position: relative;
     z-index: 3;
-    width: min(100% - 32px, var(--content-width));
-    height: 100%;
+    width: min(calc(100% - (var(--side-space) * 2)), var(--content-width));
+    height: var(--section-height);
     margin: 0 auto;
     padding-top: var(--top-space);
     display: grid;
-    grid-template-columns: var(--image-width) minmax(0, var(--content-width-copy));
+    grid-template-columns: var(--image-width) minmax(0, var(--copy-width));
     column-gap: var(--column-gap);
+    justify-content: center;
     align-items: start;
+    overflow: hidden;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__media {
     position: relative;
-    z-index: 3;
+    z-index: 2;
     width: var(--image-width);
     height: var(--image-height);
     border-radius: var(--image-radius);
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.06);
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__image {
@@ -224,13 +229,13 @@
     position: relative;
     z-index: 4;
     width: 100%;
-    max-width: var(--content-width-copy);
-    padding-top: var(--content-top-offset);
+    max-width: var(--copy-width);
+    padding-top: var(--copy-offset);
     color: var(--text-color);
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__eyebrow {
-    margin: 0 0 14px;
+    margin: 0 0 13px;
     color: var(--eyebrow-color);
     font-family: "Clash Grotesk", "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 16px;
@@ -245,24 +250,24 @@
     color: var(--heading-color);
     font-family: "Clash Grotesk", "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 52px;
-    line-height: 1.15;
+    line-height: 1.12;
     font-weight: 600;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.7px;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__body {
-    margin-top: 17px;
+    margin-top: 19px;
     max-width: 560px;
     color: var(--text-color);
     font-family: "Clash Grotesk", "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 16px;
-    line-height: 1.55;
+    line-height: 1.54;
     font-weight: 400;
     letter-spacing: -0.01em;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__list-heading {
-    margin: 28px 0 16px;
+    margin: 27px 0 16px;
     color: var(--heading-color);
     font-family: "Clash Grotesk", "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size: 18px;
@@ -336,7 +341,7 @@
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade-section__button:disabled {
-    opacity: 0.6;
+    opacity: 0.62;
     cursor: not-allowed;
   }
 
@@ -344,31 +349,30 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -60px;
-    z-index: 22;
+    bottom: 0;
+    z-index: 10;
     display: block;
     width: 100%;
-    height: 264px;
+    height: var(--bottom-grass-height);
+    max-width: none;
     object-fit: cover;
     object-position: center bottom;
     pointer-events: none;
-    inset: 12
   }
 
   @media screen and (max-width: 1320px) {
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__inner {
-      width: min(100% - 64px, var(--content-width));
-      grid-template-columns: minmax(420px, 0.52fr) minmax(0, 0.48fr);
+      width: min(calc(100% - 64px), var(--content-width));
+      grid-template-columns: minmax(460px, 630px) minmax(0, var(--copy-width));
       column-gap: clamp(28px, 3vw, var(--column-gap));
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__media {
       width: 100%;
-      height: min(var(--image-height), 64vw);
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__heading {
-      font-size: clamp(38px, 3.65vw, 52px);
+      font-size: clamp(42px, 3.7vw, 52px);
     }
   }
 
@@ -376,17 +380,25 @@
     #premium-upgrade-{{ section.id }} {
       height: auto;
       min-height: 0;
-      padding: 56px 20px 128px;
+      margin-bottom: 0;
+      padding-bottom: 0;
+      overflow: hidden;
+      background: var(--section-bg);
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade-section__bg {
+      height: 100%;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__inner {
       width: 100%;
       max-width: 680px;
       height: auto;
-      padding-top: 0;
+      padding: 56px 20px 150px;
       display: grid;
       grid-template-columns: 1fr;
       gap: 34px;
+      overflow: visible;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__media {
@@ -407,9 +419,9 @@
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
-      height: 118px;
-      width: 1100px;
-      max-width: none;
+      height: 120px;
+      bottom: -10px;
+      width: 1120px;
       left: 50%;
       right: auto;
       transform: translateX(-50%);
@@ -417,8 +429,8 @@
   }
 
   @media screen and (max-width: 575px) {
-    #premium-upgrade-{{ section.id }} {
-      padding: 44px 16px 108px;
+    #premium-upgrade-{{ section.id }} .premium-upgrade-section__inner {
+      padding: 44px 16px 124px;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__heading {
@@ -441,101 +453,8 @@
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
-      height: 96px;
-      width: 820px;
-    }
-  }
-</style>
-<style>
-  .lawn-premium-upgrade-wrapper {
-    position: relative !important;
-    z-index: 10 !important;
-    overflow: visible !important;
-  }
-
-  #premium-upgrade-{{ section.id }} {
-    position: relative !important;
-    overflow: visible !important;
-    z-index: 10 !important;
-    height: var(--section-height) !important;
-    min-height: var(--section-height) !important;
-    background: var(--section-bg) !important;
-  }
-
-  #premium-upgrade-{{ section.id }} .premium-upgrade-section__bg {
-    overflow: hidden !important;
-    z-index: 0 !important;
-  }
-
-  #premium-upgrade-{{ section.id }} .premium-upgrade-section__texture {
-    opacity: var(--texture-opacity) !important;
-    object-fit: cover !important;
-    object-position: center center !important;
-  }
-
-  #premium-upgrade-{{ section.id }} .premium-upgrade-section__bg::after {
-    background:
-      radial-gradient(circle at 16% 13%, rgba(255, 255, 255, 0.08), transparent 30%),
-      linear-gradient(90deg, rgba(0, 55, 34, 0.78) 0%, rgba(0, 55, 34, 0.7) 100%) !important;
-  }
-
-  #premium-upgrade-{{ section.id }} .premium-upgrade-section__inner {
-    position: relative !important;
-    z-index: 3 !important;
-    width: min(100% - 32px, var(--content-width)) !important;
-    height: var(--section-height) !important;
-    margin: 0 auto !important;
-    padding-top: var(--top-space) !important;
-    overflow: visible !important;
-  }
-
-  #premium-upgrade-{{ section.id }} .premium-upgrade-section__media {
-    position: relative !important;
-    z-index: 4 !important;
-    overflow: hidden !important;
-  }
-
-  #premium-upgrade-{{ section.id }} .premium-upgrade-section__content {
-    position: relative !important;
-    z-index: 5 !important;
-  }
-
-  #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
-    position: absolute !important;
-    left: 50% !important;
-    right: auto !important;
-    bottom: -34px !important;
-    z-index: 30 !important;
-    display: block !important;
-    width: 100vw !important;
-    max-width: none !important;
-    height: var(--bottom-grass-height) !important;
-    min-height: 154px !important;
-    transform: translateX(-50%) !important;
-    object-fit: cover !important;
-    object-position: center bottom !important;
-    pointer-events: none !important;
-  }
-
-  @media screen and (max-width: 989px) {
-    #premium-upgrade-{{ section.id }} {
-      overflow: hidden !important;
-    }
-
-    #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
-      bottom: -18px !important;
-      height: 118px !important;
-      min-height: 118px !important;
-      width: 1200px !important;
-    }
-  }
-
-  @media screen and (max-width: 575px) {
-    #premium-upgrade-{{ section.id }} .premium-upgrade-section__bottom-grass {
-      bottom: -14px !important;
-      height: 96px !important;
-      min-height: 96px !important;
-      width: 900px !important;
+      height: 98px;
+      width: 860px;
     }
   }
 </style>
@@ -679,17 +598,27 @@
       "type": "range",
       "id": "section_height",
       "label": "Section height",
-      "min": 560,
-      "max": 900,
+      "min": 640,
+      "max": 940,
       "step": 5,
       "unit": "px",
       "default": 825
     },
     {
       "type": "range",
+      "id": "side_space",
+      "label": "Side spacing",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
       "id": "top_space",
       "label": "Top spacing",
-      "min": 40,
+      "min": 60,
       "max": 160,
       "step": 2,
       "unit": "px",
@@ -699,9 +628,9 @@
       "type": "range",
       "id": "image_width",
       "label": "Left image width",
-      "min": 360,
+      "min": 500,
       "max": 700,
-      "step": 5,
+      "step": 2,
       "unit": "px",
       "default": 630
     },
@@ -709,18 +638,18 @@
       "type": "range",
       "id": "image_height",
       "label": "Left image height",
-      "min": 500,
-      "max": 900,
-      "step": 5,
+      "min": 720,
+      "max": 920,
+      "step": 10,
       "unit": "px",
-      "default": 825
+      "default": 820
     },
     {
       "type": "range",
       "id": "image_radius",
       "label": "Image radius",
       "min": 0,
-      "max": 40,
+      "max": 32,
       "step": 1,
       "unit": "px",
       "default": 20
@@ -729,31 +658,31 @@
       "type": "range",
       "id": "column_gap",
       "label": "Column gap",
-      "min": 0,
-      "max": 120,
+      "min": 20,
+      "max": 90,
       "step": 2,
       "unit": "px",
       "default": 40
     },
     {
       "type": "range",
-      "id": "content_top_offset",
+      "id": "copy_width",
+      "label": "Text width",
+      "min": 460,
+      "max": 700,
+      "step": 4,
+      "unit": "px",
+      "default": 596
+    },
+    {
+      "type": "range",
+      "id": "copy_offset",
       "label": "Text top offset",
       "min": 0,
       "max": 120,
       "step": 2,
       "unit": "px",
       "default": 54
-    },
-    {
-      "type": "range",
-      "id": "content_copy_width",
-      "label": "Text width",
-      "min": 420,
-      "max": 700,
-      "step": 5,
-      "unit": "px",
-      "default": 595
     },
     {
       "type": "header",
@@ -769,11 +698,21 @@
       "type": "range",
       "id": "bottom_grass_height",
       "label": "Bottom grass height",
-      "min": 60,
-      "max": 220,
+      "min": 90,
+      "max": 230,
       "step": 2,
       "unit": "px",
       "default": 154
+    },
+    {
+      "type": "range",
+      "id": "bottom_grass_bleed",
+      "label": "Bottom grass overflow",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 32
     },
     {
       "type": "header",
@@ -790,10 +729,10 @@
       "id": "texture_opacity",
       "label": "Texture opacity",
       "min": 0,
-      "max": 100,
+      "max": 80,
       "step": 1,
       "unit": "%",
-      "default": 30
+      "default": 38
     },
     {
       "type": "range",
@@ -803,7 +742,7 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 75
+      "default": 42
     },
     {
       "type": "header",
