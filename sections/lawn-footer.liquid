@@ -4,354 +4,59 @@
   assign payment_strip = section.settings.payment_strip
 -%}
 
-<footer
-  id="lawn-footer-{{ section.id }}"
-  class="lawn-footer"
-  style="
-    --footer-logo-width: {{ logo_width }}px;
-    --footer-bg: {{ section.settings.footer_bg }};
-    --footer-text: {{ section.settings.footer_text }};
-    --footer-muted: {{ section.settings.footer_muted }};
-    --footer-border: {{ section.settings.footer_border }};
-  "
->
-  <div class="lawn-footer__main">
-    <div class="lawn-footer__container lawn-footer__grid">
-      <div class="lawn-footer__brand">
-        {%- if logo != blank -%}
-          {{
-            logo
-            | image_url: width: 600
-            | image_tag:
-              class: 'lawn-footer__logo',
-              loading: 'lazy',
-              alt: shop.name,
-              width: 600,
-              height: 220
-          }}
-        {%- else -%}
-          <img
-            class="lawn-footer__logo"
-            src="{{ 'lawn-synergy-logo.png' | asset_url }}"
-            alt="{{ shop.name | escape }}"
-            width="600"
-            height="220"
-            loading="lazy"
-          >
-        {%- endif -%}
-      </div>
-
-      {%- for block in section.blocks -%}
-        {%- case block.type -%}
-          {%- when 'link_list' -%}
-            <div class="lawn-footer__column" {{ block.shopify_attributes }}>
-              {%- if block.settings.heading != blank -%}
-                <h3 class="lawn-footer__heading">{{ block.settings.heading }}</h3>
-              {%- endif -%}
-
-              <nav class="lawn-footer__nav" aria-label="{{ block.settings.heading | escape }}">
-                {%- assign rows = block.settings.links | newline_to_br | split: '<br />' -%}
-                {%- for row in rows -%}
-                  {%- assign trimmed = row | strip -%}
-                  {%- if trimmed == blank -%}
-                    {%- continue -%}
-                  {%- endif -%}
-
-                  {%- assign parts = trimmed | split: '|' -%}
-                  {%- assign label = parts[0] | strip -%}
-                  {%- assign url = parts[1] | default: '#' | strip -%}
-
-                  <a class="lawn-footer__link" href="{{ url }}">{{ label }}</a>
-                {%- endfor -%}
-              </nav>
-            </div>
-
-          {%- when 'text' -%}
-            <div class="lawn-footer__column lawn-footer__column--brand-copy" {{ block.shopify_attributes }}>
-              {%- if block.settings.heading != blank -%}
-                <h3 class="lawn-footer__heading">{{ block.settings.heading }}</h3>
-              {%- endif -%}
-
-              {%- if block.settings.text != blank -%}
-                <p class="lawn-footer__copy">{{ block.settings.text }}</p>
-              {%- endif -%}
-            </div>
-        {%- endcase -%}
-      {%- endfor -%}
+<footer class="footer">
+  <div class="container footer-grid">
+    <div>
+      {%- if logo != blank -%}
+        {{ logo | image_url: width: 600 | image_tag:
+          class: 'footer-logo',
+          loading: 'lazy',
+          alt: shop.name,
+          style: 'width: ' | append: logo_width | append: 'px;'
+        }}
+      {%- else -%}
+        <img class="footer-logo" src="{{ 'lawn-synergy-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" style="width: {{ logo_width }}px;" width="{{ logo_width }}" height="60">
+      {%- endif -%}
     </div>
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'link_list' -%}
+          <div {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.heading }}</h3>
+            {%- assign rows = block.settings.links | newline_to_br | split: '<br />' -%}
+            {%- for row in rows -%}
+              {%- assign trimmed = row | strip -%}
+              {%- if trimmed == blank -%}{%- continue -%}{%- endif -%}
+              {%- assign parts = trimmed | split: '|' -%}
+              {%- assign label = parts[0] | strip -%}
+              {%- assign url = parts[1] | default: '#' | strip -%}
+              <a href="{{ url }}">{{ label }}</a>
+            {%- endfor -%}
+          </div>
+        {%- when 'text' -%}
+          <div {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.heading }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
   </div>
 
-  <div class="lawn-footer__bottom">
-    <div class="lawn-footer__container lawn-footer__bottom-inner">
-      <p class="lawn-footer__copyright">
-        {{ section.settings.copyright | default: '©2026.' }}
-        <strong>{{ section.settings.brand_name | default: shop.name | upcase }}</strong>
-        {{ section.settings.rights | default: 'All Rights Reserved.' }}
-      </p>
-
-      <div class="lawn-footer__payments">
-        {%- if payment_strip != blank -%}
-          {{
-            payment_strip
-            | image_url: width: 600
-            | image_tag:
-              class: 'lawn-footer__payment-strip',
-              loading: 'lazy',
-              alt: 'Payment methods',
-              width: 600,
-              height: 80
-          }}
-        {%- elsif section.settings.show_default_payments -%}
-          {%- if shop.enabled_payment_types != blank -%}
-            {%- for type in shop.enabled_payment_types -%}
-              {{ type | payment_type_svg_tag: class: 'lawn-footer__payment-icon' }}
-            {%- endfor -%}
-          {%- else -%}
-            <img
-              class="lawn-footer__payment-strip"
-              src="{{ 'payment-strip.png' | asset_url }}"
-              alt="Payment methods"
-              loading="lazy"
-              width="460"
-              height="46"
-            >
-          {%- endif -%}
-        {%- endif -%}
-      </div>
-    </div>
+  <div class="footer-bottom container">
+    <p>{{ section.settings.copyright | default: '©2026.' }} <strong>{{ section.settings.brand_name | default: shop.name | upcase }}</strong> {{ section.settings.rights | default: 'All Rights Reserved.' }}</p>
+    {%- if payment_strip != blank -%}
+      {{ payment_strip | image_url: width: 600 | image_tag:
+        loading: 'lazy',
+        alt: 'Payment methods',
+        width: 600,
+        height: 60
+      }}
+    {%- elsif section.settings.show_default_payments -%}
+      <img src="{{ 'payment-strip.png' | asset_url }}" alt="Payment methods" loading="lazy" width="460" height="46">
+    {%- endif -%}
   </div>
 </footer>
-
-<style>
-  #shopify-section-{{ section.id }} {
-    background: var(--footer-bg, #030b07);
-  }
-
-  #lawn-footer-{{ section.id }} {
-    position: relative;
-    z-index: 1;
-    background: var(--footer-bg, #030b07);
-    color: var(--footer-text, #ffffff);
-    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: geometricPrecision;
-  }
-
-  #lawn-footer-{{ section.id }} *,
-  #lawn-footer-{{ section.id }} *::before,
-  #lawn-footer-{{ section.id }} *::after {
-    box-sizing: border-box;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__container {
-    width: min(100% - 110px, 1260px);
-    margin-inline: auto;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__main {
-    padding: 54px 0 58px;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__grid {
-    display: grid;
-    grid-template-columns: 220px 170px 210px minmax(300px, 1fr);
-    column-gap: 78px;
-    align-items: start;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__brand {
-    padding-top: 0;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__logo {
-    display: block;
-    width: var(--footer-logo-width, 200px);
-    height: auto;
-    max-width: 100%;
-    object-fit: contain;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__heading {
-    margin: 0 0 22px;
-    color: var(--footer-text, #ffffff);
-    font-family: "Poppins", var(--font-heading-family), Arial, sans-serif;
-    font-size: 17px;
-    line-height: 1.25;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__nav {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__link {
-    display: inline-flex;
-    width: fit-content;
-    color: var(--footer-text, #ffffff);
-    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.35;
-    font-weight: 400;
-    text-decoration: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__link:hover {
-    opacity: 0.78;
-    transform: translateX(2px);
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__copy {
-    margin: 0;
-    max-width: 430px;
-    color: var(--footer-text, #ffffff);
-    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.65;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__bottom {
-    border-top: 1px solid var(--footer-border, rgba(255, 255, 255, 0.12));
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__bottom-inner {
-    min-height: 82px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 28px;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__copyright {
-    margin: 0;
-    color: var(--footer-muted, rgba(255, 255, 255, 0.82));
-    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.4;
-    font-weight: 400;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__copyright strong {
-    color: var(--footer-text, #ffffff);
-    font-weight: 800;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__payments {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 7px;
-    min-height: 28px;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__payment-strip {
-    display: block;
-    width: auto;
-    max-width: 320px;
-    height: 28px;
-    object-fit: contain;
-  }
-
-  #lawn-footer-{{ section.id }} .lawn-footer__payment-icon {
-    display: block;
-    width: 38px;
-    height: 24px;
-    border-radius: 3px;
-  }
-
-  @media screen and (max-width: 1199px) {
-    #lawn-footer-{{ section.id }} .lawn-footer__container {
-      width: min(100% - 64px, 1040px);
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__grid {
-      grid-template-columns: 200px 150px 190px minmax(280px, 1fr);
-      column-gap: 48px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__copy {
-      max-width: 390px;
-    }
-  }
-
-  @media screen and (max-width: 899px) {
-    #lawn-footer-{{ section.id }} .lawn-footer__main {
-      padding: 46px 0 44px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 38px 44px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__brand {
-      grid-column: 1 / -1;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__column--brand-copy {
-      grid-column: 1 / -1;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__bottom-inner {
-      min-height: auto;
-      padding: 24px 0;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__payments {
-      justify-content: flex-start;
-      flex-wrap: wrap;
-    }
-  }
-
-  @media screen and (max-width: 575px) {
-    #lawn-footer-{{ section.id }} .lawn-footer__container {
-      width: calc(100% - 36px);
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__main {
-      padding: 40px 0 38px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__grid {
-      grid-template-columns: 1fr;
-      gap: 34px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__logo {
-      width: min(var(--footer-logo-width, 180px), 190px);
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__heading {
-      margin-bottom: 18px;
-      font-size: 15px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__nav {
-      gap: 14px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__link,
-    #lawn-footer-{{ section.id }} .lawn-footer__copy {
-      font-size: 15px;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__copy {
-      line-height: 1.6;
-    }
-
-    #lawn-footer-{{ section.id }} .lawn-footer__copyright {
-      font-size: 13px;
-    }
-  }
-</style>
 
 {% schema %}
 {
@@ -371,40 +76,11 @@
     {
       "type": "range",
       "id": "logo_width",
-      "label": "Logo width",
-      "min": 120,
-      "max": 220,
-      "step": 2,
-      "unit": "px",
+      "label": "Logo width (px)",
+      "min": 80,
+      "max": 320,
+      "step": 4,
       "default": 200
-    },
-    {
-      "type": "header",
-      "content": "Colors"
-    },
-    {
-      "type": "color",
-      "id": "footer_bg",
-      "label": "Footer background",
-      "default": "#030B07"
-    },
-    {
-      "type": "color",
-      "id": "footer_text",
-      "label": "Text color",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "footer_muted",
-      "label": "Muted text color",
-      "default": "#D9DED9"
-    },
-    {
-      "type": "color",
-      "id": "footer_border",
-      "label": "Border color",
-      "default": "#1A211D"
     },
     {
       "type": "header",
@@ -436,7 +112,7 @@
     {
       "type": "checkbox",
       "id": "show_default_payments",
-      "label": "Show default payment icons when none uploaded",
+      "label": "Show default payment strip when none uploaded",
       "default": true
     }
   ],
@@ -454,7 +130,7 @@
         {
           "type": "textarea",
           "id": "links",
-          "label": "Links, one per line. Format: Label|URL",
+          "label": "Links (one per line, format: Label|URL)",
           "default": "Home|/\nAbout Us|/pages/about\nContact|/pages/contact"
         }
       ]
@@ -482,27 +158,9 @@
     {
       "name": "Lawn — Footer",
       "blocks": [
-        {
-          "type": "link_list",
-          "settings": {
-            "heading": "QUICK LINKS",
-            "links": "Home|/\nAbout Us|/pages/about\nContact|/pages/contact"
-          }
-        },
-        {
-          "type": "link_list",
-          "settings": {
-            "heading": "BRAND POLICIES",
-            "links": "Privacy Policy|/policies/privacy-policy\nRefund Policy|/policies/refund-policy\nShipping Policy|/policies/shipping-policy\nTerms of Service|/policies/terms-of-service"
-          }
-        },
-        {
-          "type": "text",
-          "settings": {
-            "heading": "OUR BRAND",
-            "text": "Lawn Synergy was built by real lawn and landscape professionals with 25+ years of experience managing over 2,000 high-end residential properties. We're not a big-box brand we're turf experts who want to help you get the lawn you deserve."
-          }
-        }
+        { "type": "link_list", "settings": { "heading": "QUICK LINKS", "links": "Home|/\nAbout Us|/pages/about\nContact|/pages/contact" } },
+        { "type": "link_list", "settings": { "heading": "BRAND POLICIES", "links": "Privacy Policy|/policies/privacy-policy\nRefund Policy|/policies/refund-policy\nShipping Policy|/policies/shipping-policy\nTerms of Service|/policies/terms-of-service" } },
+        { "type": "text", "settings": { "heading": "OUR BRAND", "text": "Lawn Synergy was built by real lawn and landscape professionals with 25+ years of experience managing over 2,000 high-end residential properties. We're not a big-box brand we're turf experts who want to help you get the lawn you deserve." } }
       ]
     }
   ]
