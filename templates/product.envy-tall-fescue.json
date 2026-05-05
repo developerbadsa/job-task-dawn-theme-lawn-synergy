@@ -292,10 +292,31 @@
           "settings": {
             "text": "You Want A Darker Green, More Attractive Lawn"
           }
+        },
+        "point_4gLHW8": {
+          "type": "point",
+          "settings": {
+            "text": "Your lawn feels thin or uneven"
+          }
+        },
+        "point_GQVhzx": {
+          "type": "point",
+          "settings": {
+            "text": "You want better density and a more uniform finish"
+          }
+        },
+        "point_4wkhTP": {
+          "type": "point",
+          "settings": {
+            "text": "You want better than basic seed"
+          }
         }
       },
       "block_order": [
-        "point_QnK734"
+        "point_QnK734",
+        "point_4gLHW8",
+        "point_GQVhzx",
+        "point_4wkhTP"
       ],
       "settings": {
         "main_image": "shopify://shop_images/a2a48fb8dc1e6454669f19bb9abc157c34f5b533.png",
