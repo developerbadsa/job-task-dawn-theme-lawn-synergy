@@ -1,147 +1,108 @@
 {%- liquid
-  # ===== Resolve the product (global > section picker) =====
-  assign current_product = nil
+  # =========================================================
+  # Lawn Synergy Dynamic Product Hero
+  # File: sections/lawn-product-hero.liquid
+  # Dynamic source priority:
+  # 1) Product page product object
+  # 2) Section selected product
+  # 3) Section fallback settings / blocks
+  # =========================================================
 
-  if product != blank and product.id != blank and product.handle != blank
+  assign current_product = null
+
+  if product != blank and product.id != blank
     assign current_product = product
-  endif
-
-  if current_product == nil and section.settings.product != blank
-    assign picked_product = section.settings.product
-    if picked_product.id != blank and picked_product.handle != blank
-      assign current_product = picked_product
-    endif
+  elsif section.settings.product != blank
+    assign current_product = section.settings.product
   endif
 
   assign has_product = false
-  if current_product != nil and current_product != blank and current_product.id != blank
+  if current_product != null and current_product.id != blank
     assign has_product = true
   endif
 
-  assign selected_variant = nil
+  assign selected_variant = null
   if has_product
     assign selected_variant = current_product.selected_or_first_available_variant
-  endif
-
-  # ===== Block buckets =====
-  assign thumb_blocks = section.blocks | where: 'type', 'thumb'
-  assign size_blocks = section.blocks | where: 'type', 'size'
-  assign trust_blocks = section.blocks | where: 'type', 'trust'
-  assign feature_blocks = section.blocks | where: 'type', 'feature'
-  assign accordion_blocks = section.blocks | where: 'type', 'accordion'
-
-  # ===== Mode flags =====
-  assign use_product_media = section.settings.use_product_media
-  assign use_product_title = section.settings.use_product_title
-  assign use_product_description = section.settings.use_product_description
-  assign use_size_block_labels = section.settings.use_size_block_labels
-
-  # ===== Title =====
-  if has_product and use_product_title
-    assign hero_title = current_product.title
-  else
-    assign hero_title = section.settings.title | default: 'Premium Product'
-  endif
-
-  # ===== Lead description (metafield > product description > section fallback) =====
-  assign hero_lead = blank
-  assign hero_lead_is_html = false
-
-  if has_product and use_product_description
-    assign meta_summary = current_product.metafields.lawn.short_summary
-    if meta_summary != blank
-      assign hero_lead = meta_summary | strip_html | truncatewords: 36
-    elsif current_product.description != blank
-      assign hero_lead = current_product.description | strip_html | truncatewords: 36
+    if selected_variant == blank
+      assign selected_variant = current_product.variants.first
     endif
   endif
 
-  if hero_lead == blank
-    assign hero_lead = section.settings.lead | default: 'Premium product description.'
+  assign thumb_blocks = section.blocks | where: 'type', 'thumb'
+  assign trust_blocks = section.blocks | where: 'type', 'trust'
+  assign feature_blocks = section.blocks | where: 'type', 'feature'
+  assign size_blocks = section.blocks | where: 'type', 'size'
+  assign accordion_blocks = section.blocks | where: 'type', 'accordion'
+
+  assign use_product_media = section.settings.use_product_media
+  assign use_product_title = section.settings.use_product_title
+  assign use_product_description = section.settings.use_product_description
+
+  assign hero_title = section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend'
+  if has_product and use_product_title
+    assign hero_title = current_product.title
   endif
 
-  # ===== Main image =====
-  assign main_image = nil
-  assign main_image_from_product = false
-  if has_product and use_product_media and current_product.featured_image != blank
+  assign hero_lead = section.settings.lead | default: 'Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.'
+  if has_product and use_product_description
+    assign meta_summary = current_product.metafields.lawn.short_summary
+    if meta_summary != blank
+      assign hero_lead = meta_summary | metafield_text
+    elsif current_product.description != blank
+      assign hero_lead = current_product.description | strip_html | truncatewords: 28
+    endif
+  endif
+
+  assign rating_stars = section.settings.rating_stars | default: '★★★★★'
+  assign rating_text = section.settings.rating_text | default: 'Rated By 12,520+ Customers'
+  if has_product
+    assign meta_rating_stars = current_product.metafields.lawn.rating_stars
+    assign meta_rating_text = current_product.metafields.lawn.rating_text
+    assign meta_rating_count = current_product.metafields.lawn.rating_count
+
+    if meta_rating_stars != blank
+      assign rating_stars = meta_rating_stars | metafield_text
+    endif
+
+    if meta_rating_text != blank
+      assign rating_text = meta_rating_text | metafield_text
+    elsif meta_rating_count != blank
+      assign rating_count_text = meta_rating_count | metafield_text
+      assign rating_text = 'Rated By ' | append: rating_count_text | append: '+ Customers'
+    endif
+  endif
+
+  assign main_image = null
+  assign main_image_alt = hero_title
+  if has_product and use_product_media and current_product.featured_media != blank and current_product.featured_media.preview_image != blank
+    assign main_image = current_product.featured_media.preview_image
+    assign main_image_alt = current_product.featured_media.alt | default: current_product.title
+  elsif has_product and use_product_media and current_product.featured_image != blank
     assign main_image = current_product.featured_image
-    assign main_image_from_product = true
+    assign main_image_alt = current_product.title
   elsif section.settings.main_image != blank
     assign main_image = section.settings.main_image
+    assign main_image_alt = section.settings.main_image_alt | default: hero_title
   endif
 
-  # ===== Gallery =====
-  assign product_images_count = 0
-  if has_product
-    assign product_images_count = current_product.media.size
-  endif
-  assign show_product_media_gallery = false
-  if has_product and use_product_media and product_images_count > 0
-    assign show_product_media_gallery = true
+  assign show_product_gallery = false
+  if has_product and use_product_media and current_product.media.size > 0
+    assign show_product_gallery = true
   endif
 
-  # ===== Size selector logic =====
   assign show_size_area = true
   if has_product and current_product.has_only_default_variant
     assign show_size_area = false
   endif
+
   assign use_real_variants = false
-  if has_product and current_product.variants.size > 0 and show_size_area
+  if has_product and show_size_area and current_product.variants.size > 0
     assign use_real_variants = true
   endif
 
-  # ===== Price fallbacks (no product linked) =====
-  assign sale_price_text = section.settings.sale_price | default: '$49.99'
-  assign old_price_text = section.settings.old_price | default: '$56.25'
-
-  # ===== Rating (metafield > section fallback) =====
-  assign rating_value = blank
-  assign rating_text_value = blank
-
-  if has_product
-    assign meta_rating_stars = current_product.metafields.lawn.rating_stars
-    if meta_rating_stars != blank
-      assign rating_value = meta_rating_stars
-    else
-      assign meta_rating = current_product.metafields.lawn.rating
-      if meta_rating != blank
-        assign rating_number = meta_rating | times: 1.0
-        assign rating_int = rating_number | floor
-        assign filled = ''
-        for i in (1..rating_int)
-          assign filled = filled | append: '★'
-        endfor
-        assign empties = 5 | minus: rating_int
-        if empties > 0
-          for i in (1..empties)
-            assign filled = filled | append: '☆'
-          endfor
-        endif
-        assign rating_value = filled
-      endif
-    endif
-
-    assign meta_rating_text = current_product.metafields.lawn.rating_text
-    if meta_rating_text != blank
-      assign rating_text_value = meta_rating_text
-    else
-      assign meta_rating_count = current_product.metafields.lawn.rating_count
-      if meta_rating_count != blank
-        assign rating_text_value = 'Rated By ' | append: meta_rating_count | append: '+ Customers'
-      endif
-    endif
-  endif
-
-  if rating_value == blank
-    assign rating_value = section.settings.rating_stars | default: '★★★★★'
-  endif
-  if rating_text_value == blank
-    assign rating_text_value = section.settings.rating_text | default: 'Rated By 12,520+ Customers'
-  endif
-
-  # ===== Features (metafield list > feature blocks) =====
   assign features_from_metafield = false
-  assign features_list = nil
+  assign features_list = null
   if has_product
     assign meta_features = current_product.metafields.lawn.features
     if meta_features != blank and meta_features.value != blank
@@ -150,542 +111,1540 @@
     endif
   endif
 
-  # ===== Urgency text (metafield > section) =====
-  assign urgency_text = section.settings.urgency_text
-  if has_product
-    assign meta_urgency = current_product.metafields.lawn.urgency_text
-    if meta_urgency != blank
-      assign urgency_text = meta_urgency
-    endif
+  assign urgency_text = section.settings.urgency_text | default: 'Selling Fast'
+  if has_product and current_product.metafields.lawn.urgency_text != blank
+    assign urgency_text = current_product.metafields.lawn.urgency_text | metafield_text
   endif
 
-  # ===== Vendor / SKU display flags =====
-  assign show_vendor = section.settings.show_vendor
-  assign show_sku = section.settings.show_sku
+  assign fallback_sale_price = section.settings.sale_price | default: '$49.99'
+  assign fallback_compare_price = section.settings.compare_price | default: '$56.25'
 -%}
 
-<section class="hero product-section container" data-lawn-hero data-section-id="{{ section.id }}">
-  <div class="product-media">
-    <div class="gallery">
-      <div class="thumbs" aria-label="Product gallery thumbnails">
-        {%- if show_product_media_gallery -%}
-          {%- for media in current_product.media -%}
-            {%- if media.preview_image != blank -%}
-              <button
-                class="thumb{% if forloop.first %} is-active{% endif %}"
-                type="button"
-                data-thumb-image="{{ media.preview_image | image_url: width: 1200 }}"
-                data-thumb-alt="{{ media.alt | default: current_product.title | escape }}"
-              >
-                {{ media.preview_image | image_url: width: 200 | image_tag:
-                  loading: 'lazy',
-                  alt: media.alt | default: current_product.title,
-                  width: 200,
-                  height: 200
-                }}
-              </button>
-            {%- endif -%}
+<section
+  id="LawnFigmaProduct-{{ section.id }}"
+  class="lawn-figma-product"
+  data-lawn-figma-product
+  data-section-id="{{ section.id }}"
+>
+  <div class="lawn-figma-product__inner">
+    <div class="lawn-figma-product__media">
+      <div class="lawn-figma-gallery">
+        <div class="lawn-figma-gallery__thumbs" aria-label="Product media thumbnails">
+          {%- if show_product_gallery -%}
+            {%- for media in current_product.media limit: section.settings.max_thumbnails -%}
+              {%- if media.preview_image != blank -%}
+                <button
+                  class="lawn-figma-thumb{% if forloop.first %} is-active{% endif %}"
+                  type="button"
+                  data-gallery-thumb
+                  data-main-image="{{ media.preview_image | image_url: width: 1200 }}"
+                  data-main-alt="{{ media.alt | default: current_product.title | escape }}"
+                  aria-label="View image {{ forloop.index }}"
+                >
+                  {{
+                    media.preview_image
+                    | image_url: width: 180
+                    | image_tag: loading: 'lazy', alt: media.alt
+                    | default: current_product.title, widths: '90, 140, 180', sizes: '76px'
+                  }}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- else -%}
+            {%- for block in thumb_blocks limit: section.settings.max_thumbnails -%}
+              {%- liquid
+                assign thumb_image = block.settings.image
+                assign thumb_alt = block.settings.alt | default: hero_title
+              -%}
+              {%- if thumb_image != blank -%}
+                <button
+                  class="lawn-figma-thumb{% if forloop.first %} is-active{% endif %}"
+                  type="button"
+                  data-gallery-thumb
+                  data-main-image="{{ thumb_image | image_url: width: 1200 }}"
+                  data-main-alt="{{ thumb_alt | escape }}"
+                  aria-label="View image {{ forloop.index }}"
+                  {{ block.shopify_attributes }}
+                >
+                  {{
+                    thumb_image
+                    | image_url: width: 180
+                    | image_tag: loading: 'lazy', alt: thumb_alt, widths: '90, 140, 180', sizes: '76px'
+                  }}
+                </button>
+              {%- endif -%}
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+
+        <div class="lawn-figma-gallery__main">
+          {%- if main_image != blank -%}
+            <img
+              src="{{ main_image | image_url: width: 1200 }}"
+              alt="{{ main_image_alt | escape }}"
+              width="1200"
+              height="1200"
+              loading="eager"
+              data-main-image-target
+            >
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          {%- endif -%}
+        </div>
+      </div>
+
+      {%- if section.settings.show_dots -%}
+        <div class="lawn-figma-dots" aria-hidden="true">
+          {%- for i in (1..5) -%}
+            <span class="{% if i == section.settings.active_dot %}is-active{% endif %}"></span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_trust_badges -%}
+        <div class="lawn-figma-trust" aria-label="Store benefits">
+          {%- for block in trust_blocks -%}
+            <div class="lawn-figma-trust__item" {{ block.shopify_attributes }}>
+              <span class="lawn-figma-trust__seal" aria-hidden="true">
+                {%- case block.settings.icon -%}
+                  {%- when 'quality' -%}
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M12 2.5l2.4 2 3.1-.1 1.1 2.9 2.5 1.9-1 3 1 3-2.5 1.9-1.1 2.9-3.1-.1-2.4 2-2.4-2-3.1.1-1.1-2.9L2.9 15.2l1-3-1-3 2.5-1.9 1.1-2.9 3.1.1 2.4-2z"/><path d="M8 12.3l2.5 2.5L16.4 9"/>
+                    </svg>
+                  {%- when 'secure' -%}
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M7 10V7a5 5 0 0 1 10 0v3"/><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M12 15v2"/>
+                    </svg>
+                  {%- when 'return' -%}
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M20 7v5h-5"/><path d="M19 12a7 7 0 1 1-2-5"/><path d="M8 12h5"/>
+                    </svg>
+                  {%- else -%}
+                    <svg viewBox="0 0 24 24" focusable="false">
+                      <path d="M3 7h11v9H3z"/><path d="M14 10h3.5l2.5 3v3h-6z"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/><path d="M5 10h5M5 13h4"/>
+                    </svg>
+                {%- endcase -%}
+              </span>
+              <strong>{{ block.settings.label }}</strong>
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="lawn-figma-product__info">
+      {%- if section.settings.show_rating -%}
+        <div class="lawn-figma-rating">
+          <span class="lawn-figma-rating__stars" aria-hidden="true">{{ rating_stars }}</span>
+          <span class="lawn-figma-rating__text">{{ rating_text }}</span>
+        </div>
+      {%- endif -%}
+
+      <h1 class="lawn-figma-title">{{ hero_title }}</h1>
+
+      {%- if hero_lead != blank -%}
+        <p class="lawn-figma-lead">{{ hero_lead }}</p>
+      {%- endif -%}
+
+      <ul class="lawn-figma-features" role="list">
+        {%- if features_from_metafield -%}
+          {%- for feature in features_list -%}
+            <li>
+              <span aria-hidden="true">✓</span>
+              <strong>{{ feature }}</strong>
+            </li>
           {%- endfor -%}
         {%- else -%}
-          {%- for block in thumb_blocks -%}
+          {%- for block in feature_blocks -%}
+            <li {{ block.shopify_attributes }}>
+              <span aria-hidden="true">✓</span>
+              <strong>{{ block.settings.text }}</strong>
+            </li>
+          {%- endfor -%}
+        {%- endif -%}
+      </ul>
+
+      {%- if section.settings.show_sku and has_product and selected_variant.sku != blank -%}
+        <p class="lawn-figma-sku" data-sku>SKU: {{ selected_variant.sku }}</p>
+      {%- endif -%}
+
+      <div class="lawn-figma-price">
+        {%- if has_product and selected_variant != blank -%}
+          <span class="lawn-figma-price__sale" data-product-price>{{ selected_variant.price | money }}</span>
+          {%- if selected_variant.compare_at_price > selected_variant.price -%}
+            <span class="lawn-figma-price__compare" data-product-compare-price>
+              {{- selected_variant.compare_at_price | money -}}
+            </span>
+          {%- else -%}
+            <span class="lawn-figma-price__compare" data-product-compare-price hidden></span>
+          {%- endif -%}
+        {%- else -%}
+          <span class="lawn-figma-price__sale">{{ fallback_sale_price }}</span>
+          <span class="lawn-figma-price__compare">{{ fallback_compare_price }}</span>
+        {%- endif -%}
+      </div>
+
+      {%- if show_size_area -%}
+        <div class="lawn-figma-size">
+          <h2>{{ section.settings.size_heading }}</h2>
+          <div
+            class="lawn-figma-size__grid"
+            role="radiogroup"
+            aria-label="{{ section.settings.size_heading | escape }}"
+          >
+            {%- if use_real_variants -%}
+              {%- for variant in current_product.variants limit: section.settings.max_variant_cards -%}
+                {%- liquid
+                  assign card_index = forloop.index0
+                  assign fallback_size_block = size_blocks[card_index]
+
+                  assign is_selected = false
+                  if selected_variant.id == variant.id
+                    assign is_selected = true
+                  endif
+
+                  assign size_label = variant.title
+                  if variant.metafields.lawn.size_label != blank
+                    assign size_label = variant.metafields.lawn.size_label | metafield_text
+                  elsif fallback_size_block.settings.size != blank and section.settings.force_block_size_labels
+                    assign size_label = fallback_size_block.settings.size
+                  endif
+
+                  assign coverage_text = ''
+                  if variant.metafields.lawn.coverage != blank
+                    assign coverage_text = variant.metafields.lawn.coverage | metafield_text
+                  elsif fallback_size_block.settings.coverage != blank
+                    assign coverage_text = fallback_size_block.settings.coverage
+                  endif
+
+                  assign badge_text = ''
+                  if variant.metafields.lawn.badge != blank
+                    assign badge_text = variant.metafields.lawn.badge | metafield_text
+                  elsif fallback_size_block.settings.badge != blank
+                    assign badge_text = fallback_size_block.settings.badge
+                  endif
+
+                  assign card_price_text = variant.price | money
+                  if variant.metafields.lawn.card_price != blank
+                    assign card_price_text = variant.metafields.lawn.card_price | metafield_text
+                  endif
+                -%}
+
+                <button
+                  type="button"
+                  class="lawn-figma-size-card{% if is_selected %} is-selected{% endif %}{% if badge_text != blank %} has-badge{% endif %}{% unless variant.available %} is-unavailable{% endunless %}"
+                  role="radio"
+                  aria-checked="{% if is_selected %}true{% else %}false{% endif %}"
+                  data-variant-card
+                  data-variant-id="{{ variant.id }}"
+                  data-variant-price="{{ variant.price | money | escape }}"
+                  data-variant-compare="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money | escape }}{% endif %}"
+                  data-variant-available="{% if variant.available %}true{% else %}false{% endif %}"
+                  data-variant-sku="{{ variant.sku | escape }}"
+                  data-variant-image="{% if variant.featured_media != blank and variant.featured_media.preview_image != blank %}{{ variant.featured_media.preview_image | image_url: width: 1200 }}{% endif %}"
+                  data-variant-alt="{{ variant.featured_media.alt | default: variant.title | escape }}"
+                >
+                  {%- if badge_text != blank -%}
+                    <em>{{ badge_text }}</em>
+                  {%- endif -%}
+                  <strong>{{ size_label }}</strong>
+                  <span>{{ coverage_text | default: '&nbsp;' }}</span>
+                  <b>{{ card_price_text }}</b>
+                </button>
+              {%- endfor -%}
+            {%- else -%}
+              {%- for block in size_blocks -%}
+                <button
+                  type="button"
+                  class="lawn-figma-size-card{% if forloop.first %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}"
+                  role="radio"
+                  aria-checked="{% if forloop.first %}true{% else %}false{% endif %}"
+                  data-static-size-card
+                  {{ block.shopify_attributes }}
+                >
+                  {%- if block.settings.badge != blank -%}
+                    <em>{{ block.settings.badge }}</em>
+                  {%- endif -%}
+                  <strong>{{ block.settings.size }}</strong>
+                  <span>{{ block.settings.coverage }}</span>
+                  <b>{{ block.settings.price }}</b>
+                </button>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        </div>
+      {%- endif -%}
+
+      {%- if has_product and selected_variant != blank -%}
+        {%- assign form_id = 'lawn-figma-product-form-' | append: section.id -%}
+        {%- form 'product', current_product, id: form_id, class: 'lawn-figma-form', novalidate: 'novalidate' -%}
+          <input type="hidden" name="id" value="{{ selected_variant.id }}" data-variant-input>
+          <input type="hidden" name="quantity" value="{{ section.settings.default_quantity }}" data-quantity-input>
+
+          <div class="lawn-figma-buy">
+            <label>{{ section.settings.quantity_label }}</label>
+            <div class="lawn-figma-qty" aria-label="Quantity selector">
+              <button type="button" data-qty-minus aria-label="Decrease quantity">−</button>
+              <span data-qty-value>{{ section.settings.default_quantity }}</span>
+              <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+            </div>
+            {%- if urgency_text != blank -%}
+              <span class="lawn-figma-selling">{{ urgency_text }}</span>
+            {%- endif -%}
+          </div>
+
+          {%- if section.settings.program_text != blank -%}
+            <p class="lawn-figma-program">
+              {{ section.settings.program_text }}
+              {%- if section.settings.program_link != blank -%}
+                <a href="{{ section.settings.program_link }}">{{ section.settings.program_link_label }}</a>
+              {%- endif -%}
+            </p>
+          {%- endif -%}
+
+          <button
+            class="lawn-figma-cart"
+            type="submit"
+            name="add"
+            data-add-to-cart
+            data-add-label="{{ section.settings.cta_label | escape }}"
+            data-sold-out-label="{{ section.settings.sold_out_label | escape }}"
+            {% unless selected_variant.available %}
+              disabled
+            {% endunless %}
+          >
+            {%- if selected_variant.available -%}
+              {{ section.settings.cta_label }}
+            {%- else -%}
+              {{ section.settings.sold_out_label }}
+            {%- endif -%}
+          </button>
+        {%- endform -%}
+      {%- else -%}
+        <div class="lawn-figma-form">
+          <div class="lawn-figma-buy">
+            <label>{{ section.settings.quantity_label }}</label>
+            <div class="lawn-figma-qty" aria-label="Quantity selector">
+              <button type="button" data-qty-minus aria-label="Decrease quantity">−</button>
+              <span data-qty-value>{{ section.settings.default_quantity }}</span>
+              <button type="button" data-qty-plus aria-label="Increase quantity">+</button>
+            </div>
+            <span class="lawn-figma-selling">{{ urgency_text }}</span>
+          </div>
+
+          {%- if section.settings.program_text != blank -%}
+            <p class="lawn-figma-program">
+              {{ section.settings.program_text }}
+              {%- if section.settings.program_link != blank -%}
+                <a href="{{ section.settings.program_link }}">{{ section.settings.program_link_label }}</a>
+              {%- endif -%}
+            </p>
+          {%- endif -%}
+
+          <button class="lawn-figma-cart" type="button" disabled>{{ section.settings.cta_label }}</button>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_shipping_line -%}
+        <div class="lawn-figma-shipping">
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 7h11v8H3z"/><path d="M14 10h3.5l2.5 3v2h-6z"/><circle cx="7" cy="16.5" r="1.5"/><circle cx="17.5" cy="16.5" r="1.5"/>
+            </svg>
+            {{ section.settings.shipping_left }}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/>
+            </svg>
+            {{ section.settings.shipping_right }}
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_payment_icons -%}
+        <div class="lawn-figma-payments" aria-label="Accepted payment methods">
+          {%- if section.settings.use_shopify_payment_icons and shop.enabled_payment_types.size > 0 -%}
+            {%- for type in shop.enabled_payment_types limit: 6 -%}
+              <span class="lawn-figma-payment-svg">{{ type | payment_type_svg_tag }}</span>
+            {%- endfor -%}
+          {%- else -%}
+            {%- assign payment_labels = section.settings.payment_labels | split: ',' -%}
+            {%- for label in payment_labels -%}
+              <span>{{ label | strip }}</span>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if accordion_blocks.size > 0 -%}
+        <div class="lawn-figma-accordions">
+          {%- for block in accordion_blocks -%}
             {%- liquid
-              assign thumb_idx = forloop.index0
-              assign thumb_image = block.settings.image
-              assign thumb_from_asset = false
+              assign accordion_key = block.settings.metafield_key
+              assign accordion_mf = blank
 
-              if thumb_image == blank and has_product and product_images_count > thumb_idx
-                assign product_media_item = current_product.media[thumb_idx]
-                if product_media_item != blank and product_media_item.preview_image != blank
-                  assign thumb_image = product_media_item.preview_image
-                endif
+              if accordion_key == blank
+                assign title_down = block.settings.title | downcase | strip
+                case title_down
+                  when 'product details'
+                    assign accordion_key = 'product_details'
+                  when 'spreader settings'
+                    assign accordion_key = 'spreader_settings'
+                  when "what's inside the blend?"
+                    assign accordion_key = 'whats_inside'
+                  when 'whats inside the blend'
+                    assign accordion_key = 'whats_inside'
+                  when 'what’s inside the blend?'
+                    assign accordion_key = 'whats_inside'
+                  when 'what’s inside the blend'
+                    assign accordion_key = 'whats_inside'
+                  when 'when to use'
+                    assign accordion_key = 'when_to_use'
+                  when 'grow a thicker greener lawn'
+                    assign accordion_key = 'grow_tips'
+                endcase
               endif
 
-              if thumb_image == blank
-                assign thumb_from_asset = true
-                assign default_thumb_name = 'thumb-' | append: forloop.index | append: '.png'
-              endif
-
-              if thumb_from_asset
-                assign large_url = default_thumb_name | asset_url
-              else
-                assign large_url = thumb_image | image_url: width: 1200
+              if has_product and accordion_key != blank
+                assign accordion_mf = current_product.metafields.lawn[accordion_key]
               endif
             -%}
-            <button
-              class="thumb{% if forloop.first %} is-active{% endif %}"
-              type="button"
-              data-thumb-image="{{ large_url }}"
-              data-thumb-alt="{{ block.settings.alt | default: 'Product gallery thumbnail' | escape }}"
-              {{ block.shopify_attributes }}
-            >
-              {%- if thumb_from_asset -%}
-                <img src="{{ default_thumb_name | asset_url }}"
-                     alt="{{ block.settings.alt | default: 'Product gallery thumbnail' }}"
-                     width="200" height="200" loading="lazy">
-              {%- else -%}
-                {{ thumb_image | image_url: width: 200 | image_tag:
-                  loading: 'lazy',
-                  alt: block.settings.alt | default: 'Product gallery thumbnail',
-                  width: 200,
-                  height: 200
-                }}
-              {%- endif -%}
-            </button>
+
+            <details class="lawn-figma-accordion" {{ block.shopify_attributes }}>
+              <summary>
+                <span class="lawn-figma-accordion__icon" aria-hidden="true">
+                  {%- case block.settings.icon -%}
+                    {%- when 'spreader' -%}
+                      <svg viewBox="0 0 24 24">
+                        <path d="M7 9h10l-1 7H8L7 9z"/><path d="M9 9V6h6v3"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/>
+                      </svg>
+                    {%- when 'blend' -%}
+                      <svg viewBox="0 0 24 24">
+                        <path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M4 7.5l8 4.5 8-4.5"/><path d="M12 12v9"/>
+                      </svg>
+                    {%- when 'calendar' -%}
+                      <svg viewBox="0 0 24 24">
+                        <rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/><path d="M8 14l2 2 5-5"/>
+                      </svg>
+                    {%- when 'grow' -%}
+                      <svg viewBox="0 0 24 24">
+                        <path d="M12 20V9"/><path d="M12 12c-4 0-6-2-7-6 4 0 7 2 7 6z"/><path d="M12 15c4 0 6-2 7-6-4 0-7 2-7 6z"/>
+                      </svg>
+                    {%- else -%}
+                      <svg viewBox="0 0 24 24">
+                        <path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>
+                      </svg>
+                  {%- endcase -%}
+                </span>
+                <span class="lawn-figma-accordion__title">{{ block.settings.title }}</span>
+                <span class="lawn-figma-accordion__chev" aria-hidden="true"></span>
+              </summary>
+
+              <div class="lawn-figma-accordion__content rte">
+                {%- if block.settings.content != blank -%}
+                  {{ block.settings.content }}
+                {%- elsif accordion_mf != blank -%}
+                  {{ accordion_mf | metafield_tag }}
+                {%- elsif has_product
+                  and current_product.description != blank
+                  and accordion_key == 'product_details'
+                -%}
+                  {{ current_product.description }}
+                {%- endif -%}
+              </div>
+            </details>
           {%- endfor -%}
-        {%- endif -%}
-      </div>
-
-      <div class="main-product-card" data-lawn-main-image>
-        {%- if main_image != blank -%}
-          {%- if main_image_from_product -%}
-            {{ main_image | image_url: width: 1200 | image_tag:
-              loading: 'eager',
-              alt: current_product.title,
-              width: 1200,
-              height: 1200
-            }}
-          {%- else -%}
-            {{ main_image | image_url: width: 1200 | image_tag:
-              loading: 'eager',
-              alt: section.settings.main_image_alt | default: hero_title,
-              width: 1200,
-              height: 1200
-            }}
-          {%- endif -%}
-        {%- else -%}
-          <img src="{{ 'envy-tall-fescue-design.png' | asset_url }}"
-               alt="{{ section.settings.main_image_alt | default: hero_title }}"
-               width="1200" height="1200">
-        {%- endif -%}
-      </div>
-    </div>
-
-    {%- if section.settings.show_dots -%}
-      <div class="slider-dots" aria-hidden="true">
-        {%- assign dot_count = section.settings.dot_count | default: 5 -%}
-        {%- assign active_dot = section.settings.active_dot | default: 3 -%}
-        {%- for i in (1..dot_count) -%}
-          <span{% if i == active_dot %} class="active"{% endif %}></span>
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
-
-    {%- if section.settings.show_trust -%}
-      <div class="trust-row">
-        {%- for block in trust_blocks -%}
-          <div class="trust-item" {{ block.shopify_attributes }}>
-            {%- if block.settings.image != blank -%}
-              {{ block.settings.image | image_url: width: 200 | image_tag:
-                loading: 'lazy',
-                class: 'seal-img',
-                alt: '',
-                width: 86,
-                height: 86
-              }}
-            {%- else -%}
-              <img class="seal-img" src="{{ 'trust-shipping.png' | asset_url }}" alt="" width="86" height="86" loading="lazy">
-            {%- endif -%}
-            <strong>{{ block.settings.label }}</strong>
-          </div>
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
-  </div>
-
-  <div class="product-info">
-    {%- if show_vendor and has_product and current_product.vendor != blank -%}
-      <p class="product-vendor">{{ current_product.vendor }}</p>
-    {%- endif -%}
-
-    {%- if section.settings.show_rating -%}
-      <div class="rating">
-        <span class="stars">{{ rating_value }}</span>
-        <span>{{ rating_text_value }}</span>
-      </div>
-    {%- endif -%}
-
-    <h1>{{ hero_title }}</h1>
-
-    {%- if hero_lead_is_html -%}
-      <div class="lead rte">{{ hero_lead }}</div>
-    {%- else -%}
-      <p class="lead">{{ hero_lead }}</p>
-    {%- endif -%}
-
-    <ul class="feature-list">
-      {%- if features_from_metafield -%}
-        {%- for f in features_list -%}
-          <li>{{ f }}</li>
-        {%- endfor -%}
-      {%- else -%}
-        {%- for block in feature_blocks -%}
-          <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
-        {%- endfor -%}
-      {%- endif -%}
-    </ul>
-
-    {%- if show_sku and has_product and selected_variant.sku != blank -%}
-      <p class="product-sku" data-product-sku>SKU: {{ selected_variant.sku }}</p>
-    {%- endif -%}
-
-    <div class="price-row">
-      {%- if has_product -%}
-        <span class="sale-price" data-product-price>{{ selected_variant.price | money }}</span>
-        {%- if selected_variant.compare_at_price > selected_variant.price -%}
-          <span class="old-price" data-product-compare-price>{{ selected_variant.compare_at_price | money }}</span>
-        {%- else -%}
-          <span class="old-price" data-product-compare-price hidden></span>
-        {%- endif -%}
-      {%- else -%}
-        <span class="sale-price">{{ sale_price_text }}</span>
-        {%- if old_price_text != blank -%}
-          <span class="old-price">{{ old_price_text }}</span>
-        {%- endif -%}
-      {%- endif -%}
-    </div>
-
-    {%- if show_size_area -%}
-      <div class="size-area">
-        <h2>{{ section.settings.size_heading | default: 'Select Your Size' }}</h2>
-        <div class="size-grid" role="radiogroup" aria-label="Select size">
-          {%- if use_real_variants -%}
-            {%- for variant in current_product.variants -%}
-              {%- liquid
-                assign vidx = forloop.index0
-                assign sblock = size_blocks[vidx]
-
-                assign is_selected = false
-                if variant.id == selected_variant.id
-                  assign is_selected = true
-                endif
-
-                # Variant label: variant metafield > variant.title > size block fallback
-                assign size_label = variant.title
-                assign meta_size_label = variant.metafields.lawn.size_label
-                if meta_size_label != blank
-                  assign size_label = meta_size_label
-                endif
-                if use_size_block_labels and sblock.settings.size != blank
-                  assign size_label = sblock.settings.size
-                endif
-
-                # Coverage: variant metafield > size block coverage
-                assign meta_coverage = variant.metafields.lawn.coverage
-                if meta_coverage != blank
-                  assign coverage_text = meta_coverage
-                else
-                  assign coverage_text = sblock.settings.coverage
-                endif
-
-                # Badge: variant metafield > size block badge
-                assign meta_badge = variant.metafields.lawn.badge
-                if meta_badge != blank
-                  assign badge_text = meta_badge
-                else
-                  assign badge_text = sblock.settings.badge
-                endif
-              -%}
-              <button
-                class="size-card{% if is_selected %} is-selected{% endif %}{% if badge_text != blank %} has-badge{% endif %}{% unless variant.available %} is-unavailable{% endunless %}"
-                type="button"
-                data-variant-id="{{ variant.id }}"
-                data-variant-price="{{ variant.price | money }}"
-                data-variant-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
-                data-variant-available="{{ variant.available }}"
-                data-variant-sku="{{ variant.sku | escape }}"
-                aria-pressed="{% if is_selected %}true{% else %}false{% endif %}"
-                {%- unless variant.available %} aria-disabled="true"{%- endunless %}
-              >
-                {%- if badge_text != blank -%}
-                  <em>{{ badge_text }}</em>
-                {%- endif -%}
-                <strong>{{ size_label }}</strong>
-                {%- if coverage_text != blank -%}
-                  <span>{{ coverage_text }}</span>
-                {%- else -%}
-                  <span>&nbsp;</span>
-                {%- endif -%}
-                <b>{{ variant.price | money }}</b>
-              </button>
-            {%- endfor -%}
-          {%- else -%}
-            {%- for block in size_blocks -%}
-              <button
-                class="size-card{% if forloop.first %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}"
-                type="button"
-                aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
-                {{ block.shopify_attributes }}
-              >
-                {%- if block.settings.badge != blank -%}
-                  <em>{{ block.settings.badge }}</em>
-                {%- endif -%}
-                <strong>{{ block.settings.size }}</strong>
-                <span>{{ block.settings.coverage }}</span>
-                <b>{{ block.settings.price }}</b>
-              </button>
-            {%- endfor -%}
-          {%- endif -%}
         </div>
-      </div>
-    {%- endif -%}
-
-    {%- if has_product and current_product != blank -%}
-      {%- assign form_id = 'lawn-hero-product-form-' | append: section.id -%}
-      {%- form 'product', current_product, id: form_id, class: 'lawn-product-form', novalidate: 'novalidate' -%}
-        <input type="hidden" name="id" value="{{ selected_variant.id }}" data-product-variant-input>
-        <div class="buy-box">
-          <label for="quantity-{{ section.id }}">{{ section.settings.qty_label | default: 'Quantity:' }}</label>
-          <div class="quantity">
-            <button class="qty-btn" data-qty="minus" type="button" aria-label="Decrease quantity">-</button>
-            <span id="quantityValue">{{ section.settings.default_qty | default: 1 }}</span>
-            <button class="qty-btn" data-qty="plus" type="button" aria-label="Increase quantity">+</button>
-            <input type="hidden" name="quantity" id="quantity-{{ section.id }}" value="{{ section.settings.default_qty | default: 1 }}" data-product-quantity-input>
-          </div>
-          {%- if urgency_text != blank -%}
-            <span class="selling">{{ urgency_text }}</span>
-          {%- endif -%}
-        </div>
-
-        {%- if section.settings.program_text != blank -%}
-          <p class="program">
-            {{ section.settings.program_text }}
-            {%- if section.settings.program_link != blank -%}
-              <a href="{{ section.settings.program_link }}">{{ section.settings.program_link_label | default: 'Join the Program' }}</a>
-            {%- endif -%}
-          </p>
-        {%- endif -%}
-
-        <button
-          class="add-cart"
-          type="submit"
-          name="add"
-          data-add-to-cart
-          data-add-label="{{ section.settings.cta_label | default: 'Add To Cart' | escape }}"
-          {%- unless selected_variant.available %} disabled{%- endunless %}
-        >
-          {%- if selected_variant.available -%}
-            {{ section.settings.cta_label | default: 'Add To Cart' }}
-          {%- else -%}
-            {{ 'products.product.sold_out' | t | default: 'Sold Out' }}
-          {%- endif -%}
-        </button>
-      {%- endform -%}
-    {%- else -%}
-      <div class="buy-box">
-        <label>{{ section.settings.qty_label | default: 'Quantity:' }}</label>
-        <div class="quantity">
-          <button class="qty-btn" data-qty="minus" type="button" aria-label="Decrease quantity">-</button>
-          <span id="quantityValue">{{ section.settings.default_qty | default: 1 }}</span>
-          <button class="qty-btn" data-qty="plus" type="button" aria-label="Increase quantity">+</button>
-        </div>
-        {%- if urgency_text != blank -%}
-          <span class="selling">{{ urgency_text }}</span>
-        {%- endif -%}
-      </div>
-
-      {%- if section.settings.program_text != blank -%}
-        <p class="program">
-          {{ section.settings.program_text }}
-          {%- if section.settings.program_link != blank -%}
-            <a href="{{ section.settings.program_link }}">{{ section.settings.program_link_label | default: 'Join the Program' }}</a>
-          {%- endif -%}
-        </p>
       {%- endif -%}
-
-      <button class="add-cart" type="button" disabled>{{ section.settings.cta_label | default: 'Add To Cart' }}</button>
-      <p class="program" style="opacity:.7"><small>Link a product in the section settings to enable add to cart.</small></p>
-    {%- endif -%}
-
-    {%- if section.settings.show_shipping_line -%}
-      <div class="shipping-line">
-        {%- if section.settings.shipping_left != blank -%}
-          <span>{{ section.settings.shipping_left }}</span>
-        {%- endif -%}
-        {%- if section.settings.shipping_right != blank -%}
-          <span>{{ section.settings.shipping_right }}</span>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-
-    {%- if section.settings.show_payments -%}
-      <div class="payments">
-        {%- assign payments = section.settings.payment_labels | default: 'AMEX,Pay,G Pay,MC,MC,VISA' | split: ',' -%}
-        {%- for payment in payments -%}
-          <span>{{ payment | strip }}</span>
-        {%- endfor -%}
-      </div>
-    {%- endif -%}
-
-    <div class="product-accordions">
-      {%- for block in accordion_blocks -%}
-        {%- liquid
-          assign accordion_content = block.settings.content
-          assign metafield_key = block.settings.metafield_key
-          assign accordion_title_lower = block.settings.title | downcase | strip
-
-          # Auto-derive metafield key from the accordion title if none was selected
-          if metafield_key == blank
-            case accordion_title_lower
-              when 'product details'
-                assign metafield_key = 'product_details'
-              when 'description'
-                assign metafield_key = 'product_details'
-              when 'spreader settings'
-                assign metafield_key = 'spreader_settings'
-              when "what's inside the blend?"
-                assign metafield_key = 'whats_inside'
-              when "what's inside the blend"
-                assign metafield_key = 'whats_inside'
-              when "what's inside"
-                assign metafield_key = 'whats_inside'
-              when "whats inside the blend?"
-                assign metafield_key = 'whats_inside'
-              when "whats inside the blend"
-                assign metafield_key = 'whats_inside'
-              when "whats inside"
-                assign metafield_key = 'whats_inside'
-              when 'when to use'
-                assign metafield_key = 'when_to_use'
-              when 'how to use'
-                assign metafield_key = 'when_to_use'
-              when 'grow a thicker greener lawn'
-                assign metafield_key = 'grow_tips'
-              when 'grow tips'
-                assign metafield_key = 'grow_tips'
-              when 'growing tips'
-                assign metafield_key = 'grow_tips'
-              when 'ingredients'
-                assign metafield_key = 'ingredients'
-              when 'shipping & returns'
-                assign metafield_key = 'shipping_returns'
-              when 'shipping and returns'
-                assign metafield_key = 'shipping_returns'
-              when 'shipping'
-                assign metafield_key = 'shipping_returns'
-              when 'returns'
-                assign metafield_key = 'shipping_returns'
-              when 'faq'
-                assign metafield_key = 'faq'
-              when "faq's"
-                assign metafield_key = 'faq'
-              when 'faqs'
-                assign metafield_key = 'faq'
-            endcase
-          endif
-
-          # Pull rich text from product metafield (lawn namespace) when the block has no manual content
-          if accordion_content == blank and has_product and metafield_key != blank
-            assign mf_val = current_product.metafields.lawn[metafield_key]
-            if mf_val != blank
-              assign accordion_content = mf_val
-            endif
-          endif
-
-          # Final fallback: for the "Product Details" item, use product description
-          if accordion_content == blank and has_product
-            if accordion_title_lower contains 'product details' or accordion_title_lower contains 'description'
-              if current_product.description != blank
-                assign accordion_content = current_product.description
-              endif
-            endif
-          endif
-        -%}
-        <details class="product-accordion" {{ block.shopify_attributes }}>
-          <summary>
-            <span>{{ block.settings.title }}</span>
-            <i></i>
-          </summary>
-          {%- if accordion_content != blank -%}
-            <div class="product-accordion__content rte">{{ accordion_content }}</div>
-          {%- endif -%}
-        </details>
-      {%- endfor -%}
     </div>
   </div>
 </section>
 
+{% style %}
+  #LawnFigmaProduct-{{ section.id }} {
+    --lawn-green: {{ section.settings.green_color }};
+    --lawn-dark: {{ section.settings.dark_color }};
+    --lawn-orange: {{ section.settings.orange_color }};
+    --lawn-text: {{ section.settings.text_color }};
+    --lawn-muted: {{ section.settings.muted_color }};
+    --lawn-line: {{ section.settings.line_color }};
+    --lawn-bg: {{ section.settings.background_color }};
+    --lawn-max: {{ section.settings.max_width }}px;
+    --lawn-left: {{ section.settings.left_column_width }}px;
+    --lawn-right: {{ section.settings.right_column_width }}px;
+    background: var(--lawn-bg);
+    color: var(--lawn-text);
+    font-family: var(--font-body-family, Poppins, Inter, Arial, sans-serif);
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} *,
+  #LawnFigmaProduct-{{ section.id }} *::before,
+  #LawnFigmaProduct-{{ section.id }} *::after {
+    box-sizing: border-box;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-product__inner {
+    width: min(var(--lawn-max), calc(100vw - 32px));
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, var(--lawn-left)) minmax(390px, var(--lawn-right));
+    gap: {{ section.settings.column_gap }}px;
+    align-items: start;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery {
+    display: grid;
+    grid-template-columns: 76px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery__thumbs {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-thumb {
+    display: block;
+    width: 76px;
+    height: 76px;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    background: #fff;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .18s ease, transform .18s ease;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-thumb:hover,
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-thumb.is-active {
+    border-color: var(--lawn-green);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-thumb img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery__main {
+    height: 433px;
+    border: 1px solid var(--lawn-green);
+    border-radius: 7px;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery__main img,
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery__main svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: {{ section.settings.main_image_fit }};
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 26px;
+    padding-left: 88px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: #fae5df;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-dots span.is-active {
+    background: var(--lawn-orange);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 33px;
+    padding-left: 0;
+    gap: 0;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__item {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    min-width: 0;
+    text-align: center;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 10px;
+    width: 1px;
+    height: 54px;
+    background: #eef4ee;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--lawn-green);
+    color: #fff;
+    outline: 2px dashed var(--lawn-green);
+    outline-offset: 4px;
+    box-shadow: inset 0 0 0 2px rgba(255,255,255,.7);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal svg {
+    width: 33px;
+    height: 33px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal svg path:first-child,
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__seal svg rect:first-child {
+    fill: none;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__item strong {
+    font-size: 14px;
+    line-height: 1.1;
+    font-weight: 800;
+    color: #171717;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-product__info {
+    min-width: 0;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-rating {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-top: -1px;
+    margin-bottom: 19px;
+    line-height: 1;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-rating__stars {
+    color: #ff9200;
+    font-size: 18px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-rating__text {
+    color: #0a9c5d;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-title {
+    margin: 0 0 17px;
+    color: var(--lawn-dark);
+    font-family: var(--font-heading-family, Poppins, Inter, Arial, sans-serif);
+    font-size: 38px;
+    line-height: 1.27;
+    letter-spacing: -1.15px;
+    font-weight: 900;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-lead {
+    margin: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--lawn-line);
+    color: #454545;
+    font-size: 17px;
+    line-height: 1.34;
+    font-weight: 600;
+    letter-spacing: -.22px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-features {
+    list-style: none;
+    padding: 0 0 21px;
+    margin: 17px 0 0;
+    border-bottom: 1px solid var(--lawn-line);
+    display: grid;
+    gap: 15px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-features li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--lawn-dark);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-features li > span {
+    flex: 0 0 auto;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--lawn-green);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-features strong {
+    font-size: 17px;
+    line-height: 1.2;
+    font-weight: 800;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-sku {
+    margin: 12px 0 -6px;
+    font-size: 12px;
+    color: var(--lawn-muted);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-price {
+    margin-top: 26px;
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-price__sale {
+    color: var(--lawn-orange);
+    font-size: 42px;
+    line-height: .95;
+    font-weight: 900;
+    letter-spacing: -1px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-price__compare {
+    color: #484848;
+    font-size: 20px;
+    line-height: 1.05;
+    font-weight: 800;
+    text-decoration: line-through;
+    margin-bottom: 5px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size {
+    margin-top: 27px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--lawn-line);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size h2 {
+    margin: 0 0 26px;
+    color: var(--lawn-dark);
+    font-family: var(--font-heading-family, Poppins, Inter, Arial, sans-serif);
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -.15px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card {
+    position: relative;
+    min-height: 125px;
+    width: 100%;
+    padding: 15px 10px 13px;
+    border: 1px solid #35b77a;
+    border-radius: 7px;
+    background: #fff;
+    color: var(--lawn-dark);
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card.is-selected {
+    border-color: var(--lawn-green);
+    box-shadow: 0 0 0 1px var(--lawn-green), 0 8px 18px rgba(22, 164, 98, .10);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 18px rgba(10, 62, 39, .08);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card.is-unavailable {
+    opacity: .55;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card em {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 90px;
+    height: 20px;
+    padding: 0 12px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 999px;
+    background: var(--lawn-green);
+    color: #fff;
+    font-style: normal;
+    font-size: 11px;
+    line-height: 1;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card strong {
+    display: block;
+    font-size: 19px;
+    line-height: 1.1;
+    font-weight: 900;
+    letter-spacing: -.25px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card > span {
+    display: block;
+    margin-top: 5px;
+    color: #777;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 500;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card b {
+    display: block;
+    margin-top: 27px;
+    color: var(--lawn-dark);
+    font-size: 23px;
+    line-height: 1;
+    font-weight: 900;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-form {
+    margin-top: 16px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-buy {
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: end;
+    column-gap: 19px;
+    row-gap: 11px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-buy label {
+    grid-column: 1 / -1;
+    color: #151515;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-qty {
+    width: 146px;
+    height: 47px;
+    display: grid;
+    grid-template-columns: 42px 1fr 42px;
+    align-items: center;
+    border: 1px solid #ff6947;
+    border-radius: 999px;
+    overflow: hidden;
+    color: #151515;
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-qty button {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    color: #1a1a1a;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-qty span {
+    text-align: center;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-selling {
+    align-self: center;
+    color: var(--lawn-orange);
+    font-size: 16px;
+    line-height: 1;
+    font-weight: 500;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-program {
+    margin: 20px 0 21px;
+    color: #111;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-program a {
+    color: var(--lawn-orange);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-cart {
+    width: 100%;
+    height: 60px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--lawn-orange);
+    color: #fff;
+    font-family: var(--font-heading-family, Poppins, Inter, Arial, sans-serif);
+    font-size: 25px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: -.25px;
+    cursor: pointer;
+    transition: opacity .16s ease, transform .16s ease;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-cart:hover {
+    transform: translateY(-1px);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-cart:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-shipping {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    margin-top: 14px;
+    color: var(--lawn-dark);
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 500;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-shipping span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-shipping svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: var(--lawn-green);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-payments {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 13px;
+    padding-bottom: 19px;
+    border-bottom: 1px solid var(--lawn-line);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-payments > span {
+    min-width: 34px;
+    height: 20px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 3px;
+    background: #fff;
+    box-shadow: 0 0 0 1px #edf0ee;
+    color: #0e326b;
+    font-size: 8px;
+    line-height: 1;
+    font-weight: 900;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-payment-svg {
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-payment-svg svg {
+    width: 34px;
+    height: 22px;
+    display: block;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordions {
+    border-bottom: 1px solid var(--lawn-line);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion {
+    border-top: 1px solid var(--lawn-line);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion summary {
+    min-height: 60px;
+    display: grid;
+    grid-template-columns: 22px 1fr 18px;
+    gap: 0;
+    align-items: center;
+    color: var(--lawn-dark);
+    list-style: none;
+    cursor: pointer;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion summary::-webkit-details-marker {
+    display: none;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion__icon svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+    fill: none;
+    stroke: var(--lawn-green);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion__title {
+    font-size: 17px;
+    line-height: 1.1;
+    font-weight: 900;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion__chev {
+    justify-self: end;
+    width: 9px;
+    height: 9px;
+    border-right: 1.8px solid var(--lawn-dark);
+    border-bottom: 1.8px solid var(--lawn-dark);
+    transform: rotate(-45deg);
+    transition: transform .18s ease;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion[open] .lawn-figma-accordion__chev {
+    transform: rotate(45deg);
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion__content {
+    padding: 0 18px 20px 22px;
+    color: #3e3e3e;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .lawn-figma-accordion__content:empty {
+    display: none;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .rte > *:first-child {
+    margin-top: 0;
+  }
+
+  #LawnFigmaProduct-{{ section.id }} .rte > *:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 989px) {
+    #LawnFigmaProduct-{{ section.id }} {
+      padding-top: 22px;
+      padding-bottom: 38px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-product__inner {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      width: min(680px, calc(100vw - 28px));
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery {
+      grid-template-columns: 72px 1fr;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery__main {
+      height: auto;
+      aspect-ratio: 1 / 1;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-dots {
+      padding-left: 84px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-title {
+      font-size: clamp(32px, 7vw, 38px);
+    }
+  }
+
+  @media (max-width: 560px) {
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-gallery__thumbs {
+      display: flex;
+      gap: 9px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-thumb {
+      width: 68px;
+      height: 68px;
+      flex: 0 0 68px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-dots {
+      padding-left: 0;
+      margin-top: 18px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px 0;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-trust__item:nth-child(2)::after {
+      display: none;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-size__grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-size-card {
+      min-height: 112px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-buy {
+      grid-template-columns: auto 1fr;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-selling {
+      justify-self: start;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-shipping {
+      flex-wrap: wrap;
+      gap: 10px 14px;
+    }
+
+    #LawnFigmaProduct-{{ section.id }} .lawn-figma-payments {
+      flex-wrap: wrap;
+    }
+  }
+{% endstyle %}
+
+<script>
+  (function () {
+    function initLawnFigmaProduct(sectionId) {
+      var root = document.getElementById('LawnFigmaProduct-' + sectionId);
+      if (!root || root.dataset.lawnReady === 'true') return;
+      root.dataset.lawnReady = 'true';
+
+      var mainImage = root.querySelector('[data-main-image-target]');
+      var thumbs = root.querySelectorAll('[data-gallery-thumb]');
+
+      thumbs.forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+          if (!mainImage) return;
+          var src = thumb.getAttribute('data-main-image');
+          var alt = thumb.getAttribute('data-main-alt') || '';
+          if (src) {
+            mainImage.removeAttribute('srcset');
+            mainImage.src = src;
+            mainImage.alt = alt;
+          }
+          thumbs.forEach(function (item) {
+            item.classList.remove('is-active');
+          });
+          thumb.classList.add('is-active');
+        });
+      });
+
+      var qtyInput = root.querySelector('[data-quantity-input]');
+      var qtyValue = root.querySelector('[data-qty-value]');
+      var minus = root.querySelector('[data-qty-minus]');
+      var plus = root.querySelector('[data-qty-plus]');
+
+      function setQty(value) {
+        var next = parseInt(value, 10);
+        if (isNaN(next) || next < 1) next = 1;
+        if (qtyInput) qtyInput.value = next;
+        if (qtyValue) qtyValue.textContent = next;
+      }
+
+      if (minus) {
+        minus.addEventListener('click', function () {
+          var current = qtyInput ? qtyInput.value : qtyValue ? qtyValue.textContent : 1;
+          setQty(parseInt(current, 10) - 1);
+        });
+      }
+
+      if (plus) {
+        plus.addEventListener('click', function () {
+          var current = qtyInput ? qtyInput.value : qtyValue ? qtyValue.textContent : 1;
+          setQty(parseInt(current, 10) + 1);
+        });
+      }
+
+      var cards = root.querySelectorAll('[data-variant-card]');
+      var variantInput = root.querySelector('[data-variant-input]');
+      var price = root.querySelector('[data-product-price]');
+      var compare = root.querySelector('[data-product-compare-price]');
+      var sku = root.querySelector('[data-sku]');
+      var addButton = root.querySelector('[data-add-to-cart]');
+
+      cards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          cards.forEach(function (item) {
+            item.classList.remove('is-selected');
+            item.setAttribute('aria-checked', 'false');
+          });
+
+          card.classList.add('is-selected');
+          card.setAttribute('aria-checked', 'true');
+
+          var variantId = card.getAttribute('data-variant-id');
+          var variantPrice = card.getAttribute('data-variant-price');
+          var variantCompare = card.getAttribute('data-variant-compare');
+          var available = card.getAttribute('data-variant-available') === 'true';
+          var variantSku = card.getAttribute('data-variant-sku');
+          var variantImage = card.getAttribute('data-variant-image');
+          var variantAlt = card.getAttribute('data-variant-alt') || '';
+
+          if (variantInput && variantId) variantInput.value = variantId;
+          if (price && variantPrice) price.textContent = variantPrice;
+
+          if (compare) {
+            if (variantCompare) {
+              compare.textContent = variantCompare;
+              compare.hidden = false;
+            } else {
+              compare.textContent = '';
+              compare.hidden = true;
+            }
+          }
+
+          if (sku) {
+            sku.textContent = variantSku ? 'SKU: ' + variantSku : '';
+            sku.hidden = !variantSku;
+          }
+
+          if (mainImage && variantImage) {
+            mainImage.removeAttribute('srcset');
+            mainImage.src = variantImage;
+            mainImage.alt = variantAlt;
+            thumbs.forEach(function (item) {
+              item.classList.remove('is-active');
+            });
+          }
+
+          if (addButton) {
+            addButton.disabled = !available;
+            addButton.textContent = available
+              ? addButton.getAttribute('data-add-label')
+              : addButton.getAttribute('data-sold-out-label');
+          }
+        });
+      });
+
+      var staticCards = root.querySelectorAll('[data-static-size-card]');
+      staticCards.forEach(function (card) {
+        card.addEventListener('click', function () {
+          staticCards.forEach(function (item) {
+            item.classList.remove('is-selected');
+            item.setAttribute('aria-checked', 'false');
+          });
+          card.classList.add('is-selected');
+          card.setAttribute('aria-checked', 'true');
+        });
+      });
+    }
+
+    initLawnFigmaProduct('{{ section.id }}');
+
+    document.addEventListener('shopify:section:load', function (event) {
+      if (event.detail && event.detail.sectionId === '{{ section.id }}') {
+        initLawnFigmaProduct('{{ section.id }}');
+      }
+    });
+  })();
+</script>
+
 {% schema %}
 {
-  "name": "Lawn — Hero Product",
+  "name": " Product Hero",
   "tag": "section",
-  "class": "lawn-hero-section",
+  "class": "section-lawn-product",
   "settings": [
     {
       "type": "header",
-      "content": "Product (optional)"
+      "content": "Product source"
     },
     {
       "type": "product",
       "id": "product",
-      "label": "Linked product",
-      "info": "On a product template the page product is used automatically. Use this to link a product on non-product templates (e.g. homepage)."
-    },
-    {
-      "type": "paragraph",
-      "content": "Tip: To make the section fully dynamic, define product metafields under the namespace 'lawn' (e.g. lawn.rating, lawn.features, lawn.product_details). Variant-level metafields supported: lawn.coverage, lawn.badge, lawn.size_label."
-    },
-    {
-      "type": "header",
-      "content": "Main media"
+      "label": "Product fallback",
+      "info": "On product templates this section uses the current product automatically. Use this only for homepage or landing pages."
     },
     {
       "type": "checkbox",
       "id": "use_product_media",
-      "label": "Use real product media",
-      "default": true,
-      "info": "When a product is linked, Shopify product images replace the custom image and thumbnail fallback."
+      "label": "Use Shopify product media",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_product_title",
+      "label": "Use Shopify product title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_product_description",
+      "label": "Use product metafield/description for subtitle",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Fallback content"
     },
     {
       "type": "image_picker",
       "id": "main_image",
-      "label": "Main image (fallback)",
-      "info": "Used only when no product image is available."
+      "label": "Fallback main image"
     },
     {
       "type": "text",
       "id": "main_image_alt",
-      "label": "Main image alt text",
-      "default": "Product graphic"
+      "label": "Fallback main image alt",
+      "default": "Product image"
     },
     {
-      "type": "checkbox",
-      "id": "show_dots",
-      "label": "Show slider dots",
-      "default": true
+      "type": "text",
+      "id": "title",
+      "label": "Fallback title",
+      "default": "Envy Premium Tall Fescue Grass Seed Blend"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Fallback subtitle",
+      "default": "Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance."
+    },
+    {
+      "type": "text",
+      "id": "rating_stars",
+      "label": "Fallback rating stars",
+      "default": "★★★★★"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Fallback rating text",
+      "default": "Rated By 12,520+ Customers"
+    },
+    {
+      "type": "text",
+      "id": "sale_price",
+      "label": "Fallback sale price",
+      "default": "$49.99"
+    },
+    {
+      "type": "text",
+      "id": "compare_price",
+      "label": "Fallback compare price",
+      "default": "$56.25"
+    },
+    {
+      "type": "header",
+      "content": "Layout accuracy"
     },
     {
       "type": "range",
-      "id": "dot_count",
-      "label": "Number of dots",
-      "min": 2,
-      "max": 10,
+      "id": "max_width",
+      "label": "Section max width",
+      "min": 900,
+      "max": 1320,
+      "step": 6,
+      "unit": "px",
+      "default": 966
+    },
+    {
+      "type": "range",
+      "id": "left_column_width",
+      "label": "Left column width",
+      "min": 460,
+      "max": 650,
+      "step": 5,
+      "unit": "px",
+      "default": 520
+    },
+    {
+      "type": "range",
+      "id": "right_column_width",
+      "label": "Right column width",
+      "min": 380,
+      "max": 520,
+      "step": 2,
+      "unit": "px",
+      "default": 426
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 90,
+      "step": 1,
+      "unit": "px",
+      "default": 27
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 35
+    },
+    {
+      "type": "select",
+      "id": "main_image_fit",
+      "label": "Main image fit",
+      "options": [
+        { "value": "cover", "label": "Cover / Figma exact crop" },
+        { "value": "contain", "label": "Contain / do not crop" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "max_thumbnails",
+      "label": "Max thumbnails",
+      "min": 3,
+      "max": 8,
       "step": 1,
       "default": 5
     },
     {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "green_color",
+      "label": "Main green",
+      "default": "#24A96B"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Dark text green",
+      "default": "#073C27"
+    },
+    {
+      "type": "color",
+      "id": "orange_color",
+      "label": "Orange CTA / price",
+      "default": "#FF5A1F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text",
+      "default": "#1B1B1B"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted text",
+      "default": "#777777"
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Divider line",
+      "default": "#E8EFE9"
+    },
+    {
+      "type": "header",
+      "content": "Display"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show gallery dots",
+      "default": true
+    },
+    {
       "type": "range",
       "id": "active_dot",
-      "label": "Active dot index",
+      "label": "Active dot",
       "min": 1,
-      "max": 10,
+      "max": 5,
       "step": 1,
       "default": 3
     },
     {
       "type": "checkbox",
-      "id": "show_trust",
-      "label": "Show trust row",
+      "id": "show_trust_badges",
+      "label": "Show trust badges",
       "default": true
-    },
-    {
-      "type": "header",
-      "content": "Product info"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "label": "Show product vendor",
-      "default": false
     },
     {
       "type": "checkbox",
@@ -694,75 +1653,8 @@
       "default": false
     },
     {
-      "type": "checkbox",
-      "id": "show_rating",
-      "label": "Show rating row",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "rating_stars",
-      "label": "Stars text (fallback)",
-      "default": "★★★★★",
-      "info": "Overridden by product metafield lawn.rating_stars or lawn.rating."
-    },
-    {
-      "type": "text",
-      "id": "rating_text",
-      "label": "Rating text (fallback)",
-      "default": "Rated By 12,520+ Customers",
-      "info": "Overridden by product metafield lawn.rating_text or lawn.rating_count."
-    },
-    {
-      "type": "checkbox",
-      "id": "use_product_title",
-      "label": "Use real product title",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Title (fallback)",
-      "default": "Premium Product"
-    },
-    {
-      "type": "checkbox",
-      "id": "use_product_description",
-      "label": "Use product description / lawn.short_summary as lead",
-      "default": true
-    },
-    {
-      "type": "textarea",
-      "id": "lead",
-      "label": "Lead (fallback)",
-      "default": "Premium product description."
-    },
-    {
-      "type": "header",
-      "content": "Price (used when no product is linked)"
-    },
-    {
-      "type": "text",
-      "id": "sale_price",
-      "label": "Sale price",
-      "default": "$49.99"
-    },
-    {
-      "type": "text",
-      "id": "old_price",
-      "label": "Compare-at price",
-      "default": "$56.25"
-    },
-    {
       "type": "header",
       "content": "Size selector"
-    },
-    {
-      "type": "checkbox",
-      "id": "use_size_block_labels",
-      "label": "Force size block labels for real variants",
-      "default": false,
-      "info": "Off = use variant.title (or variant metafield lawn.size_label). On = use the Size block's label."
     },
     {
       "type": "text",
@@ -771,27 +1663,44 @@
       "default": "Select Your Size"
     },
     {
+      "type": "checkbox",
+      "id": "force_block_size_labels",
+      "label": "Force block labels instead of variant titles",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "max_variant_cards",
+      "label": "Max variant cards",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
       "type": "header",
       "content": "Buy box"
     },
     {
       "type": "text",
-      "id": "qty_label",
+      "id": "quantity_label",
       "label": "Quantity label",
       "default": "Quantity:"
     },
     {
-      "type": "number",
-      "id": "default_qty",
+      "type": "range",
+      "id": "default_quantity",
       "label": "Default quantity",
-      "default": 1
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 2
     },
     {
       "type": "text",
       "id": "urgency_text",
-      "label": "Urgency text (fallback)",
-      "default": "Selling Fast",
-      "info": "Overridden by product metafield lawn.urgency_text."
+      "label": "Fallback urgency text",
+      "default": "Selling Fast"
     },
     {
       "type": "text",
@@ -813,8 +1722,14 @@
     {
       "type": "text",
       "id": "cta_label",
-      "label": "Add to cart button",
+      "label": "Add to cart label",
       "default": "Add To Cart"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Sold out label",
+      "default": "Sold Out"
     },
     {
       "type": "checkbox",
@@ -825,75 +1740,147 @@
     {
       "type": "text",
       "id": "shipping_left",
-      "label": "Shipping line — left",
+      "label": "Shipping text left",
       "default": "Free Shipping on orders $45+"
     },
     {
       "type": "text",
       "id": "shipping_right",
-      "label": "Shipping line — right",
+      "label": "Shipping text right",
       "default": "Enjoy or return within 30 Days"
     },
     {
       "type": "checkbox",
-      "id": "show_payments",
+      "id": "show_payment_icons",
       "label": "Show payment badges",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "use_shopify_payment_icons",
+      "label": "Use Shopify enabled payment SVG icons",
       "default": true
     },
     {
       "type": "text",
       "id": "payment_labels",
-      "label": "Payment badges (comma separated)",
+      "label": "Fallback payment labels",
       "default": "AMEX,Pay,G Pay,MC,MC,VISA"
     }
   ],
   "blocks": [
     {
       "type": "thumb",
-      "name": "Gallery thumbnail",
+      "name": "Fallback thumbnail",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Thumbnail image", "info": "Used only when product media is empty." },
-        { "type": "text", "id": "alt", "label": "Alt text", "default": "Product gallery thumbnail" }
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Thumbnail image"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text",
+          "default": "Product thumbnail"
+        }
       ]
     },
     {
       "type": "trust",
       "name": "Trust badge",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Icon image" },
-        { "type": "text", "id": "label", "label": "Label", "default": "Fast Shipping" }
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "shipping", "label": "Fast Shipping" },
+            { "value": "quality", "label": "Quality Assured" },
+            { "value": "secure", "label": "Secure Checkout" },
+            { "value": "return", "label": "Easy Returns" }
+          ],
+          "default": "shipping"
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Fast Shipping"
+        }
       ]
     },
     {
       "type": "feature",
-      "name": "Feature point",
+      "name": "Fallback feature",
       "settings": [
-        { "type": "text", "id": "text", "label": "Text", "default": "Feature point" },
-        { "type": "paragraph", "content": "Overridden by product metafield list 'lawn.features'." }
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Feature text",
+          "default": "Darker Green Color"
+        }
       ]
     },
     {
       "type": "size",
-      "name": "Size option",
+      "name": "Fallback size card",
       "settings": [
-        { "type": "text", "id": "size", "label": "Size label (used when no product variants)", "default": "10 lbs" },
-        { "type": "text", "id": "coverage", "label": "Coverage", "default": "(1,000-2,500sqft)" },
-        { "type": "text", "id": "price", "label": "Price (used when no product variants)", "default": "$28.99" },
-        { "type": "text", "id": "badge", "label": "Badge (e.g. Popular)" }
+        {
+          "type": "text",
+          "id": "size",
+          "label": "Size label",
+          "default": "10 lbs"
+        },
+        {
+          "type": "text",
+          "id": "coverage",
+          "label": "Coverage",
+          "default": "(1,000–2,500sqft)"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Display price",
+          "default": "$28.99"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge"
+        }
       ]
     },
     {
       "type": "accordion",
       "name": "Accordion item",
       "settings": [
-        { "type": "text", "id": "title", "label": "Title", "default": "Product Details" },
-        { "type": "richtext", "id": "content", "label": "Content (overrides metafield)" },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "details", "label": "Product Details" },
+            { "value": "spreader", "label": "Spreader Settings" },
+            { "value": "blend", "label": "Blend" },
+            { "value": "calendar", "label": "When To Use" },
+            { "value": "grow", "label": "Grow Tips" }
+          ],
+          "default": "details"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Product Details"
+        },
         {
           "type": "select",
           "id": "metafield_key",
-          "label": "Pull content from product metafield (lawn.<key>)",
+          "label": "Dynamic product metafield",
+          "info": "Pulls from namespace lawn. Example: lawn.product_details",
           "options": [
-            { "value": "", "label": "— None —" },
+            { "value": "", "label": "Auto by title / none" },
             { "value": "product_details", "label": "lawn.product_details" },
             { "value": "spreader_settings", "label": "lawn.spreader_settings" },
             { "value": "whats_inside", "label": "lawn.whats_inside" },
@@ -904,35 +1891,62 @@
             { "value": "faq", "label": "lawn.faq" }
           ],
           "default": ""
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Manual fallback content",
+          "info": "If filled, this overrides the product metafield."
         }
       ]
     }
   ],
   "presets": [
     {
-      "name": "Lawn — Hero Product",
+      "name": "Figma Accurate Product Hero",
       "blocks": [
         { "type": "thumb" },
         { "type": "thumb" },
         { "type": "thumb" },
         { "type": "thumb" },
         { "type": "thumb" },
-        { "type": "trust", "settings": { "label": "Fast Shipping" } },
-        { "type": "trust", "settings": { "label": "Quality Assured" } },
-        { "type": "trust", "settings": { "label": "Secure Checkout" } },
-        { "type": "trust", "settings": { "label": "Easy Returns" } },
+        { "type": "trust", "settings": { "icon": "shipping", "label": "Fast Shipping" } },
+        { "type": "trust", "settings": { "icon": "quality", "label": "Quality Assured" } },
+        { "type": "trust", "settings": { "icon": "secure", "label": "Secure Checkout" } },
+        { "type": "trust", "settings": { "icon": "return", "label": "Easy Returns" } },
         { "type": "feature", "settings": { "text": "Darker Green Color" } },
         { "type": "feature", "settings": { "text": "Strong Heat & Drought Tolerance" } },
         { "type": "feature", "settings": { "text": "Thick, Uniform Lawn Appearance" } },
         { "type": "feature", "settings": { "text": "0% Weed Seeds Clean, Pure Results" } },
-        { "type": "size", "settings": { "size": "10 lbs", "coverage": "(1,000-2,500sqft)", "price": "$28.99" } },
-        { "type": "size", "settings": { "size": "25 lbs", "coverage": "(2,500-5,000sqft)", "price": "$28.99", "badge": "Popular" } },
-        { "type": "size", "settings": { "size": "50 lbs", "coverage": "(5,000-10,000sqft)", "price": "$28.99", "badge": "Best Value" } },
-        { "type": "accordion", "settings": { "title": "Product Details", "metafield_key": "product_details" } },
-        { "type": "accordion", "settings": { "title": "Spreader Settings", "metafield_key": "spreader_settings" } },
-        { "type": "accordion", "settings": { "title": "What's Inside The Blend?", "metafield_key": "whats_inside" } },
-        { "type": "accordion", "settings": { "title": "When To Use", "metafield_key": "when_to_use" } },
-        { "type": "accordion", "settings": { "title": "Grow A Thicker Greener Lawn", "metafield_key": "grow_tips" } }
+        { "type": "size", "settings": { "size": "10 lbs", "coverage": "(1,000–2,500sqft)", "price": "$28.99" } },
+        {
+          "type": "size",
+          "settings": { "size": "25 lbs", "coverage": "(2,500–5,000sqft)", "price": "$28.99", "badge": "Popular" }
+        },
+        {
+          "type": "size",
+          "settings": { "size": "50 lbs", "coverage": "(5,000–10,000sqft)", "price": "$28.99", "badge": "Best Value" }
+        },
+        {
+          "type": "accordion",
+          "settings": { "icon": "details", "title": "Product Details", "metafield_key": "product_details" }
+        },
+        {
+          "type": "accordion",
+          "settings": { "icon": "spreader", "title": "Spreader Settings", "metafield_key": "spreader_settings" }
+        },
+        {
+          "type": "accordion",
+          "settings": { "icon": "blend", "title": "What’s Inside The Blend?", "metafield_key": "whats_inside" }
+        },
+        {
+          "type": "accordion",
+          "settings": { "icon": "calendar", "title": "When To Use", "metafield_key": "when_to_use" }
+        },
+        {
+          "type": "accordion",
+          "settings": { "icon": "grow", "title": "Grow A Thicker Greener Lawn", "metafield_key": "grow_tips" }
+        }
       ]
     }
   ]
