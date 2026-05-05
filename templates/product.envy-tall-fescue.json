@@ -255,8 +255,8 @@
             "icon_class": "grass-icon",
             "title": "0% Weed Seed",
             "text": "Clean, high-quality seed with zero weed seeds and no unnecessary fillers for better lawn results.",
-            "offset": false,
-            "style": "default"
+            "offset": true,
+            "style": "green"
           }
         }
       },
