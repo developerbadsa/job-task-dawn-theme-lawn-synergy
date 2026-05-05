@@ -16,6 +16,7 @@
           "type": "trust",
           "settings": {
             "icon": "shipping",
+            "custom_icon_image": "shopify://shop_images/Mask_group_10.png",
             "theme_icon_asset": "",
             "label": "Quality Assured"
           }
