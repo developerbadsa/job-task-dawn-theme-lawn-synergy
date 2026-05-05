@@ -9,17 +9,16 @@
     --steps-bg: {{ section.settings.bg_color }};
     --steps-green: {{ section.settings.green_color }};
     --steps-accent: {{ section.settings.accent_color }};
+    --steps-heading: {{ section.settings.heading_color }};
     --steps-text: {{ section.settings.text_color }};
     --steps-muted: {{ section.settings.muted_color }};
     --steps-max-width: {{ section.settings.max_width }}px;
     --steps-section-height: {{ section.settings.section_height }}px;
-    --steps-padding-top: {{ section.settings.padding_top }}px;
-    --steps-padding-bottom: {{ section.settings.padding_bottom }}px;
-    --steps-side-padding: {{ section.settings.side_padding }}px;
+    --steps-header-top: {{ section.settings.header_top }}px;
+    --steps-side-space: {{ section.settings.side_space }}px;
+    --steps-heading-width: {{ section.settings.heading_width }}px;
+    --steps-lead-width: {{ section.settings.lead_width }}px;
     --steps-image-size: {{ section.settings.step_image_size }}px;
-    --steps-curve-width: {{ section.settings.curve_width }}px;
-    --steps-curve-left: {{ section.settings.curve_left }}px;
-    --steps-curve-top: {{ section.settings.curve_top }}px;
     --steps-hill-width: {{ section.settings.grass_hill_width }}px;
     --steps-hill-right: -{{ section.settings.grass_hill_push_right }}px;
     --steps-hill-bottom: -{{ section.settings.grass_hill_drop }}px;
@@ -42,9 +41,9 @@
 
     <div class="lawn-steps__stage">
       {%- if section.settings.show_curve -%}
-        <svg class="lawn-steps__curve" viewBox="0 0 770 250" fill="none" aria-hidden="true" preserveAspectRatio="none">
+        <svg class="lawn-steps__curve" viewBox="0 0 1270 824" fill="none" aria-hidden="true" preserveAspectRatio="none">
           <path
-            d="M2 176 C86 197 145 192 198 113 C246 40 300 31 366 91 C424 143 440 157 505 72 C575 -20 650 31 768 17"
+            d="M270 474 C340 488 382 468 420 405 C463 334 507 338 560 365 C620 396 625 314 690 285 C762 253 820 276 875 270 C928 264 960 268 1015 277"
             stroke="var(--steps-green)"
             stroke-width="2"
             stroke-linecap="round"
@@ -106,21 +105,21 @@
       {%- if section.settings.grass_hill_image != blank -%}
         {{
           section.settings.grass_hill_image
-          | image_url: width: 1000
+          | image_url: width: 1200
           | image_tag:
             loading: 'lazy',
             class: 'lawn-steps__hill-img',
             alt: '',
-            width: 1000,
-            height: 1000
+            width: 1200,
+            height: 1200
         }}
       {%- else -%}
         <img
           class="lawn-steps__hill-img"
           src="{{ 'grass-hill.png' | asset_url }}"
           alt=""
-          width="1000"
-          height="1000"
+          width="1200"
+          height="1200"
           loading="lazy"
         >
       {%- endif -%}
@@ -134,98 +133,107 @@
     isolation: isolate;
     overflow: hidden;
     min-height: var(--steps-section-height);
-    padding-top: var(--steps-padding-top);
-    padding-bottom: var(--steps-padding-bottom);
     background: var(--steps-bg);
     color: var(--steps-text);
+  }
+
+  #lawn-steps-{{ section.id }} * {
+    box-sizing: border-box;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__container {
     position: relative;
     z-index: 2;
-    width: min(100% - calc(var(--steps-side-padding) * 2), var(--steps-max-width));
-    min-height: calc(var(--steps-section-height) - var(--steps-padding-top) - var(--steps-padding-bottom));
-    margin-inline: auto;
+    width: min(100%, var(--steps-max-width));
+    min-height: var(--steps-section-height);
+    margin: 0 auto;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__header {
-    position: relative;
-    z-index: 5;
-    max-width: 650px;
+    position: absolute;
+    z-index: 6;
+    top: var(--steps-header-top);
+    left: var(--steps-side-space);
+    width: var(--steps-heading-width);
+    max-width: calc(100% - 160px);
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__eyebrow {
-    margin: 0 0 12px;
+    margin: 0 0 14px;
     color: var(--steps-green);
-    font-size: 15px;
+    font-family: "Poppins", var(--font-body-family), sans-serif;
+    font-size: 16px;
     line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-weight: 500;
+    letter-spacing: 0;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__heading {
     margin: 0;
-    max-width: 590px;
-    color: var(--steps-text);
-    font-size: clamp(38px, 3.35vw, 50px);
-    line-height: 1.12;
-    font-weight: 850;
-    letter-spacing: -0.05em;
+    width: var(--steps-heading-width);
+    max-width: 100%;
+    color: var(--steps-heading);
+    font-family: "Clash Grotesk", "Poppins", var(--font-heading-family), sans-serif;
+    font-size: 52px;
+    line-height: 64px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__lead {
-    margin: 22px 0 0;
-    max-width: 660px;
+    margin: 24px 0 0;
+    width: var(--steps-lead-width);
+    max-width: 100%;
     color: var(--steps-muted);
-    font-size: 17px;
-    line-height: 1.55;
+    font-family: "Poppins", var(--font-body-family), sans-serif;
+    font-size: 19px;
+    line-height: 28px;
     font-weight: 500;
-    letter-spacing: -0.015em;
+    letter-spacing: 0;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__stage {
     position: absolute;
     inset: 0;
-    z-index: 3;
+    z-index: 4;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__curve {
     position: absolute;
+    inset: 0;
     z-index: 1;
-    left: var(--steps-curve-left);
-    top: var(--steps-curve-top);
-    width: var(--steps-curve-width);
-    height: auto;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__item {
     position: absolute;
     z-index: 4;
-    width: 300px;
+    width: 385px;
     text-align: center;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__item--1 {
-    left: 40px;
-    top: 334px;
+    left: 80px;
+    top: 366px;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__item--2 {
-    left: 442px;
-    top: 246px;
+    left: 438px;
+    top: 286px;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__item--3 {
-    right: 88px;
-    top: 154px;
+    left: 798px;
+    top: 206px;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__image-wrap {
     position: relative;
     width: var(--steps-image-size);
     height: var(--steps-image-size);
-    margin: 0 auto 34px;
+    margin: 0 auto 38px;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__image-ring {
@@ -233,7 +241,7 @@
     width: 100%;
     height: 100%;
     padding: 8px;
-    border: 2px dashed var(--steps-green);
+    border: 1.5px dashed var(--steps-green);
     border-radius: 50%;
     background: #ffffff;
   }
@@ -248,39 +256,43 @@
 
   #lawn-steps-{{ section.id }} .lawn-steps__number {
     position: absolute;
-    right: 22px;
-    bottom: -16px;
+    left: 50%;
+    bottom: -18px;
     display: grid;
     place-items: center;
     width: 44px;
     height: 44px;
+    transform: translateX(-50%);
     border-radius: 999px;
     background: var(--steps-accent);
     color: #ffffff;
-    font-size: 25px;
-    line-height: 1;
-    font-weight: 850;
-    letter-spacing: -0.04em;
-    box-shadow: 0 8px 18px rgba(252, 88, 16, 0.22);
+    font-family: "Clash Grotesk", "Poppins", var(--font-heading-family), sans-serif;
+    font-size: 32px;
+    line-height: 38px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    box-shadow: 0 8px 18px rgba(252, 88, 16, 0.18);
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__title {
     margin: 0;
-    color: var(--steps-text);
-    font-size: 28px;
-    line-height: 1.15;
-    font-weight: 850;
-    letter-spacing: -0.045em;
+    color: var(--steps-heading);
+    font-family: "Clash Grotesk", "Poppins", var(--font-heading-family), sans-serif;
+    font-size: 32px;
+    line-height: 38px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__text {
     margin: 16px auto 0;
-    max-width: 296px;
-    color: #333333;
-    font-size: 16px;
-    line-height: 1.42;
+    max-width: 385px;
+    color: var(--steps-text);
+    font-family: "Poppins", var(--font-body-family), sans-serif;
+    font-size: 19px;
+    line-height: 28px;
     font-weight: 500;
-    letter-spacing: -0.015em;
+    letter-spacing: 0;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__hill {
@@ -289,7 +301,9 @@
     right: var(--steps-hill-right);
     bottom: var(--steps-hill-bottom);
     width: var(--steps-hill-width);
+    max-width: 58vw;
     pointer-events: none;
+    line-height: 0;
   }
 
   #lawn-steps-{{ section.id }} .lawn-steps__hill-img {
@@ -299,46 +313,58 @@
   }
 
   @media screen and (max-width: 1240px) {
-    #lawn-steps-{{ section.id }} .lawn-steps__item--1 {
-      left: 0;
+    #lawn-steps-{{ section.id }} .lawn-steps__container {
+      transform: scale(0.88);
+      transform-origin: top center;
     }
 
-    #lawn-steps-{{ section.id }} .lawn-steps__item--2 {
-      left: 36%;
-    }
-
-    #lawn-steps-{{ section.id }} .lawn-steps__item--3 {
-      right: 0;
-    }
-
-    #lawn-steps-{{ section.id }} .lawn-steps__curve {
-      left: 20%;
-      width: 64%;
+    #lawn-steps-{{ section.id }} {
+      min-height: calc(var(--steps-section-height) * 0.88);
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__hill {
-      width: min(var(--steps-hill-width), 45vw);
+      transform: scale(0.88);
+      transform-origin: right bottom;
     }
   }
 
   @media screen and (max-width: 989px) {
     #lawn-steps-{{ section.id }} {
       min-height: auto;
-      padding-top: 58px;
-      padding-bottom: 76px;
-      overflow: hidden;
+      padding: 58px 20px 72px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__container {
+      width: 100%;
       min-height: auto;
+      transform: none;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__header {
+      position: relative;
+      top: auto;
+      left: auto;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__heading {
+      width: 100%;
+      font-size: 40px;
+      line-height: 48px;
+    }
+
+    #lawn-steps-{{ section.id }} .lawn-steps__lead {
+      width: 100%;
+      font-size: 16px;
+      line-height: 25px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__stage {
       position: relative;
       inset: auto;
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 46px;
+      gap: 48px;
       margin-top: 56px;
     }
 
@@ -352,17 +378,20 @@
     #lawn-steps-{{ section.id }} .lawn-steps__item--2,
     #lawn-steps-{{ section.id }} .lawn-steps__item--3 {
       position: relative;
-      inset: auto;
-      width: min(100%, 360px);
-      margin-inline: auto;
+      top: auto;
+      left: auto;
+      width: min(100%, 385px);
+      margin: 0 auto;
     }
 
-    #lawn-steps-{{ section.id }} .lawn-steps__heading {
-      font-size: clamp(34px, 8vw, 44px);
+    #lawn-steps-{{ section.id }} .lawn-steps__title {
+      font-size: 30px;
+      line-height: 36px;
     }
 
-    #lawn-steps-{{ section.id }} .lawn-steps__lead {
+    #lawn-steps-{{ section.id }} .lawn-steps__text {
       font-size: 16px;
+      line-height: 25px;
     }
   }
 
@@ -373,46 +402,47 @@
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__eyebrow {
-      margin-bottom: 10px;
       font-size: 14px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__heading {
       font-size: 32px;
-      line-height: 1.13;
+      line-height: 38px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__lead {
-      margin-top: 17px;
+      margin-top: 18px;
       font-size: 15px;
-      line-height: 1.55;
+      line-height: 24px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__stage {
       margin-top: 42px;
-      gap: 40px;
+      gap: 42px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__image-wrap {
       width: 148px;
       height: 148px;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__number {
       width: 40px;
       height: 40px;
-      right: 19px;
-      bottom: -14px;
-      font-size: 23px;
+      bottom: -16px;
+      font-size: 26px;
+      line-height: 32px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__title {
-      font-size: 25px;
+      font-size: 26px;
+      line-height: 32px;
     }
 
     #lawn-steps-{{ section.id }} .lawn-steps__text {
       font-size: 15px;
+      line-height: 24px;
     }
   }
 </style>
@@ -474,7 +504,7 @@
       "type": "range",
       "id": "max_width",
       "label": "Content width",
-      "min": 900,
+      "min": 1000,
       "max": 1500,
       "step": 10,
       "unit": "px",
@@ -484,41 +514,51 @@
       "type": "range",
       "id": "section_height",
       "label": "Section height",
-      "min": 600,
+      "min": 650,
       "max": 950,
       "step": 10,
       "unit": "px",
-      "default": 800
+      "default": 820
     },
     {
       "type": "range",
-      "id": "padding_top",
-      "label": "Top spacing",
-      "min": 0,
+      "id": "header_top",
+      "label": "Header top position",
+      "min": 40,
       "max": 160,
       "step": 4,
       "unit": "px",
-      "default": 76
+      "default": 104
     },
     {
       "type": "range",
-      "id": "padding_bottom",
-      "label": "Bottom spacing",
-      "min": 0,
-      "max": 160,
-      "step": 4,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "side_padding",
+      "id": "side_space",
       "label": "Side spacing",
-      "min": 16,
-      "max": 100,
+      "min": 40,
+      "max": 140,
       "step": 4,
       "unit": "px",
-      "default": 52
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "heading_width",
+      "label": "Heading width",
+      "min": 500,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "lead_width",
+      "label": "Lead width",
+      "min": 500,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 700
     },
     {
       "type": "range",
@@ -526,46 +566,16 @@
       "label": "Step image size",
       "min": 120,
       "max": 220,
-      "step": 4,
+      "step": 2,
       "unit": "px",
-      "default": 168
-    },
-    {
-      "type": "range",
-      "id": "curve_width",
-      "label": "Curve width",
-      "min": 500,
-      "max": 1000,
-      "step": 10,
-      "unit": "px",
-      "default": 770
-    },
-    {
-      "type": "range",
-      "id": "curve_left",
-      "label": "Curve left position",
-      "min": 0,
-      "max": 500,
-      "step": 5,
-      "unit": "px",
-      "default": 285
-    },
-    {
-      "type": "range",
-      "id": "curve_top",
-      "label": "Curve top position",
-      "min": 120,
-      "max": 420,
-      "step": 4,
-      "unit": "px",
-      "default": 244
+      "default": 194
     },
     {
       "type": "range",
       "id": "grass_hill_width",
       "label": "Bottom grass width",
       "min": 300,
-      "max": 900,
+      "max": 800,
       "step": 10,
       "unit": "px",
       "default": 560
@@ -575,7 +585,7 @@
       "id": "grass_hill_push_right",
       "label": "Bottom grass push right",
       "min": 0,
-      "max": 220,
+      "max": 200,
       "step": 5,
       "unit": "px",
       "default": 0
@@ -585,7 +595,7 @@
       "id": "grass_hill_drop",
       "label": "Bottom grass drop",
       "min": 0,
-      "max": 180,
+      "max": 160,
       "step": 5,
       "unit": "px",
       "default": 0
@@ -604,7 +614,7 @@
       "type": "color",
       "id": "green_color",
       "label": "Primary green",
-      "default": "#20B26B"
+      "default": "#12B76A"
     },
     {
       "type": "color",
@@ -614,15 +624,21 @@
     },
     {
       "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#043320"
+    },
+    {
+      "type": "color",
       "id": "text_color",
-      "label": "Heading text",
-      "default": "#043B26"
+      "label": "Body text color",
+      "default": "#42473E"
     },
     {
       "type": "color",
       "id": "muted_color",
-      "label": "Lead text",
-      "default": "#244A3E"
+      "label": "Lead text color",
+      "default": "#124236"
     }
   ],
   "max_blocks": 3,
