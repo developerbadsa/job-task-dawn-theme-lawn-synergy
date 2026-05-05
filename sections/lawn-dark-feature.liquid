@@ -2,97 +2,482 @@
   assign bag = section.settings.bag_image
   assign grass_bg = section.settings.grass_bg_image
   assign grass_edge_img = section.settings.grass_edge_image
+  assign product_form_id = 'premium-upgrade-form-' | append: section.id
+
+  if section.settings.product != blank
+    assign selected_product = section.settings.product
+  else
+    assign selected_product = product
+  endif
+
+  assign selected_variant = selected_product.selected_or_first_available_variant
 -%}
 
-<section class="dark-feature">
+<section
+  id="premium-upgrade-{{ section.id }}"
+  class="premium-upgrade"
+  style="
+    --section-bg: {{ section.settings.background_color }};
+    --overlay-color: {{ section.settings.overlay_color }};
+    --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --texture-opacity: {{ section.settings.texture_opacity | divided_by: 100.0 }};
+    --content-width: {{ section.settings.content_width }}px;
+    --section-min-height: {{ section.settings.section_min_height }}px;
+    --section-padding-top: {{ section.settings.padding_top }}px;
+    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --media-width: {{ section.settings.media_width }}px;
+    --media-height: {{ section.settings.media_height }}px;
+    --media-radius: {{ section.settings.media_radius }}px;
+    --grid-gap: {{ section.settings.grid_gap }}px;
+    --copy-top-offset: {{ section.settings.copy_top_offset }}px;
+    --edge-height: {{ section.settings.grass_edge_height }}px;
+    --edge-bottom: {{ section.settings.grass_edge_bottom }}px;
+    --edge-opacity: {{ section.settings.grass_edge_opacity | divided_by: 100.0 }};
+    --eyebrow-color: {{ section.settings.eyebrow_color }};
+    --heading-color: {{ section.settings.heading_color }};
+    --text-color: {{ section.settings.text_color }};
+    --check-bg: {{ section.settings.check_color }};
+    --button-bg: {{ section.settings.button_background }};
+    --button-color: {{ section.settings.button_text_color }};
+  "
+>
+  <div class="premium-upgrade__base" aria-hidden="true"></div>
+
   {%- if grass_bg != blank -%}
-    <img class="grass-bg" src="{{ grass_bg | image_url: width: 2000 }}" alt="" width="2000" height="1333" loading="lazy" aria-hidden="true">
+    {{
+      grass_bg
+      | image_url: width: 2400
+      | image_tag:
+        class: 'premium-upgrade__texture',
+        loading: 'lazy',
+        alt: '',
+        width: 2400,
+        height: 1400
+    }}
   {%- else -%}
-    <img class="grass-bg" src="{{ 'grass-bg.jpg' | asset_url }}" alt="" width="2000" height="1333" loading="lazy" aria-hidden="true"
-         onerror="this.style.display='none'">
+    <img
+      class="premium-upgrade__texture"
+      src="{{ 'grass-bg.jpg' | asset_url }}"
+      alt=""
+      width="2400"
+      height="1400"
+      loading="lazy"
+      onerror="this.style.display='none'"
+    >
   {%- endif -%}
 
-  <div class="container dark-grid">
-    <div class="bag-photo">
+  <div class="premium-upgrade__inner">
+    <div class="premium-upgrade__media">
       {%- if bag != blank -%}
-        {{ bag | image_url: width: 1200 | image_tag:
-          loading: 'lazy',
-          alt: section.settings.bag_alt | default: 'Envy Tall Fescue bag',
-          width: 1200,
-          height: 1500
+        {{
+          bag
+          | image_url: width: 1200
+          | image_tag:
+            class: 'premium-upgrade__image',
+            loading: 'lazy',
+            alt: section.settings.bag_alt,
+            width: 1200,
+            height: 1500
         }}
       {%- else -%}
-        <img src="{{ 'upgrade-bag.png' | asset_url }}"
-             alt="{{ section.settings.bag_alt | default: 'Envy Tall Fescue bag in grass' }}"
-             width="1200" height="1500">
+        <img
+          class="premium-upgrade__image"
+          src="{{ 'upgrade-bag.png' | asset_url }}"
+          alt="{{ section.settings.bag_alt | escape }}"
+          width="1200"
+          height="1500"
+          loading="lazy"
+        >
       {%- endif -%}
     </div>
 
-    <div class="dark-copy">
+    <div class="premium-upgrade__copy">
       {%- if section.settings.eyebrow != blank -%}
-        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
-      {%- endif -%}
-      <h2>{{ section.settings.heading | default: 'The Best Lawn Starts With The Right Seed' }}</h2>
-      {%- if section.settings.body != blank -%}
-        <p>{{ section.settings.body }}</p>
-      {%- endif -%}
-      {%- if section.settings.list_heading != blank -%}
-        <h3>{{ section.settings.list_heading }}</h3>
+        <p class="premium-upgrade__eyebrow">{{ section.settings.eyebrow }}</p>
       {%- endif -%}
 
-      <ul class="feature-list light">
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'feature' -%}
-            <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
-          {%- endif -%}
-        {%- endfor -%}
-      </ul>
+      {%- if section.settings.heading != blank -%}
+        <h2 class="premium-upgrade__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.body != blank -%}
+        <div class="premium-upgrade__body">
+          {{ section.settings.body | newline_to_br }}
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.list_heading != blank -%}
+        <h3 class="premium-upgrade__list-title">{{ section.settings.list_heading }}</h3>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="premium-upgrade__list" role="list">
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'feature' and block.settings.text != blank -%}
+              <li class="premium-upgrade__item" {{ block.shopify_attributes }}>
+                <span class="premium-upgrade__check" aria-hidden="true">
+                  <svg viewBox="0 0 12 12" focusable="false">
+                    <path d="M4.8 8.5 2.3 6l.9-.9 1.6 1.6 4-4 .9.9-4.9 4.9Z" />
+                  </svg>
+                </span>
+                <span>{{ block.settings.text }}</span>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
 
       {%- if section.settings.cta_label != blank -%}
-        <a class="add-cart compact" href="{{ section.settings.cta_link | default: '#' }}" style="display: grid; place-items: center; text-decoration: none;">
-          {{ section.settings.cta_label }}
-        </a>
+        {%- if section.settings.button_action == 'add_to_cart' and selected_product != blank and selected_variant != blank -%}
+          {%- form 'product', selected_product, id: product_form_id, class: 'premium-upgrade__form' -%}
+            <input type="hidden" name="id" value="{{ selected_variant.id }}">
+            <button
+              type="submit"
+              class="premium-upgrade__button"
+              {% unless selected_variant.available %}
+                disabled
+              {% endunless %}
+            >
+              {%- if selected_variant.available -%}
+                {{ section.settings.cta_label }}
+              {%- else -%}
+                {{ section.settings.sold_out_label }}
+              {%- endif -%}
+            </button>
+          {%- endform -%}
+        {%- else -%}
+          <a class="premium-upgrade__button" href="{{ section.settings.cta_link | default: '#' }}">
+            {{ section.settings.cta_label }}
+          </a>
+        {%- endif -%}
       {%- endif -%}
     </div>
   </div>
 
   {%- if section.settings.show_grass_edge -%}
     {%- if grass_edge_img != blank -%}
-      <img class="grass-edge" src="{{ grass_edge_img | image_url: width: 2000 }}" alt="" width="2000" height="220" loading="lazy" aria-hidden="true">
+      {{
+        grass_edge_img
+        | image_url: width: 2400
+        | image_tag:
+          class: 'premium-upgrade__edge',
+          loading: 'lazy',
+          alt: '',
+          width: 2400,
+          height: 360
+      }}
     {%- else -%}
-      <img class="grass-edge" src="{{ 'grass-strip.png' | asset_url }}" alt="" width="1440" height="160" loading="lazy" aria-hidden="true">
+      <img
+        class="premium-upgrade__edge"
+        src="{{ 'grass-strip.png' | asset_url }}"
+        alt=""
+        width="2400"
+        height="360"
+        loading="lazy"
+        onerror="this.style.display='none'"
+      >
     {%- endif -%}
   {%- endif -%}
 </section>
+
+<style>
+  #premium-upgrade-{{ section.id }} {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: var(--section-min-height);
+    background: var(--section-bg);
+    padding: var(--section-padding-top) 24px var(--section-padding-bottom);
+    font-family: inherit;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__base {
+    position: absolute;
+    inset: 0;
+    z-index: -4;
+    background:
+      radial-gradient(circle at 17% 13%, rgba(255, 255, 255, 0.08), transparent 31%),
+      linear-gradient(90deg, rgba(0, 53, 30, 0.74) 0%, rgba(0, 48, 28, 0.98) 56%, rgba(0, 53, 30, 0.94) 100%);
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__texture {
+    position: absolute;
+    inset: 0;
+    z-index: -3;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: var(--texture-opacity);
+    mix-blend-mode: screen;
+    filter: saturate(0.95) contrast(1.05);
+    pointer-events: none;
+  }
+
+  #premium-upgrade-{{ section.id }}::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: var(--overlay-color);
+    opacity: var(--overlay-opacity);
+    pointer-events: none;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__inner {
+    position: relative;
+    z-index: 2;
+    max-width: var(--content-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: var(--media-width) minmax(0, 1fr);
+    gap: var(--grid-gap);
+    align-items: start;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__media {
+    width: var(--media-width);
+    height: var(--media-height);
+    overflow: hidden;
+    border-radius: var(--media-radius);
+    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.16);
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__copy {
+    position: relative;
+    z-index: 8;
+    padding-top: var(--copy-top-offset);
+    color: var(--text-color);
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__eyebrow {
+    margin: 0 0 8px;
+    color: var(--eyebrow-color);
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__heading {
+    max-width: 430px;
+    margin: 0;
+    color: var(--heading-color);
+    font-size: 32px;
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__body {
+    max-width: 404px;
+    margin-top: 10px;
+    color: var(--text-color);
+    font-size: 13.2px;
+    line-height: 1.55;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__list-title {
+    margin: 18px 0 11px;
+    color: var(--heading-color);
+    font-size: 15.5px;
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__list {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    color: var(--text-color);
+    font-size: 13px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__check {
+    flex: 0 0 13px;
+    width: 13px;
+    height: 13px;
+    margin-top: 1px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--check-bg);
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__check svg {
+    display: block;
+    width: 10px;
+    height: 10px;
+    fill: #fff;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__form {
+    margin: 0;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__button {
+    width: 184px;
+    min-height: 45px;
+    margin-top: 23px;
+    display: inline-grid;
+    place-items: center;
+    border: 0;
+    border-radius: 999px;
+    background: var(--button-bg);
+    color: var(--button-color);
+    text-decoration: none;
+    font-size: 19px;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    cursor: pointer;
+    box-shadow: none;
+    transition: transform 160ms ease, opacity 160ms ease;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__button:hover {
+    transform: translateY(-1px);
+    opacity: 0.96;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+  }
+
+  #premium-upgrade-{{ section.id }} .premium-upgrade__edge {
+    position: absolute;
+    left: 50%;
+    bottom: var(--edge-bottom);
+    z-index: 5;
+    width: 100%;
+    min-width: 1180px;
+    height: var(--edge-height);
+    object-fit: cover;
+    object-position: center bottom;
+    transform: translateX(-50%);
+    opacity: var(--edge-opacity);
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    #premium-upgrade-{{ section.id }} {
+      min-height: auto;
+      padding: 48px 20px 126px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__inner {
+      grid-template-columns: 1fr;
+      max-width: 560px;
+      gap: 28px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__media {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 400 / 484;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__copy {
+      padding-top: 0;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__heading,
+    #premium-upgrade-{{ section.id }} .premium-upgrade__body {
+      max-width: none;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__heading {
+      font-size: 30px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__edge {
+      min-width: 960px;
+      height: 112px;
+    }
+  }
+
+  @media screen and (max-width: 575px) {
+    #premium-upgrade-{{ section.id }} {
+      padding: 38px 16px 104px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__heading {
+      font-size: 27px;
+      line-height: 1.18;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__body {
+      font-size: 13px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__button {
+      width: 100%;
+      max-width: 240px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__edge {
+      min-width: 720px;
+      height: 92px;
+    }
+  }
+</style>
 
 {% schema %}
 {
   "name": "Lawn — Premium Upgrade",
   "tag": "section",
-  "class": "lawn-dark-feature-section",
+  "class": "lawn-premium-upgrade-section",
   "settings": [
+    {
+      "type": "header",
+      "content": "Images"
+    },
     {
       "type": "image_picker",
       "id": "bag_image",
-      "label": "Left bag image"
+      "label": "Left image"
     },
     {
       "type": "image_picker",
       "id": "grass_bg_image",
-      "label": "Background grass texture (low opacity overlay)",
-      "info": "Falls back to assets/grass-bg.jpg when empty."
+      "label": "Background texture image"
     },
     {
       "type": "image_picker",
       "id": "grass_edge_image",
-      "label": "Bottom grass edge image",
-      "info": "Falls back to assets/grass-strip.png when empty."
+      "label": "Bottom grass image"
     },
     {
       "type": "text",
       "id": "bag_alt",
-      "label": "Bag image alt text",
+      "label": "Image alt text",
       "default": "Envy Tall Fescue bag in grass"
+    },
+    {
+      "type": "header",
+      "content": "Content"
     },
     {
       "type": "text",
@@ -110,7 +495,7 @@
       "type": "textarea",
       "id": "body",
       "label": "Body",
-      "default": "If You Want A Lawn That Actually Stands Out - Thicker, Darker, And More Uniform It All Starts With The Seed You Choose. Envy Premium Tall Fescue Is Our Highest-End Blend, Built For Homeowners Who Are Tired Of Thin, Patchy Grass And Want A Lawn That Looks Better, Fills In Thicker, And Performs Consistently Year After Year."
+      "default": "If You Want A Lawn That Actually Stands Out — Thicker, Darker, And More Uniform It All Starts With The Seed You Choose.\nEnvy Premium Tall Fescue Is Our Highest-End Blend, Built For Homeowners Who Are Tired Of Thin, Patchy Grass And Want A Lawn That Looks Better, Fills In Thicker, And Performs Consistently Year After Year."
     },
     {
       "type": "text",
@@ -119,21 +504,252 @@
       "default": "This Is The Right Seed For You If:"
     },
     {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "select",
+      "id": "button_action",
+      "label": "Button action",
+      "options": [
+        {
+          "value": "link",
+          "label": "Open link"
+        },
+        {
+          "value": "add_to_cart",
+          "label": "Add selected product to cart"
+        }
+      ],
+      "default": "link"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product for add to cart"
+    },
+    {
       "type": "text",
       "id": "cta_label",
-      "label": "CTA label",
+      "label": "Button label",
       "default": "Add To Cart"
+    },
+    {
+      "type": "text",
+      "id": "sold_out_label",
+      "label": "Sold out label",
+      "default": "Sold Out"
     },
     {
       "type": "url",
       "id": "cta_link",
-      "label": "CTA link"
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 760,
+      "max": 1060,
+      "step": 4,
+      "unit": "px",
+      "default": 812
+    },
+    {
+      "type": "range",
+      "id": "section_min_height",
+      "label": "Minimum height",
+      "min": 520,
+      "max": 760,
+      "step": 4,
+      "unit": "px",
+      "default": 640
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 68
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 60,
+      "max": 180,
+      "step": 4,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Column gap",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "copy_top_offset",
+      "label": "Text top offset",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "media_width",
+      "label": "Image width",
+      "min": 320,
+      "max": 480,
+      "step": 2,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "media_height",
+      "label": "Image height",
+      "min": 380,
+      "max": 560,
+      "step": 2,
+      "unit": "px",
+      "default": 484
+    },
+    {
+      "type": "range",
+      "id": "media_radius",
+      "label": "Image corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Bottom grass"
     },
     {
       "type": "checkbox",
       "id": "show_grass_edge",
-      "label": "Show bottom grass edge",
+      "label": "Show bottom grass",
       "default": true
+    },
+    {
+      "type": "range",
+      "id": "grass_edge_height",
+      "label": "Bottom grass height",
+      "min": 80,
+      "max": 220,
+      "step": 2,
+      "unit": "px",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "grass_edge_bottom",
+      "label": "Bottom grass position",
+      "min": -40,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": -8
+    },
+    {
+      "type": "range",
+      "id": "grass_edge_opacity",
+      "label": "Bottom grass opacity",
+      "min": 40,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#063B23"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#00351F"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "texture_opacity",
+      "label": "Texture opacity",
+      "min": 0,
+      "max": 70,
+      "step": 1,
+      "unit": "%",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow color",
+      "default": "#2BD679"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "check_color",
+      "label": "Check icon color",
+      "default": "#20B872"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#FF5A1F"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
     }
   ],
   "blocks": [
@@ -141,7 +757,12 @@
       "type": "feature",
       "name": "Feature point",
       "settings": [
-        { "type": "text", "id": "text", "label": "Text", "default": "Feature item" }
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Feature item"
+        }
       ]
     }
   ],
@@ -149,10 +770,30 @@
     {
       "name": "Lawn — Premium Upgrade",
       "blocks": [
-        { "type": "feature", "settings": { "text": "You Want A Darker Green, More Attractive Lawn" } },
-        { "type": "feature", "settings": { "text": "Your Lawn Feels Thin Or Uneven" } },
-        { "type": "feature", "settings": { "text": "You Want Better Density And A More Uniform Finish" } },
-        { "type": "feature", "settings": { "text": "You Want Better Than Basic Seed" } }
+        {
+          "type": "feature",
+          "settings": {
+            "text": "You Want A Darker Green, More Attractive Lawn"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "text": "Your Lawn Feels Thin Or Uneven"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "text": "You Want Better Density And A More Uniform Finish"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "text": "You Want Better Than Basic Seed"
+          }
+        }
       ]
     }
   ]
