@@ -42,8 +42,7 @@
   assign heading_color = section.settings.visual_heading_color | default: '#FFFFFF'
   assign body_color = section.settings.visual_body_color | default: '#FFFFFF'
 
-  assign texture_opacity = section.settings.texture_opacity | default: 30 | times: 0.01
-  assign texture_blend = section.settings.texture_blend | default: 'overlay'
+  assign texture_opacity = section.settings.texture_opacity | default: 26 | times: 0.01
 
   if bg_texture != blank
     assign texture_url = bg_texture | image_url: width: 2400
@@ -60,32 +59,35 @@
     --testimonial-height: {{ layout_height }}px;
     --testimonial-panel-left: {{ panel_left }}px;
     --testimonial-panel-radius: {{ panel_radius }}px;
+
     --testimonial-person-left: {{ person_left }}px;
     --testimonial-person-top: {{ person_top }}px;
     --testimonial-person-width: {{ person_width }}px;
     --testimonial-person-height: {{ person_height }}px;
+
     --testimonial-content-left: {{ content_left }}px;
     --testimonial-content-top: {{ content_top }}px;
     --testimonial-content-width: {{ content_width }}px;
+
     --testimonial-card-width: {{ card_width }}px;
     --testimonial-card-height: {{ card_height }}px;
     --testimonial-card-gap: {{ card_gap }}px;
     --testimonial-grass-height: {{ grass_height }}px;
+
     --testimonial-panel-bg: {{ panel_bg }};
     --testimonial-card-bg: {{ card_bg }};
     --testimonial-primary: {{ primary_green }};
     --testimonial-heading: {{ heading_color }};
     --testimonial-body: {{ body_color }};
+
     --testimonial-heading-size: {{ heading_size }}px;
     --testimonial-quote-size: {{ quote_size }}px;
+
     --testimonial-texture: {% if texture_url != blank %}url('{{ texture_url }}'){% else %}none{% endif %};
     --testimonial-texture-opacity: {{ texture_opacity }};
-    --testimonial-texture-blend: {{ texture_blend }};
   "
 >
   <div class="lawn-testimonial-custom__inner">
-    <div class="lawn-testimonial-custom__panel"></div>
-
     <div class="lawn-testimonial-custom__person">
       {%- if person != blank -%}
         {{
@@ -227,48 +229,36 @@
     height: var(--testimonial-height);
     margin-inline: auto;
     overflow: visible;
+    isolation: isolate;
   }
 
-  /* Panel extends to the right edge of the viewport (not just the inner container) */
-  /* isolation: isolate creates a new stacking context so mix-blend-mode on ::before
-     ONLY blends with the panel itself, not with the section's white background behind it */
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel {
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
     left: var(--testimonial-panel-left);
     right: calc(50% - 50vw);
-    z-index: 1;
-    overflow: hidden;
-    isolation: isolate;
     border-top-left-radius: var(--testimonial-panel-radius);
-    background-color: var(--testimonial-panel-bg);
+    pointer-events: none;
   }
 
-  /* Texture pattern - now uses mix-blend-mode so the leafy/grass pattern
-     is properly visible on top of the dark green background */
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel::before {
-    content: "";
-    position: absolute;
-    inset: 0;
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before {
     z-index: 1;
-    background-image: var(--testimonial-texture);
+    background: var(--testimonial-panel-bg);
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
+    z-index: 2;
+    background-image:
+      linear-gradient(0deg, rgba(4, 51, 32, 0.38), rgba(4, 51, 32, 0.38)),
+      var(--testimonial-texture);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     opacity: var(--testimonial-texture-opacity);
-    mix-blend-mode: var(--testimonial-texture-blend);
-    pointer-events: none;
-  }
-
-  /* Subtle highlight only — no darkening so the texture stays visible */
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: radial-gradient(ellipse at 30% 8%, rgba(255, 255, 255, 0.05), transparent 55%);
-    pointer-events: none;
+    filter: grayscale(1) contrast(1.28) brightness(0.9);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
@@ -449,7 +439,8 @@
       height: 760px;
     }
 
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel {
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
       left: 21%;
       right: calc(50% - 50vw);
       border-top-left-radius: 42px;
@@ -503,8 +494,12 @@
       overflow: visible;
     }
 
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel {
-      inset: -52px -20px -128px;
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
+      top: -52px;
+      right: -20px;
+      bottom: -128px;
+      left: -20px;
       border-radius: 0;
     }
 
@@ -557,6 +552,14 @@
       padding: 44px 16px 110px;
     }
 
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
+      top: -44px;
+      right: -16px;
+      bottom: -110px;
+      left: -16px;
+    }
+
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
       margin-bottom: 12px;
       font-size: 14px;
@@ -596,6 +599,7 @@
     }
   }
 </style>
+
 {% schema %}
 {
   "name": "Lawn — Testimonial",
@@ -630,22 +634,7 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 30
-    },
-    {
-      "type": "select",
-      "id": "texture_blend",
-      "label": "Texture blend mode",
-      "info": "Use 'overlay' for green grass photos on dark green (recommended). Use 'screen' only with light/grayscale textures. 'Soft light' for very subtle effect.",
-      "options": [
-        { "value": "overlay", "label": "Overlay (recommended for green textures)" },
-        { "value": "soft-light", "label": "Soft light (subtle)" },
-        { "value": "multiply", "label": "Multiply (darken pattern)" },
-        { "value": "screen", "label": "Screen (light texture only)" },
-        { "value": "lighten", "label": "Lighten" },
-        { "value": "normal", "label": "Normal (no blend)" }
-      ],
-      "default": "overlay"
+      "default": 26
     },
     {
       "type": "image_picker",
