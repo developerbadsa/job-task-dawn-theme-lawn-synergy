@@ -105,54 +105,55 @@ img {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .cart-button,
 .icon-button {
   border: 0;
-  background: #f3fbf7;
+  background: #64c1961a;
   color: #101815;
-  height: 44px;
+  height: 52px;
   border-radius: 8px;
 }
 
 .cart-button {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 0 14px;
+  gap: 12px;
+  padding: 0 20px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 1;
 }
 
 .icon-button {
-  width: 44px;
+  width: 52px;
   display: grid;
   place-items: center;
 }
 
 .cart-count {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #63c89b;
+  background: #64c196;
   color: #fff;
-  font-size: 11px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .header-action-icon {
   display: block;
   flex: 0 0 auto;
-  width: 18px;
-  height: 18px;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.9;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
