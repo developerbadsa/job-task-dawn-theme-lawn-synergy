@@ -25,6 +25,7 @@
           "type": "trust",
           "settings": {
             "icon": "shipping",
+            "custom_icon_image": "shopify://shop_images/Frame_2.png",
             "theme_icon_asset": "",
             "label": "Secure Checkout"
           }
@@ -32,7 +33,8 @@
         "trust4": {
           "type": "trust",
           "settings": {
-            "icon": "shipping",
+            "icon": "return",
+            "custom_icon_image": "shopify://shop_images/Frame_3.png",
             "theme_icon_asset": "",
             "label": "Easy Returns"
           }
@@ -41,6 +43,7 @@
           "type": "trust",
           "settings": {
             "icon": "shipping",
+            "custom_icon_image": "shopify://shop_images/Frame_4.png",
             "theme_icon_asset": "",
             "label": "Easy Returns"
           }
