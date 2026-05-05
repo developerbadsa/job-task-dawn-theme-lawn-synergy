@@ -24,7 +24,7 @@
   assign person_width = section.settings.layout_person_width | default: 779
   assign person_height = section.settings.layout_person_height | default: 905
 
-  assign content_left = section.settings.layout_content_left | default: 410
+  assign content_left = section.settings.layout_content_left | default: 711
   assign content_top = section.settings.layout_content_top | default: 156
   assign content_width = section.settings.layout_content_width | default: 647
 
@@ -33,12 +33,12 @@
   assign card_gap = section.settings.layout_card_gap | default: 50
   assign grass_height = section.settings.layout_grass_height | default: 148
 
-  assign heading_size = section.settings.type_heading_size | default: 48
+  assign heading_size = section.settings.type_heading_size | default: 52
   assign quote_size = section.settings.type_quote_size | default: 24
 
   assign panel_bg = section.settings.visual_panel_bg | default: '#043320'
   assign card_bg = section.settings.visual_card_bg | default: '#25AA6C'
-  assign primary_green = section.settings.visual_primary_green | default: '#20B26B'
+  assign primary_green = section.settings.visual_primary_green | default: '#25AA6C'
   assign heading_color = section.settings.visual_heading_color | default: '#FFFFFF'
   assign body_color = section.settings.visual_body_color | default: '#FFFFFF'
 
@@ -85,7 +85,6 @@
 
     --testimonial-texture: {% if texture_url != blank %}url('{{ texture_url }}'){% else %}none{% endif %};
     --testimonial-texture-opacity: {{ texture_opacity }};
-    overflow:visbile;
   "
 >
   <div class="lawn-testimonial-custom__inner">
@@ -224,6 +223,11 @@
     box-sizing: border-box;
   }
 
+  #lawn-testimonial-{{ section.id }} {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
     position: relative;
     width: min(100%, var(--testimonial-width));
@@ -290,24 +294,24 @@
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
-    margin: 0 0 14px;
+    margin: 0 0 15px;
     color: var(--testimonial-primary);
     font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 15px;
-    line-height: 1.2;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 500;
+    letter-spacing: 0;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
     margin: 0;
     max-width: 647px;
     color: var(--testimonial-heading);
-    font-family: "Clash Grotesk", "Poppins", var(--font-heading-family), Arial, sans-serif;
+    font-family: "Clash Grotesk", "Clash Display", var(--font-heading-family), "Poppins", Arial, sans-serif;
     font-size: var(--testimonial-heading-size);
-    line-height: 1.15;
-    font-weight: 700;
-    letter-spacing: -0.045em;
+    line-height: 64px;
+    font-weight: 600;
+    letter-spacing: -0.4px;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
@@ -315,7 +319,7 @@
     width: var(--testimonial-card-width);
     min-height: var(--testimonial-card-height);
     margin-top: var(--testimonial-card-gap);
-    padding: 66px 38px 34px;
+    padding: 54px 37px 36px;
     border-radius: 28px;
     background: var(--testimonial-card-bg);
     color: #ffffff;
@@ -360,14 +364,14 @@
     position: relative;
     z-index: 3;
     margin: 0;
-    max-width: 535px;
+    max-width: 533px;
     color: #ffffff;
-    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
+    font-family: "Inter", var(--font-body-family), Arial, sans-serif;
     font-size: var(--testimonial-quote-size);
-    line-height: 1.45;
-    font-weight: 500;
+    line-height: 36px;
+    font-weight: 400;
     font-style: italic;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta {
@@ -377,27 +381,28 @@
     align-items: flex-end;
     justify-content: space-between;
     gap: 28px;
-    margin-top: 32px;
+    margin-top: 26px;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta strong {
     display: block;
     color: #ffffff;
-    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
+    font-family: "Inter", "Poppins", var(--font-body-family), Arial, sans-serif;
     font-size: 24px;
-    line-height: 1.1;
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    line-height: 28px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta small {
     display: block;
-    margin-top: 5px;
+    margin-top: 3px;
     color: #ffffff;
-    font-family: "Poppins", var(--font-body-family), Arial, sans-serif;
-    font-size: 12px;
-    line-height: 1.2;
-    font-weight: 500;
+    font-family: "Inter", "Poppins", var(--font-body-family), Arial, sans-serif;
+    font-size: 13px;
+    line-height: 16px;
+    font-weight: 400;
+    letter-spacing: 0;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__stars {
@@ -459,18 +464,26 @@
       width: min(52vw, var(--testimonial-content-width));
     }
 
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
-      font-size: 42px;
+      font-size: 44px;
+      line-height: 54px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
       width: 100%;
       min-height: 300px;
       margin-top: 48px;
+      padding: 52px 32px 32px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
-      font-size: 21px;
+      font-size: 22px;
+      line-height: 34px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__grass {
@@ -527,19 +540,27 @@
       z-index: 5;
     }
 
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
+      font-size: 16px;
+      line-height: 1.3;
+    }
+
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
-      font-size: clamp(36px, 8vw, 48px);
+      font-size: clamp(36px, 7vw, 46px);
+      line-height: 1.18;
+      letter-spacing: -0.3px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
       width: 100%;
       min-height: auto;
       margin-top: 70px;
-      padding: 58px 26px 30px;
+      padding: 54px 26px 30px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
       font-size: 20px;
+      line-height: 31px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__grass {
@@ -563,20 +584,23 @@
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
       margin-bottom: 12px;
       font-size: 14px;
+      line-height: 1.3;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
       font-size: 34px;
-      line-height: 1.18;
+      line-height: 42px;
+      letter-spacing: -0.25px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
       font-size: 18px;
-      line-height: 1.45;
+      line-height: 28px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta {
       display: block;
+      margin-top: 24px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__stars {
@@ -599,95 +623,110 @@
     }
   }
 
+  @media screen and (min-width: 1280px) {
+    #lawn-testimonial-{{ section.id }} {
+      height: 891px !important;
+      min-height: 891px !important;
+    }
 
-  /* ================================
-    EXACT DESKTOP LOCK
-   1440 x 891 artboard based
-================================ */
-@media screen and (min-width: 1280px) {
-  #lawn-testimonial-{{ section.id }} {
-    height: 891px !important;
-    min-height: 891px !important;
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
+      width: min(100%, 1440px) !important;
+      height: 891px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
+      top: 0 !important;
+      bottom: 0 !important;
+      left: 301px !important;
+      right: calc(50% - 50vw) !important;
+      border-top-left-radius: 50px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
+      top: 0 !important;
+      left: 18px !important;
+      width: 779px !important;
+      height: 905px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__content {
+      top: 156px !important;
+      left: 711px !important;
+      width: 647px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
+      margin: 0 0 15px !important;
+      font-family: "Poppins", var(--font-body-family), Arial, sans-serif !important;
+      font-size: 18px !important;
+      line-height: 23.4px !important;
+      font-weight: 500 !important;
+      letter-spacing: 0 !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
+      max-width: 647px !important;
+      font-family: "Clash Grotesk", "Clash Display", var(--font-heading-family), "Poppins", Arial, sans-serif !important;
+      font-size: 52px !important;
+      line-height: 64px !important;
+      font-weight: 600 !important;
+      letter-spacing: -0.4px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
+      width: 647px !important;
+      min-height: 328px !important;
+      margin-top: 50px !important;
+      padding: 54px 37px 36px !important;
+      border-radius: 28px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__avatar {
+      top: -42px !important;
+      left: 52px !important;
+      width: 78px !important;
+      height: 78px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote-mark {
+      top: -42px !important;
+      right: 38px !important;
+      font-size: 126px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
+      max-width: 533px !important;
+      font-family: "Inter", var(--font-body-family), Arial, sans-serif !important;
+      font-size: 24px !important;
+      line-height: 36px !important;
+      font-weight: 400 !important;
+      font-style: italic !important;
+      letter-spacing: 0 !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta {
+      margin-top: 26px !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta strong {
+      font-family: "Inter", "Poppins", var(--font-body-family), Arial, sans-serif !important;
+      font-size: 24px !important;
+      line-height: 28px !important;
+      font-weight: 600 !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta small {
+      font-family: "Inter", "Poppins", var(--font-body-family), Arial, sans-serif !important;
+      font-size: 13px !important;
+      line-height: 16px !important;
+      font-weight: 400 !important;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__grass {
+      height: 148px !important;
+    }
   }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
-    width: min(100%, 1440px) !important;
-    height: 891px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 301px !important;
-    right: calc(50% - 50vw) !important;
-    border-top-left-radius: 50px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
-    top: 0 !important;
-    left: 18px !important;
-    width: 779px !important;
-    height: 905px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__content {
-    top: 156px !important;
-    left: 711px !important;
-    width: 647px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
-    margin: 0 0 14px !important;
-    font-size: 15px !important;
-    line-height: 1.2 !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
-    max-width: 647px !important;
-    font-size: 48px !important;
-    line-height: 1.15 !important;
-    letter-spacing: -0.045em !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
-    width: 647px !important;
-    min-height: 328px !important;
-    margin-top: 50px !important;
-    padding: 66px 38px 34px !important;
-    border-radius: 28px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__avatar {
-    top: -42px !important;
-    left: 52px !important;
-    width: 78px !important;
-    height: 78px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote-mark {
-    top: -42px !important;
-    right: 38px !important;
-    font-size: 126px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
-    max-width: 535px !important;
-    font-size: 24px !important;
-    line-height: 1.45 !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta {
-    margin-top: 32px !important;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__grass {
-    height: 148px !important;
-  }
-}
-
-
-
 </style>
 
 {% schema %}
@@ -876,11 +915,11 @@
       "type": "range",
       "id": "layout_content_left",
       "label": "Content left position",
-      "min": 360,
-      "max": 460,
+      "min": 660,
+      "max": 760,
       "step": 1,
       "unit": "px",
-      "default": 410
+      "default": 711
     },
     {
       "type": "range",
@@ -954,7 +993,7 @@
       "max": 70,
       "step": 1,
       "unit": "px",
-      "default": 48
+      "default": 52
     },
     {
       "type": "range",
@@ -986,7 +1025,7 @@
       "type": "color",
       "id": "visual_primary_green",
       "label": "Eyebrow green",
-      "default": "#20B26B"
+      "default": "#25AA6C"
     },
     {
       "type": "color",
