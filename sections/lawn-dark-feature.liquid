@@ -1,8 +1,17 @@
 {%- liquid
   assign bag = section.settings.bag_image
+  assign grass_bg = section.settings.grass_bg_image
+  assign grass_edge_img = section.settings.grass_edge_image
 -%}
 
 <section class="dark-feature">
+  {%- if grass_bg != blank -%}
+    <img class="grass-bg" src="{{ grass_bg | image_url: width: 2000 }}" alt="" width="2000" height="1333" loading="lazy" aria-hidden="true">
+  {%- else -%}
+    <img class="grass-bg" src="{{ 'grass-bg.jpg' | asset_url }}" alt="" width="2000" height="1333" loading="lazy" aria-hidden="true"
+         onerror="this.style.display='none'">
+  {%- endif -%}
+
   <div class="container dark-grid">
     <div class="bag-photo">
       {%- if bag != blank -%}
@@ -48,7 +57,11 @@
   </div>
 
   {%- if section.settings.show_grass_edge -%}
-    <img class="grass-edge" src="{{ 'grass-strip.png' | asset_url }}" alt="" width="1440" height="160" loading="lazy">
+    {%- if grass_edge_img != blank -%}
+      <img class="grass-edge" src="{{ grass_edge_img | image_url: width: 2000 }}" alt="" width="2000" height="220" loading="lazy" aria-hidden="true">
+    {%- else -%}
+      <img class="grass-edge" src="{{ 'grass-strip.png' | asset_url }}" alt="" width="1440" height="160" loading="lazy" aria-hidden="true">
+    {%- endif -%}
   {%- endif -%}
 </section>
 
@@ -62,6 +75,18 @@
       "type": "image_picker",
       "id": "bag_image",
       "label": "Left bag image"
+    },
+    {
+      "type": "image_picker",
+      "id": "grass_bg_image",
+      "label": "Background grass texture (low opacity overlay)",
+      "info": "Falls back to assets/grass-bg.jpg when empty."
+    },
+    {
+      "type": "image_picker",
+      "id": "grass_edge_image",
+      "label": "Bottom grass edge image",
+      "info": "Falls back to assets/grass-strip.png when empty."
     },
     {
       "type": "text",

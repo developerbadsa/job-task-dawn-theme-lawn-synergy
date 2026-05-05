@@ -743,6 +743,24 @@ p {
 
 .dark-feature {
   padding: 120px 0 140px;
+  isolation: isolate;
+}
+
+.dark-feature .grass-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.12;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.dark-feature .container {
+  position: relative;
+  z-index: 1;
 }
 
 .dark-grid {
@@ -817,9 +835,11 @@ p {
   left: 0;
   bottom: -1px;
   width: 100%;
-  height: 90px;
+  height: 120px;
   object-fit: cover;
+  object-position: center bottom;
   pointer-events: none;
+  z-index: 2;
 }
 
 /* Steps */
