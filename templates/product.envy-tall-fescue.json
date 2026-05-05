@@ -214,31 +214,71 @@
     },
     "difference": {
       "type": "lawn-difference",
+      "blocks": {
+        "card_dp9j3R": {
+          "type": "card",
+          "settings": {
+            "icon_image": "shopify://shop_images/Mask_group_5.png",
+            "icon_class": "grass-icon",
+            "title": "Thicker, Denser Turf",
+            "text": "Selected for improved lawn density, creating a smoother, thicker, more uniform appearance across your entire lawn.",
+            "offset": false,
+            "style": "default"
+          }
+        },
+        "card_VcbQ8f": {
+          "type": "card",
+          "settings": {
+            "icon_image": "shopify://shop_images/Mask_group_7.png",
+            "icon_class": "grass-icon",
+            "title": "Ultra-Dark Green",
+            "text": "Elite varieties chosen for deep, rich green color that stands out beautifully in any lawn setting.",
+            "offset": false,
+            "style": "default"
+          }
+        },
+        "card_wfi8EU": {
+          "type": "card",
+          "settings": {
+            "icon_image": "shopify://shop_images/Mask_group_8.png",
+            "icon_class": "grass-icon",
+            "title": "Ultra-Dark Green",
+            "text": "Elite varieties chosen for deep, rich green color that stands out beautifully in any lawn setting.",
+            "offset": false,
+            "style": "default"
+          }
+        },
+        "card_GCHBBV": {
+          "type": "card",
+          "settings": {
+            "icon_image": "shopify://shop_images/Mask_group_9.png",
+            "icon_class": "grass-icon",
+            "title": "0% Weed Seed",
+            "text": "Clean, high-quality seed with zero weed seeds and no unnecessary fillers for better lawn results.",
+            "offset": false,
+            "style": "default"
+          }
+        }
+      },
+      "block_order": [
+        "card_dp9j3R",
+        "card_VcbQ8f",
+        "card_wfi8EU",
+        "card_GCHBBV"
+      ],
       "settings": {
         "eyebrow": "Premium Difference",
         "heading": "What Makes Envy Different From Other Grass Seeds?",
         "photo": "shopify://shop_images/eb525d0a099acc205cbd49814b99be2d1f85dc41.png",
+        "badge_image": "shopify://shop_images/35d59b928db3f71e6f85aa0f846720ee3dcafb98.png",
         "photo_alt": "Lawn Synergy specialist holding Envy grass seed",
-        "show_badge": true,
-        "card_1_icon": "grass",
-        "card_1_title": "Thicker, Denser Turf",
-        "card_1_text": "Selected For Improved Lawn Density, Creating A Smoother, Thicker, More Uniform Appearance Across Your Entire Lawn.",
-        "card_2_icon": "grass",
-        "card_2_title": "Ultra-Dark Green",
-        "card_2_text": "Elite Varieties Chosen For Deep, Rich Green Color That Stands Out Beautifully In Any Lawn Setting.",
-        "card_3_icon": "chart",
-        "card_3_title": "Improved Fill-In",
-        "card_3_text": "Helps Reduce Thin, Patchy Areas Faster Compared To Standard Tall Fescue Blends Used In Lawns.",
-        "card_4_icon": "seed",
-        "card_4_title": "0% Weed Seed",
-        "card_4_text": "Clean, High-Quality Seed With Zero Weed Seeds And No Unnecessary Fillers For Better Lawn Results.",
+        "container_width": 1280,
+        "card_radius": 20,
         "background_color": "#eff9f4",
-        "dark_color": "#063d2b",
-        "green_color": "#22b86f",
-        "card_green_color": "#63c69a",
         "text_color": "#21352e",
-        "max_width": 1270,
-        "section_height": 720
+        "accent_color": "#18b873",
+        "card_background": "#ffffff",
+        "green_card_background": "#5cc493"
       }
     },
     "dark_feature": {
@@ -281,9 +321,34 @@
         "heading": "The Best Lawn Starts With The Right Seed",
         "body": "If You Want A Lawn That Actually Stands Out - Thicker, Darker, And More Uniform It All Starts With The Seed You Choose. Envy Premium Tall Fescue Is Our Highest-End Blend, Built For Homeowners Who Are Tired Of Thin, Patchy Grass And Want A Lawn That Looks Better, Fills In Thicker, And Performs Consistently Year After Year.",
         "list_heading": "This Is The Right Seed For You If:",
+        "button_action": "link",
+        "product": "",
         "cta_label": "Add To Cart",
+        "sold_out_label": "Sold Out",
         "cta_link": "",
-        "show_grass_edge": true
+        "content_width": 812,
+        "section_min_height": 640,
+        "padding_top": 68,
+        "padding_bottom": 88,
+        "grid_gap": 28,
+        "copy_top_offset": 24,
+        "media_width": 400,
+        "media_height": 484,
+        "media_radius": 10,
+        "show_grass_edge": true,
+        "grass_edge_height": 150,
+        "grass_edge_bottom": -8,
+        "grass_edge_opacity": 100,
+        "background_color": "#063b23",
+        "overlay_color": "#00351f",
+        "overlay_opacity": 30,
+        "texture_opacity": 18,
+        "eyebrow_color": "#2bd679",
+        "heading_color": "#ffffff",
+        "text_color": "#ffffff",
+        "check_color": "#20b872",
+        "button_background": "#ff5a1f",
+        "button_text_color": "#ffffff"
       }
     },
     "steps": {
