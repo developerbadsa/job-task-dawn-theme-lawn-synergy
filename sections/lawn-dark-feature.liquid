@@ -10,7 +10,9 @@
     assign selected_product = product
   endif
 
-  assign selected_variant = selected_product.selected_or_first_available_variant
+  if selected_product != blank
+    assign selected_variant = selected_product.selected_or_first_available_variant
+  endif
 -%}
 
 <section
@@ -18,18 +20,17 @@
   class="premium-upgrade"
   style="
     --section-bg: {{ section.settings.background_color }};
-    --overlay-color: {{ section.settings.overlay_color }};
-    --overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
-    --texture-opacity: {{ section.settings.texture_opacity | divided_by: 100.0 }};
     --content-width: {{ section.settings.content_width }}px;
     --section-min-height: {{ section.settings.section_min_height }}px;
     --section-padding-top: {{ section.settings.padding_top }}px;
-    --section-padding-bottom: {{ section.settings.padding_bottom }}px;
+    --section-padding-x: {{ section.settings.padding_horizontal }}px;
     --media-width: {{ section.settings.media_width }}px;
     --media-height: {{ section.settings.media_height }}px;
     --media-radius: {{ section.settings.media_radius }}px;
     --grid-gap: {{ section.settings.grid_gap }}px;
     --copy-top-offset: {{ section.settings.copy_top_offset }}px;
+    --texture-opacity: {{ section.settings.texture_opacity | divided_by: 100.0 }};
+    --texture-overlay-opacity: {{ section.settings.texture_overlay_opacity | divided_by: 100.0 }};
     --edge-height: {{ section.settings.grass_edge_height }}px;
     --edge-bottom: {{ section.settings.grass_edge_bottom }}px;
     --edge-opacity: {{ section.settings.grass_edge_opacity | divided_by: 100.0 }};
@@ -41,53 +42,34 @@
     --button-color: {{ section.settings.button_text_color }};
   "
 >
-  <div class="premium-upgrade__base" aria-hidden="true"></div>
-
-  {%- if grass_bg != blank -%}
-    {{
-      grass_bg
-      | image_url: width: 2400
-      | image_tag:
-        class: 'premium-upgrade__texture',
-        loading: 'lazy',
-        alt: '',
-        width: 2400,
-        height: 1400
-    }}
-  {%- else -%}
-    <img
-      class="premium-upgrade__texture"
-      src="{{ 'grass-bg.jpg' | asset_url }}"
-      alt=""
-      width="2400"
-      height="1400"
-      loading="lazy"
-      onerror="this.style.display='none'"
-    >
-  {%- endif -%}
+  <div class="premium-upgrade__bg" aria-hidden="true">
+    {%- if grass_bg != blank -%}
+      {{
+        grass_bg
+        | image_url: width: 2400
+        | image_tag:
+          class: 'premium-upgrade__texture',
+          loading: 'lazy',
+          alt: '',
+          width: 2400,
+          height: 1400
+      }}
+    {%- endif -%}
+  </div>
 
   <div class="premium-upgrade__inner">
     <div class="premium-upgrade__media">
       {%- if bag != blank -%}
         {{
           bag
-          | image_url: width: 1200
+          | image_url: width: 1400
           | image_tag:
             class: 'premium-upgrade__image',
             loading: 'lazy',
             alt: section.settings.bag_alt,
-            width: 1200,
-            height: 1500
+            width: 1400,
+            height: 1800
         }}
-      {%- else -%}
-        <img
-          class="premium-upgrade__image"
-          src="{{ 'upgrade-bag.png' | asset_url }}"
-          alt="{{ section.settings.bag_alt | escape }}"
-          width="1200"
-          height="1500"
-          loading="lazy"
-        >
       {%- endif -%}
     </div>
 
@@ -134,9 +116,7 @@
             <button
               type="submit"
               class="premium-upgrade__button"
-              {% unless selected_variant.available %}
-                disabled
-              {% endunless %}
+              {% unless selected_variant.available %}disabled{% endunless %}
             >
               {%- if selected_variant.available -%}
                 {{ section.settings.cta_label }}
@@ -154,29 +134,17 @@
     </div>
   </div>
 
-  {%- if section.settings.show_grass_edge -%}
-    {%- if grass_edge_img != blank -%}
-      {{
-        grass_edge_img
-        | image_url: width: 2400
-        | image_tag:
-          class: 'premium-upgrade__edge',
-          loading: 'lazy',
-          alt: '',
-          width: 2400,
-          height: 360
-      }}
-    {%- else -%}
-      <img
-        class="premium-upgrade__edge"
-        src="{{ 'grass-strip.png' | asset_url }}"
-        alt=""
-        width="2400"
-        height="360"
-        loading="lazy"
-        onerror="this.style.display='none'"
-      >
-    {%- endif -%}
+  {%- if section.settings.show_grass_edge and grass_edge_img != blank -%}
+    {{
+      grass_edge_img
+      | image_url: width: 2400
+      | image_tag:
+        class: 'premium-upgrade__edge',
+        loading: 'lazy',
+        alt: '',
+        width: 2400,
+        height: 360
+    }}
   {%- endif -%}
 </section>
 
@@ -185,52 +153,51 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
+    width: 100%;
     min-height: var(--section-min-height);
+    padding: var(--section-padding-top) var(--section-padding-x) 0;
     background: var(--section-bg);
-    padding: var(--section-padding-top) 24px var(--section-padding-bottom);
     font-family: inherit;
   }
 
-  #premium-upgrade-{{ section.id }} .premium-upgrade__base {
+  #premium-upgrade-{{ section.id }} .premium-upgrade__bg {
     position: absolute;
     inset: 0;
-    z-index: -4;
-    background:
-      radial-gradient(circle at 17% 13%, rgba(255, 255, 255, 0.08), transparent 31%),
-      linear-gradient(90deg, rgba(0, 53, 30, 0.74) 0%, rgba(0, 48, 28, 0.98) 56%, rgba(0, 53, 30, 0.94) 100%);
+    z-index: -3;
+    background: var(--section-bg);
+    pointer-events: none;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__texture {
     position: absolute;
     inset: 0;
-    z-index: -3;
     width: 100%;
     height: 100%;
     object-fit: cover;
     opacity: var(--texture-opacity);
-    mix-blend-mode: screen;
-    filter: saturate(0.95) contrast(1.05);
-    pointer-events: none;
+    mix-blend-mode: soft-light;
+    filter: saturate(0.85) contrast(1.08);
   }
 
-  #premium-upgrade-{{ section.id }}::after {
+  #premium-upgrade-{{ section.id }} .premium-upgrade__bg::after {
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -2;
-    background: var(--overlay-color);
-    opacity: var(--overlay-opacity);
-    pointer-events: none;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.08), transparent 29%),
+      linear-gradient(90deg, rgba(0, 54, 31, 0.78) 0%, rgba(0, 52, 31, 0.94) 58%, rgba(0, 54, 31, 0.86) 100%);
+    opacity: var(--texture-overlay-opacity);
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__inner {
     position: relative;
-    z-index: 2;
+    z-index: 3;
+    width: 100%;
     max-width: var(--content-width);
     margin: 0 auto;
     display: grid;
     grid-template-columns: var(--media-width) minmax(0, 1fr);
-    gap: var(--grid-gap);
+    column-gap: var(--grid-gap);
     align-items: start;
   }
 
@@ -239,7 +206,7 @@
     height: var(--media-height);
     overflow: hidden;
     border-radius: var(--media-radius);
-    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.16);
+    box-shadow: none;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__image {
@@ -251,44 +218,45 @@
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__copy {
     position: relative;
-    z-index: 8;
+    z-index: 6;
+    max-width: 596px;
     padding-top: var(--copy-top-offset);
     color: var(--text-color);
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__eyebrow {
-    margin: 0 0 8px;
+    margin: 0 0 12px;
     color: var(--eyebrow-color);
-    font-size: 13px;
+    font-size: 16px;
     line-height: 1.2;
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-weight: 500;
+    letter-spacing: -0.02em;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__heading {
-    max-width: 430px;
+    max-width: 560px;
     margin: 0;
     color: var(--heading-color);
-    font-size: 32px;
-    line-height: 1.25;
+    font-size: 44px;
+    line-height: 1.16;
     font-weight: 800;
-    letter-spacing: -0.035em;
+    letter-spacing: -0.045em;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__body {
-    max-width: 404px;
-    margin-top: 10px;
+    max-width: 560px;
+    margin-top: 16px;
     color: var(--text-color);
-    font-size: 13.2px;
-    line-height: 1.55;
+    font-size: 16px;
+    line-height: 1.52;
     font-weight: 500;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.016em;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__list-title {
-    margin: 18px 0 11px;
+    margin: 27px 0 16px;
     color: var(--heading-color);
-    font-size: 15.5px;
+    font-size: 18px;
     line-height: 1.25;
     font-weight: 800;
     letter-spacing: -0.025em;
@@ -296,7 +264,7 @@
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__list {
     display: grid;
-    gap: 8px;
+    gap: 13px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -305,18 +273,18 @@
   #premium-upgrade-{{ section.id }} .premium-upgrade__item {
     display: flex;
     align-items: flex-start;
-    gap: 7px;
+    gap: 10px;
     color: var(--text-color);
-    font-size: 13px;
-    line-height: 1.2;
+    font-size: 16px;
+    line-height: 1.18;
     font-weight: 600;
-    letter-spacing: -0.012em;
+    letter-spacing: -0.018em;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__check {
-    flex: 0 0 13px;
-    width: 13px;
-    height: 13px;
+    flex: 0 0 17px;
+    width: 17px;
+    height: 17px;
     margin-top: 1px;
     display: inline-grid;
     place-items: center;
@@ -325,10 +293,9 @@
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__check svg {
-    display: block;
-    width: 10px;
-    height: 10px;
-    fill: #fff;
+    width: 12px;
+    height: 12px;
+    fill: #ffffff;
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__form {
@@ -336,9 +303,9 @@
   }
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__button {
-    width: 184px;
-    min-height: 45px;
-    margin-top: 23px;
+    width: 254px;
+    min-height: 64px;
+    margin-top: 33px;
     display: inline-grid;
     place-items: center;
     border: 0;
@@ -346,10 +313,10 @@
     background: var(--button-bg);
     color: var(--button-color);
     text-decoration: none;
-    font-size: 19px;
+    font-size: 24px;
     line-height: 1;
     font-weight: 800;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.03em;
     cursor: pointer;
     box-shadow: none;
     transition: transform 160ms ease, opacity 160ms ease;
@@ -368,78 +335,96 @@
 
   #premium-upgrade-{{ section.id }} .premium-upgrade__edge {
     position: absolute;
-    left: 50%;
+    left: 0;
+    right: 0;
     bottom: var(--edge-bottom);
-    z-index: 5;
+    z-index: 8;
     width: 100%;
-    min-width: 1180px;
     height: var(--edge-height);
     object-fit: cover;
     object-position: center bottom;
-    transform: translateX(-50%);
     opacity: var(--edge-opacity);
     pointer-events: none;
+  }
+
+  @media screen and (max-width: 1320px) {
+    #premium-upgrade-{{ section.id }} {
+      --section-padding-x: 40px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__inner {
+      grid-template-columns: minmax(420px, var(--media-width)) minmax(0, 1fr);
+    }
   }
 
   @media screen and (max-width: 989px) {
     #premium-upgrade-{{ section.id }} {
       min-height: auto;
-      padding: 48px 20px 126px;
+      padding: 54px 20px 128px;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade__inner {
+      max-width: 620px;
       grid-template-columns: 1fr;
-      max-width: 560px;
-      gap: 28px;
+      gap: 34px;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade__media {
       width: 100%;
       height: auto;
-      aspect-ratio: 400 / 484;
+      aspect-ratio: 630 / 824;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade__copy {
+      max-width: none;
       padding-top: 0;
     }
 
-    #premium-upgrade-{{ section.id }} .premium-upgrade__heading,
+    #premium-upgrade-{{ section.id }} .premium-upgrade__heading {
+      max-width: none;
+      font-size: 36px;
+    }
+
     #premium-upgrade-{{ section.id }} .premium-upgrade__body {
       max-width: none;
     }
 
-    #premium-upgrade-{{ section.id }} .premium-upgrade__heading {
-      font-size: 30px;
-    }
-
     #premium-upgrade-{{ section.id }} .premium-upgrade__edge {
-      min-width: 960px;
-      height: 112px;
+      height: 120px;
+      min-width: 900px;
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
     }
   }
 
   @media screen and (max-width: 575px) {
     #premium-upgrade-{{ section.id }} {
-      padding: 38px 16px 104px;
+      padding: 42px 16px 108px;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade__heading {
-      font-size: 27px;
-      line-height: 1.18;
+      font-size: 31px;
+      line-height: 1.14;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade__body {
-      font-size: 13px;
+      font-size: 14px;
+    }
+
+    #premium-upgrade-{{ section.id }} .premium-upgrade__item {
+      font-size: 14px;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade__button {
-      width: 100%;
-      max-width: 240px;
+      width: 220px;
+      min-height: 56px;
+      font-size: 21px;
     }
 
     #premium-upgrade-{{ section.id }} .premium-upgrade__edge {
+      height: 96px;
       min-width: 720px;
-      height: 92px;
     }
   }
 </style>
@@ -521,7 +506,7 @@
           "label": "Add selected product to cart"
         }
       ],
-      "default": "link"
+      "default": "add_to_cart"
     },
     {
       "type": "product",
@@ -547,87 +532,87 @@
     },
     {
       "type": "header",
-      "content": "Layout"
+      "content": "Desktop layout"
     },
     {
       "type": "range",
       "id": "content_width",
       "label": "Content width",
-      "min": 760,
-      "max": 1060,
+      "min": 1000,
+      "max": 1400,
       "step": 4,
       "unit": "px",
-      "default": 812
+      "default": 1272
     },
     {
       "type": "range",
       "id": "section_min_height",
       "label": "Minimum height",
-      "min": 520,
-      "max": 760,
+      "min": 620,
+      "max": 980,
       "step": 4,
       "unit": "px",
-      "default": 640
+      "default": 824
     },
     {
       "type": "range",
       "id": "padding_top",
-      "label": "Top padding",
+      "label": "Top spacing",
       "min": 40,
-      "max": 120,
+      "max": 160,
       "step": 4,
       "unit": "px",
-      "default": 68
+      "default": 108
     },
     {
       "type": "range",
-      "id": "padding_bottom",
-      "label": "Bottom padding",
-      "min": 60,
-      "max": 180,
-      "step": 4,
+      "id": "padding_horizontal",
+      "label": "Side spacing",
+      "min": 0,
+      "max": 80,
+      "step": 2,
       "unit": "px",
-      "default": 88
+      "default": 0
     },
     {
       "type": "range",
       "id": "grid_gap",
       "label": "Column gap",
-      "min": 16,
+      "min": 20,
       "max": 80,
       "step": 2,
       "unit": "px",
-      "default": 28
+      "default": 52
     },
     {
       "type": "range",
       "id": "copy_top_offset",
       "label": "Text top offset",
       "min": 0,
-      "max": 80,
+      "max": 120,
       "step": 2,
       "unit": "px",
-      "default": 24
+      "default": 80
     },
     {
       "type": "range",
       "id": "media_width",
-      "label": "Image width",
-      "min": 320,
-      "max": 480,
+      "label": "Left image width",
+      "min": 500,
+      "max": 700,
       "step": 2,
       "unit": "px",
-      "default": 400
+      "default": 630
     },
     {
       "type": "range",
       "id": "media_height",
-      "label": "Image height",
-      "min": 380,
-      "max": 560,
+      "label": "Left image height",
+      "min": 720,
+      "max": 920,
       "step": 2,
       "unit": "px",
-      "default": 484
+      "default": 824
     },
     {
       "type": "range",
@@ -637,7 +622,7 @@
       "max": 32,
       "step": 1,
       "unit": "px",
-      "default": 10
+      "default": 20
     },
     {
       "type": "header",
@@ -657,17 +642,17 @@
       "max": 220,
       "step": 2,
       "unit": "px",
-      "default": 150
+      "default": 154
     },
     {
       "type": "range",
       "id": "grass_edge_bottom",
       "label": "Bottom grass position",
-      "min": -40,
-      "max": 20,
-      "step": 2,
+      "min": -30,
+      "max": 30,
+      "step": 1,
       "unit": "px",
-      "default": -8
+      "default": 0
     },
     {
       "type": "range",
@@ -681,45 +666,43 @@
     },
     {
       "type": "header",
-      "content": "Colors"
+      "content": "Background"
     },
     {
       "type": "color",
       "id": "background_color",
       "label": "Background color",
-      "default": "#063B23"
-    },
-    {
-      "type": "color",
-      "id": "overlay_color",
-      "label": "Overlay color",
-      "default": "#00351F"
-    },
-    {
-      "type": "range",
-      "id": "overlay_opacity",
-      "label": "Overlay opacity",
-      "min": 0,
-      "max": 80,
-      "step": 1,
-      "unit": "%",
-      "default": 30
+      "default": "#00452A"
     },
     {
       "type": "range",
       "id": "texture_opacity",
       "label": "Texture opacity",
       "min": 0,
-      "max": 70,
+      "max": 50,
       "step": 1,
       "unit": "%",
       "default": 18
     },
     {
+      "type": "range",
+      "id": "texture_overlay_opacity",
+      "label": "Dark overlay strength",
+      "min": 20,
+      "max": 100,
+      "step": 1,
+      "unit": "%",
+      "default": 82
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
       "type": "color",
       "id": "eyebrow_color",
       "label": "Eyebrow color",
-      "default": "#2BD679"
+      "default": "#20C875"
     },
     {
       "type": "color",
@@ -737,13 +720,13 @@
       "type": "color",
       "id": "check_color",
       "label": "Check icon color",
-      "default": "#20B872"
+      "default": "#22B974"
     },
     {
       "type": "color",
       "id": "button_background",
       "label": "Button background",
-      "default": "#FF5A1F"
+      "default": "#FC5810"
     },
     {
       "type": "color",
