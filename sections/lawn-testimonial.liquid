@@ -424,8 +424,7 @@
     width: 100%;
     height: 100%;
     max-width: none;
-    object-fit: cover;
-    object-position: center bottom;
+    margin-top: 47px;
   }
 
   @media screen and (max-width: 1279px) and (min-width: 990px) {
@@ -598,6 +597,96 @@
       height: 68px;
     }
   }
+
+
+  /* ================================
+    EXACT DESKTOP LOCK
+   1440 x 891 artboard based
+================================ */
+@media screen and (min-width: 1280px) {
+  #lawn-testimonial-{{ section.id }} {
+    height: 891px !important;
+    min-height: 891px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
+    width: min(100%, 1440px) !important;
+    height: 891px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 301px !important;
+    right: calc(50% - 50vw) !important;
+    border-top-left-radius: 50px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
+    top: 0 !important;
+    left: 18px !important;
+    width: 779px !important;
+    height: 905px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__content {
+    top: 156px !important;
+    left: 711px !important;
+    width: 647px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
+    margin: 0 0 14px !important;
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__heading {
+    max-width: 647px !important;
+    font-size: 48px !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.045em !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__card {
+    width: 647px !important;
+    min-height: 328px !important;
+    margin-top: 50px !important;
+    padding: 66px 38px 34px !important;
+    border-radius: 28px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__avatar {
+    top: -42px !important;
+    left: 52px !important;
+    width: 78px !important;
+    height: 78px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote-mark {
+    top: -42px !important;
+    right: 38px !important;
+    font-size: 126px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__quote {
+    max-width: 535px !important;
+    font-size: 24px !important;
+    line-height: 1.45 !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__meta {
+    margin-top: 32px !important;
+  }
+
+  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__grass {
+    height: 148px !important;
+  }
+}
+
+
+
 </style>
 
 {% schema %}
