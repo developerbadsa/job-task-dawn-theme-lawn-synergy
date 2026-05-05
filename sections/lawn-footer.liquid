@@ -2,7 +2,7 @@
   assign logo = section.settings.logo
   assign logo_width = section.settings.logo_width | default: 150
   assign logo_image_width = logo_width | times: 3
-  assign logo_style = 'width: ' | append: logo_width | append: 'px; height: auto;'
+  assign logo_height = logo_width | divided_by: logo.aspect_ratio | round
   assign payment_strip = section.settings.payment_strip
 -%}
 
@@ -10,12 +10,15 @@
   <div class="container footer-grid">
     <div>
       {%- if logo != blank -%}
-        {{ logo | image_url: width: logo_image_width | image_tag:
-          class: 'footer-logo',
-          loading: 'lazy',
-          alt: shop.name,
-          style: logo_style
-        }}
+        <img
+          class="footer-logo"
+          src="{{ logo | image_url: width: logo_image_width }}"
+          alt="{{ shop.name | escape }}"
+          width="{{ logo_width }}"
+          height="{{ logo_height }}"
+          loading="lazy"
+          style="width: {{ logo_width }}px;"
+        >
       {%- else -%}
         <img class="footer-logo" src="{{ 'lawn-synergy-logo.png' | asset_url }}" alt="{{ shop.name | escape }}" style="width: {{ logo_width }}px;" width="{{ logo_width }}" height="60">
       {%- endif -%}

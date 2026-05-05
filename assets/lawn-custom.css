@@ -1278,7 +1278,7 @@ p {
 
 /* Footer */
 .footer {
-  padding: 160px 0 0;
+  padding: 160px 0 56px;
   background: #050a07;
   color: #fff;
 }
@@ -1335,7 +1335,8 @@ p {
 }
 
 .footer-bottom {
-  height: 70px;
+  min-height: 70px;
+  padding-top: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   display: flex;
   align-items: center;
@@ -1594,7 +1595,7 @@ p {
 
   .footer-bottom {
     height: auto;
-    padding: 24px 0;
+    padding: 24px 0 0;
     gap: 20px;
     flex-direction: column;
     align-items: flex-start;
