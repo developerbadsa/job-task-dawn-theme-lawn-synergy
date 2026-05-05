@@ -12,42 +12,6 @@
     "hero_product": {
       "type": "lawn-hero-product",
       "blocks": {
-        "thumb1": {
-          "type": "thumb",
-          "settings": {
-            "alt": "Envy seed package thumbnail"
-          }
-        },
-        "thumb2": {
-          "type": "thumb",
-          "settings": {
-            "alt": "Tall fescue benefits thumbnail"
-          }
-        },
-        "thumb3": {
-          "type": "thumb",
-          "settings": {
-            "alt": "Lawn result thumbnail"
-          }
-        },
-        "thumb4": {
-          "type": "thumb",
-          "settings": {
-            "alt": "Product details thumbnail"
-          }
-        },
-        "thumb5": {
-          "type": "thumb",
-          "settings": {
-            "alt": "Coverage map thumbnail"
-          }
-        },
-        "trust1": {
-          "type": "trust",
-          "settings": {
-            "label": "Fast Shipping"
-          }
-        },
         "trust2": {
           "type": "trust",
           "settings": {
@@ -61,6 +25,12 @@
           }
         },
         "trust4": {
+          "type": "trust",
+          "settings": {
+            "label": "Easy Returns"
+          }
+        },
+        "trust_PJPeak": {
           "type": "trust",
           "settings": {
             "label": "Easy Returns"
@@ -121,48 +91,48 @@
           "type": "accordion",
           "settings": {
             "title": "Product Details",
-            "content": ""
+            "content": "",
+            "metafield_key": ""
           }
         },
         "acc2": {
           "type": "accordion",
           "settings": {
             "title": "Spreader Settings",
-            "content": ""
+            "content": "",
+            "metafield_key": ""
           }
         },
         "acc3": {
           "type": "accordion",
           "settings": {
             "title": "What's Inside The Blend?",
-            "content": ""
+            "content": "",
+            "metafield_key": ""
           }
         },
         "acc4": {
           "type": "accordion",
           "settings": {
             "title": "When To Use",
-            "content": ""
+            "content": "",
+            "metafield_key": ""
           }
         },
         "acc5": {
           "type": "accordion",
           "settings": {
             "title": "Grow A Thicker Greener Lawn",
-            "content": ""
+            "content": "",
+            "metafield_key": ""
           }
         }
       },
       "block_order": [
-        "thumb1",
-        "thumb2",
-        "thumb3",
-        "thumb4",
-        "thumb5",
-        "trust1",
         "trust2",
         "trust3",
         "trust4",
+        "trust_PJPeak",
         "feature1",
         "feature2",
         "feature3",
@@ -179,12 +149,13 @@
       "settings": {
         "product": "",
         "use_product_media": true,
-        "main_image": "",
         "main_image_alt": "Envy Premium Tall Fescue product graphic",
         "show_dots": true,
         "dot_count": 5,
         "active_dot": 3,
         "show_trust": true,
+        "show_vendor": false,
+        "show_sku": false,
         "show_rating": true,
         "rating_stars": "★★★★★",
         "rating_text": "Rated By 12,520+ Customers",
