@@ -121,35 +121,40 @@
           "type": "accordion",
           "settings": {
             "title": "Product Details",
-            "content": ""
+            "content": "",
+            "metafield_key": "product_details"
           }
         },
         "acc2": {
           "type": "accordion",
           "settings": {
             "title": "Spreader Settings",
-            "content": ""
+            "content": "",
+            "metafield_key": "spreader_settings"
           }
         },
         "acc3": {
           "type": "accordion",
           "settings": {
             "title": "What's Inside The Blend?",
-            "content": ""
+            "content": "",
+            "metafield_key": "whats_inside"
           }
         },
         "acc4": {
           "type": "accordion",
           "settings": {
             "title": "When To Use",
-            "content": ""
+            "content": "",
+            "metafield_key": "when_to_use"
           }
         },
         "acc5": {
           "type": "accordion",
           "settings": {
             "title": "Grow A Thicker Greener Lawn",
-            "content": ""
+            "content": "",
+            "metafield_key": "grow_tips"
           }
         }
       },

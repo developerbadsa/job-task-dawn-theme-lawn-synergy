@@ -17,6 +17,7 @@
     var addToCartLabel = addToCartBtn
       ? addToCartBtn.getAttribute("data-add-label") || addToCartBtn.textContent.trim() || "Add To Cart"
       : "Add To Cart";
+    var skuEl = hero.querySelector("[data-product-sku]");
     var thumbs = hero.querySelectorAll(".thumb[data-thumb-image]");
     var mainImg = hero.querySelector("[data-lawn-main-image] img");
 
@@ -57,6 +58,16 @@
           } else {
             compareEl.textContent = "";
             compareEl.setAttribute("hidden", "");
+          }
+        }
+
+        if (skuEl) {
+          var sku = card.getAttribute("data-variant-sku");
+          if (sku) {
+            skuEl.textContent = "SKU: " + sku;
+            skuEl.removeAttribute("hidden");
+          } else {
+            skuEl.setAttribute("hidden", "");
           }
         }
 

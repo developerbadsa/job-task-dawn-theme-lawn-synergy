@@ -1,68 +1,66 @@
 {%- liquid
+  # ===== Resolve the product (global > section picker) =====
   assign current_product = nil
 
-  if product != blank and product.id != blank
+  if product != blank and product.id != blank and product.handle != blank
     assign current_product = product
-  elsif section.settings.product != blank
-    assign product_setting = section.settings.product
+  endif
 
-    if product_setting.id != blank
-      assign current_product = product_setting
-    else
-      assign linked_product = all_products[product_setting]
-      if linked_product != blank and linked_product.id != blank
-        assign current_product = linked_product
-      endif
+  if current_product == nil and section.settings.product != blank
+    assign picked_product = section.settings.product
+    if picked_product.id != blank and picked_product.handle != blank
+      assign current_product = picked_product
     endif
   endif
 
   assign has_product = false
-  if current_product.id != blank
+  if current_product != nil and current_product != blank and current_product.id != blank
     assign has_product = true
   endif
 
-  assign rating_stars = section.settings.rating_stars | default: '★★★★★'
-  assign sale_price_text = section.settings.sale_price | default: '$49.99'
-  assign old_price_text = section.settings.old_price | default: '$56.25'
+  assign selected_variant = nil
+  if has_product
+    assign selected_variant = current_product.selected_or_first_available_variant
+  endif
 
+  # ===== Block buckets =====
   assign thumb_blocks = section.blocks | where: 'type', 'thumb'
   assign size_blocks = section.blocks | where: 'type', 'size'
   assign trust_blocks = section.blocks | where: 'type', 'trust'
   assign feature_blocks = section.blocks | where: 'type', 'feature'
   assign accordion_blocks = section.blocks | where: 'type', 'accordion'
 
-  if has_product
-    assign selected_variant = current_product.selected_or_first_available_variant
-  endif
-
+  # ===== Mode flags =====
   assign use_product_media = section.settings.use_product_media
-  if use_product_media == nil
-    assign use_product_media = true
-  endif
-
   assign use_product_title = section.settings.use_product_title
-  if use_product_title == nil
-    assign use_product_title = true
-  endif
+  assign use_product_description = section.settings.use_product_description
+  assign use_size_block_labels = section.settings.use_size_block_labels
+
+  # ===== Title =====
   if has_product and use_product_title
     assign hero_title = current_product.title
   else
-    assign hero_title = section.settings.title | default: 'Envy Premium Tall Fescue Grass Seed Blend'
+    assign hero_title = section.settings.title | default: 'Premium Product'
   endif
 
-  assign use_product_description = section.settings.use_product_description
-  if use_product_description == nil
-    assign use_product_description = true
+  # ===== Lead description (metafield > product description > section fallback) =====
+  assign hero_lead = blank
+  assign hero_lead_is_html = false
+
+  if has_product and use_product_description
+    assign meta_summary = current_product.metafields.lawn.short_summary
+    if meta_summary != blank
+      assign hero_lead = meta_summary | strip_html | truncatewords: 36
+    elsif current_product.description != blank
+      assign hero_lead = current_product.description | strip_html | truncatewords: 36
+    endif
   endif
 
-  if has_product and use_product_description and current_product.description != blank
-    assign hero_lead = current_product.description | strip_html | truncatewords: 32
-    assign hero_lead_is_html = false
-  else
-    assign hero_lead = section.settings.lead | default: 'Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance.'
-    assign hero_lead_is_html = false
+  if hero_lead == blank
+    assign hero_lead = section.settings.lead | default: 'Premium product description.'
   endif
 
+  # ===== Main image =====
   assign main_image = nil
   assign main_image_from_product = false
   if has_product and use_product_media and current_product.featured_image != blank
@@ -72,27 +70,98 @@
     assign main_image = section.settings.main_image
   endif
 
+  # ===== Gallery =====
   assign product_images_count = 0
   if has_product
     assign product_images_count = current_product.media.size
   endif
-
   assign show_product_media_gallery = false
   if has_product and use_product_media and product_images_count > 0
     assign show_product_media_gallery = true
   endif
 
+  # ===== Size selector logic =====
   assign show_size_area = true
   if has_product and current_product.has_only_default_variant
     assign show_size_area = false
   endif
-
   assign use_real_variants = false
   if has_product and current_product.variants.size > 0 and show_size_area
     assign use_real_variants = true
   endif
 
-  assign use_size_block_labels = section.settings.use_size_block_labels
+  # ===== Price fallbacks (no product linked) =====
+  assign sale_price_text = section.settings.sale_price | default: '$49.99'
+  assign old_price_text = section.settings.old_price | default: '$56.25'
+
+  # ===== Rating (metafield > section fallback) =====
+  assign rating_value = blank
+  assign rating_text_value = blank
+
+  if has_product
+    assign meta_rating_stars = current_product.metafields.lawn.rating_stars
+    if meta_rating_stars != blank
+      assign rating_value = meta_rating_stars
+    else
+      assign meta_rating = current_product.metafields.lawn.rating
+      if meta_rating != blank
+        assign rating_number = meta_rating | times: 1.0
+        assign rating_int = rating_number | floor
+        assign filled = ''
+        for i in (1..rating_int)
+          assign filled = filled | append: '★'
+        endfor
+        assign empties = 5 | minus: rating_int
+        if empties > 0
+          for i in (1..empties)
+            assign filled = filled | append: '☆'
+          endfor
+        endif
+        assign rating_value = filled
+      endif
+    endif
+
+    assign meta_rating_text = current_product.metafields.lawn.rating_text
+    if meta_rating_text != blank
+      assign rating_text_value = meta_rating_text
+    else
+      assign meta_rating_count = current_product.metafields.lawn.rating_count
+      if meta_rating_count != blank
+        assign rating_text_value = 'Rated By ' | append: meta_rating_count | append: '+ Customers'
+      endif
+    endif
+  endif
+
+  if rating_value == blank
+    assign rating_value = section.settings.rating_stars | default: '★★★★★'
+  endif
+  if rating_text_value == blank
+    assign rating_text_value = section.settings.rating_text | default: 'Rated By 12,520+ Customers'
+  endif
+
+  # ===== Features (metafield list > feature blocks) =====
+  assign features_from_metafield = false
+  assign features_list = nil
+  if has_product
+    assign meta_features = current_product.metafields.lawn.features
+    if meta_features != blank and meta_features.value != blank
+      assign features_list = meta_features.value
+      assign features_from_metafield = true
+    endif
+  endif
+
+  # ===== Urgency text (metafield > section) =====
+  assign urgency_text = section.settings.urgency_text
+  if has_product
+    assign meta_urgency = current_product.metafields.lawn.urgency_text
+    if meta_urgency != blank
+      assign urgency_text = meta_urgency
+    endif
+  endif
+
+  # ===== Vendor / SKU display flags =====
+  assign show_vendor = section.settings.show_vendor
+  assign show_sku = section.settings.show_sku
 -%}
 
 <section class="hero product-section container" data-lawn-hero data-section-id="{{ section.id }}">
@@ -119,50 +188,49 @@
           {%- endfor -%}
         {%- else -%}
           {%- for block in thumb_blocks -%}
-          {%- liquid
-            assign thumb_idx = forloop.index0
-            assign thumb_image = block.settings.image
-            assign thumb_from_asset = false
-            assign product_media_item = nil
+            {%- liquid
+              assign thumb_idx = forloop.index0
+              assign thumb_image = block.settings.image
+              assign thumb_from_asset = false
 
-            if thumb_image == blank and has_product and product_images_count > thumb_idx
-              assign product_media_item = current_product.media[thumb_idx]
-              if product_media_item != blank and product_media_item.preview_image != blank
-                assign thumb_image = product_media_item.preview_image
+              if thumb_image == blank and has_product and product_images_count > thumb_idx
+                assign product_media_item = current_product.media[thumb_idx]
+                if product_media_item != blank and product_media_item.preview_image != blank
+                  assign thumb_image = product_media_item.preview_image
+                endif
               endif
-            endif
 
-            if thumb_image == blank
-              assign thumb_from_asset = true
-              assign default_thumb_name = 'thumb-' | append: forloop.index | append: '.png'
-            endif
+              if thumb_image == blank
+                assign thumb_from_asset = true
+                assign default_thumb_name = 'thumb-' | append: forloop.index | append: '.png'
+              endif
 
-            if thumb_from_asset
-              assign large_url = default_thumb_name | asset_url
-            else
-              assign large_url = thumb_image | image_url: width: 1200
-            endif
-          -%}
-          <button
-            class="thumb{% if forloop.first %} is-active{% endif %}"
-            type="button"
-            data-thumb-image="{{ large_url }}"
-            data-thumb-alt="{{ block.settings.alt | default: 'Product gallery thumbnail' | escape }}"
-            {{ block.shopify_attributes }}
-          >
-            {%- if thumb_from_asset -%}
-              <img src="{{ default_thumb_name | asset_url }}"
-                   alt="{{ block.settings.alt | default: 'Product gallery thumbnail' }}"
-                   width="200" height="200" loading="lazy">
-            {%- else -%}
-              {{ thumb_image | image_url: width: 200 | image_tag:
-                loading: 'lazy',
-                alt: block.settings.alt | default: 'Product gallery thumbnail',
-                width: 200,
-                height: 200
-              }}
-            {%- endif -%}
-          </button>
+              if thumb_from_asset
+                assign large_url = default_thumb_name | asset_url
+              else
+                assign large_url = thumb_image | image_url: width: 1200
+              endif
+            -%}
+            <button
+              class="thumb{% if forloop.first %} is-active{% endif %}"
+              type="button"
+              data-thumb-image="{{ large_url }}"
+              data-thumb-alt="{{ block.settings.alt | default: 'Product gallery thumbnail' | escape }}"
+              {{ block.shopify_attributes }}
+            >
+              {%- if thumb_from_asset -%}
+                <img src="{{ default_thumb_name | asset_url }}"
+                     alt="{{ block.settings.alt | default: 'Product gallery thumbnail' }}"
+                     width="200" height="200" loading="lazy">
+              {%- else -%}
+                {{ thumb_image | image_url: width: 200 | image_tag:
+                  loading: 'lazy',
+                  alt: block.settings.alt | default: 'Product gallery thumbnail',
+                  width: 200,
+                  height: 200
+                }}
+              {%- endif -%}
+            </button>
           {%- endfor -%}
         {%- endif -%}
       </div>
@@ -179,14 +247,14 @@
           {%- else -%}
             {{ main_image | image_url: width: 1200 | image_tag:
               loading: 'eager',
-              alt: section.settings.main_image_alt | default: section.settings.title,
+              alt: section.settings.main_image_alt | default: hero_title,
               width: 1200,
               height: 1200
             }}
           {%- endif -%}
         {%- else -%}
           <img src="{{ 'envy-tall-fescue-design.png' | asset_url }}"
-               alt="{{ section.settings.main_image_alt | default: section.settings.title }}"
+               alt="{{ section.settings.main_image_alt | default: hero_title }}"
                width="1200" height="1200">
         {%- endif -%}
       </div>
@@ -225,30 +293,40 @@
   </div>
 
   <div class="product-info">
+    {%- if show_vendor and has_product and current_product.vendor != blank -%}
+      <p class="product-vendor">{{ current_product.vendor }}</p>
+    {%- endif -%}
+
     {%- if section.settings.show_rating -%}
       <div class="rating">
-        <span class="stars">{{ rating_stars }}</span>
-        <span>{{ section.settings.rating_text | default: 'Rated By 12,520+ Customers' }}</span>
+        <span class="stars">{{ rating_value }}</span>
+        <span>{{ rating_text_value }}</span>
       </div>
     {%- endif -%}
 
     <h1>{{ hero_title }}</h1>
 
     {%- if hero_lead_is_html -%}
-      <div class="lead rte">
-        {{ hero_lead }}
-      </div>
+      <div class="lead rte">{{ hero_lead }}</div>
     {%- else -%}
-      <p class="lead">
-        {{ hero_lead }}
-      </p>
+      <p class="lead">{{ hero_lead }}</p>
     {%- endif -%}
 
     <ul class="feature-list">
-      {%- for block in feature_blocks -%}
-        <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
-      {%- endfor -%}
+      {%- if features_from_metafield -%}
+        {%- for f in features_list -%}
+          <li>{{ f }}</li>
+        {%- endfor -%}
+      {%- else -%}
+        {%- for block in feature_blocks -%}
+          <li {{ block.shopify_attributes }}>{{ block.settings.text }}</li>
+        {%- endfor -%}
+      {%- endif -%}
     </ul>
+
+    {%- if show_sku and has_product and selected_variant.sku != blank -%}
+      <p class="product-sku" data-product-sku>SKU: {{ selected_variant.sku }}</p>
+    {%- endif -%}
 
     <div class="price-row">
       {%- if has_product -%}
@@ -267,69 +345,91 @@
     </div>
 
     {%- if show_size_area -%}
-    <div class="size-area">
-      <h2>{{ section.settings.size_heading | default: 'Select Your Size' }}</h2>
-      <div class="size-grid" role="radiogroup" aria-label="Select size">
-        {%- if use_real_variants -%}
-          {%- for variant in current_product.variants -%}
-            {%- liquid
-              assign vidx = forloop.index0
-              assign sblock = size_blocks[vidx]
-              assign is_selected = false
-              if variant.id == selected_variant.id
-                assign is_selected = true
-              endif
-              assign size_label = variant.title
-              if use_size_block_labels and sblock.settings.size != blank
-                assign size_label = sblock.settings.size
-              endif
-              assign coverage_text = sblock.settings.coverage
-              assign badge_text = sblock.settings.badge
-            -%}
-            <button
-              class="size-card{% if is_selected %} is-selected{% endif %}{% if badge_text != blank %} has-badge{% endif %}{% unless variant.available %} is-unavailable{% endunless %}"
-              type="button"
-              data-variant-id="{{ variant.id }}"
-              data-variant-price="{{ variant.price | money }}"
-              data-variant-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
-              data-variant-available="{{ variant.available }}"
-              aria-pressed="{% if is_selected %}true{% else %}false{% endif %}"
-              {%- unless variant.available %} aria-disabled="true"{%- endunless %}
-            >
-              {%- if badge_text != blank -%}
-                <em>{{ badge_text }}</em>
-              {%- endif -%}
-              <strong>{{ size_label }}</strong>
-              {%- if coverage_text != blank -%}
-                <span>{{ coverage_text }}</span>
-              {%- else -%}
-                <span>&nbsp;</span>
-              {%- endif -%}
-              <b>{{ variant.price | money }}</b>
-            </button>
-          {%- endfor -%}
-        {%- else -%}
-          {%- for block in size_blocks -%}
-            <button
-              class="size-card{% if forloop.first %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}"
-              type="button"
-              aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
-              {{ block.shopify_attributes }}
-            >
-              {%- if block.settings.badge != blank -%}
-                <em>{{ block.settings.badge }}</em>
-              {%- endif -%}
-              <strong>{{ block.settings.size }}</strong>
-              <span>{{ block.settings.coverage }}</span>
-              <b>{{ block.settings.price }}</b>
-            </button>
-          {%- endfor -%}
-        {%- endif -%}
+      <div class="size-area">
+        <h2>{{ section.settings.size_heading | default: 'Select Your Size' }}</h2>
+        <div class="size-grid" role="radiogroup" aria-label="Select size">
+          {%- if use_real_variants -%}
+            {%- for variant in current_product.variants -%}
+              {%- liquid
+                assign vidx = forloop.index0
+                assign sblock = size_blocks[vidx]
+
+                assign is_selected = false
+                if variant.id == selected_variant.id
+                  assign is_selected = true
+                endif
+
+                # Variant label: variant metafield > variant.title > size block fallback
+                assign size_label = variant.title
+                assign meta_size_label = variant.metafields.lawn.size_label
+                if meta_size_label != blank
+                  assign size_label = meta_size_label
+                endif
+                if use_size_block_labels and sblock.settings.size != blank
+                  assign size_label = sblock.settings.size
+                endif
+
+                # Coverage: variant metafield > size block coverage
+                assign meta_coverage = variant.metafields.lawn.coverage
+                if meta_coverage != blank
+                  assign coverage_text = meta_coverage
+                else
+                  assign coverage_text = sblock.settings.coverage
+                endif
+
+                # Badge: variant metafield > size block badge
+                assign meta_badge = variant.metafields.lawn.badge
+                if meta_badge != blank
+                  assign badge_text = meta_badge
+                else
+                  assign badge_text = sblock.settings.badge
+                endif
+              -%}
+              <button
+                class="size-card{% if is_selected %} is-selected{% endif %}{% if badge_text != blank %} has-badge{% endif %}{% unless variant.available %} is-unavailable{% endunless %}"
+                type="button"
+                data-variant-id="{{ variant.id }}"
+                data-variant-price="{{ variant.price | money }}"
+                data-variant-compare-price="{% if variant.compare_at_price > variant.price %}{{ variant.compare_at_price | money }}{% endif %}"
+                data-variant-available="{{ variant.available }}"
+                data-variant-sku="{{ variant.sku | escape }}"
+                aria-pressed="{% if is_selected %}true{% else %}false{% endif %}"
+                {%- unless variant.available %} aria-disabled="true"{%- endunless %}
+              >
+                {%- if badge_text != blank -%}
+                  <em>{{ badge_text }}</em>
+                {%- endif -%}
+                <strong>{{ size_label }}</strong>
+                {%- if coverage_text != blank -%}
+                  <span>{{ coverage_text }}</span>
+                {%- else -%}
+                  <span>&nbsp;</span>
+                {%- endif -%}
+                <b>{{ variant.price | money }}</b>
+              </button>
+            {%- endfor -%}
+          {%- else -%}
+            {%- for block in size_blocks -%}
+              <button
+                class="size-card{% if forloop.first %} is-selected{% endif %}{% if block.settings.badge != blank %} has-badge{% endif %}"
+                type="button"
+                aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                {{ block.shopify_attributes }}
+              >
+                {%- if block.settings.badge != blank -%}
+                  <em>{{ block.settings.badge }}</em>
+                {%- endif -%}
+                <strong>{{ block.settings.size }}</strong>
+                <span>{{ block.settings.coverage }}</span>
+                <b>{{ block.settings.price }}</b>
+              </button>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
       </div>
-    </div>
     {%- endif -%}
 
-    {%- if has_product -%}
+    {%- if has_product and current_product != blank -%}
       {%- assign form_id = 'lawn-hero-product-form-' | append: section.id -%}
       {%- form 'product', current_product, id: form_id, class: 'lawn-product-form', novalidate: 'novalidate' -%}
         <input type="hidden" name="id" value="{{ selected_variant.id }}" data-product-variant-input>
@@ -337,12 +437,12 @@
           <label for="quantity-{{ section.id }}">{{ section.settings.qty_label | default: 'Quantity:' }}</label>
           <div class="quantity">
             <button class="qty-btn" data-qty="minus" type="button" aria-label="Decrease quantity">-</button>
-            <span id="quantityValue">{{ section.settings.default_qty | default: 2 }}</span>
+            <span id="quantityValue">{{ section.settings.default_qty | default: 1 }}</span>
             <button class="qty-btn" data-qty="plus" type="button" aria-label="Increase quantity">+</button>
-            <input type="hidden" name="quantity" id="quantity-{{ section.id }}" value="{{ section.settings.default_qty | default: 2 }}" data-product-quantity-input>
+            <input type="hidden" name="quantity" id="quantity-{{ section.id }}" value="{{ section.settings.default_qty | default: 1 }}" data-product-quantity-input>
           </div>
-          {%- if section.settings.urgency_text != blank -%}
-            <span class="selling">{{ section.settings.urgency_text }}</span>
+          {%- if urgency_text != blank -%}
+            <span class="selling">{{ urgency_text }}</span>
           {%- endif -%}
         </div>
 
@@ -375,11 +475,11 @@
         <label>{{ section.settings.qty_label | default: 'Quantity:' }}</label>
         <div class="quantity">
           <button class="qty-btn" data-qty="minus" type="button" aria-label="Decrease quantity">-</button>
-          <span id="quantityValue">{{ section.settings.default_qty | default: 2 }}</span>
+          <span id="quantityValue">{{ section.settings.default_qty | default: 1 }}</span>
           <button class="qty-btn" data-qty="plus" type="button" aria-label="Increase quantity">+</button>
         </div>
-        {%- if section.settings.urgency_text != blank -%}
-          <span class="selling">{{ section.settings.urgency_text }}</span>
+        {%- if urgency_text != blank -%}
+          <span class="selling">{{ urgency_text }}</span>
         {%- endif -%}
       </div>
 
@@ -392,7 +492,8 @@
         </p>
       {%- endif -%}
 
-      <button class="add-cart" type="button">{{ section.settings.cta_label | default: 'Add To Cart' }}</button>
+      <button class="add-cart" type="button" disabled>{{ section.settings.cta_label | default: 'Add To Cart' }}</button>
+      <p class="program" style="opacity:.7"><small>Link a product in the section settings to enable add to cart.</small></p>
     {%- endif -%}
 
     {%- if section.settings.show_shipping_line -%}
@@ -419,9 +520,23 @@
       {%- for block in accordion_blocks -%}
         {%- liquid
           assign accordion_content = block.settings.content
-          if accordion_content == blank and has_product and current_product.description != blank
-            if block.settings.title contains 'Product Details'
-              assign accordion_content = current_product.description
+          assign metafield_key = block.settings.metafield_key
+
+          # If a key is selected and the block has no content, pull from product metafield
+          if accordion_content == blank and has_product and metafield_key != blank
+            assign mf_val = current_product.metafields.lawn[metafield_key]
+            if mf_val != blank
+              assign accordion_content = mf_val
+            endif
+          endif
+
+          # Auto-fallback: when title looks like "Product Details" and no content/metafield, use product description
+          if accordion_content == blank and has_product
+            assign title_lower = block.settings.title | downcase
+            if title_lower contains 'product details' or title_lower contains 'description'
+              if current_product.description != blank
+                assign accordion_content = current_product.description
+              endif
             endif
           endif
         -%}
@@ -453,7 +568,11 @@
       "type": "product",
       "id": "product",
       "label": "Linked product",
-      "info": "Used on non-product templates (e.g. homepage). On a product template the global product is used automatically."
+      "info": "On a product template the page product is used automatically. Use this to link a product on non-product templates (e.g. homepage)."
+    },
+    {
+      "type": "paragraph",
+      "content": "Tip: To make the section fully dynamic, define product metafields under the namespace 'lawn' (e.g. lawn.rating, lawn.features, lawn.product_details). Variant-level metafields supported: lawn.coverage, lawn.badge, lawn.size_label."
     },
     {
       "type": "header",
@@ -462,21 +581,21 @@
     {
       "type": "checkbox",
       "id": "use_product_media",
-      "label": "Use real product media when product is set",
+      "label": "Use real product media",
       "default": true,
-      "info": "When enabled, Shopify product images replace the custom image and thumbnail fallback."
+      "info": "When a product is linked, Shopify product images replace the custom image and thumbnail fallback."
     },
     {
       "type": "image_picker",
       "id": "main_image",
-      "label": "Main product image",
-      "info": "Used only when real product media is disabled or no product image exists."
+      "label": "Main image (fallback)",
+      "info": "Used only when no product image is available."
     },
     {
       "type": "text",
       "id": "main_image_alt",
       "label": "Main image alt text",
-      "default": "Envy Premium Tall Fescue product graphic"
+      "default": "Product graphic"
     },
     {
       "type": "checkbox",
@@ -514,6 +633,18 @@
     },
     {
       "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show product vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "Show selected variant SKU",
+      "default": false
+    },
+    {
+      "type": "checkbox",
       "id": "show_rating",
       "label": "Show rating row",
       "default": true
@@ -521,40 +652,40 @@
     {
       "type": "text",
       "id": "rating_stars",
-      "label": "Stars text",
-      "default": "★★★★★"
+      "label": "Stars text (fallback)",
+      "default": "★★★★★",
+      "info": "Overridden by product metafield lawn.rating_stars or lawn.rating."
     },
     {
       "type": "text",
       "id": "rating_text",
-      "label": "Rating text",
-      "default": "Rated By 12,520+ Customers"
+      "label": "Rating text (fallback)",
+      "default": "Rated By 12,520+ Customers",
+      "info": "Overridden by product metafield lawn.rating_text or lawn.rating_count."
     },
     {
       "type": "checkbox",
       "id": "use_product_title",
-      "label": "Use real product title when product is set",
-      "default": true,
-      "info": "When enabled, the H1 uses the linked/page product title. Disable to always use the custom Title below."
+      "label": "Use real product title",
+      "default": true
     },
     {
       "type": "text",
       "id": "title",
-      "label": "Title (override / fallback)",
-      "default": "Envy Premium Tall Fescue Grass Seed Blend"
+      "label": "Title (fallback)",
+      "default": "Premium Product"
     },
     {
       "type": "checkbox",
       "id": "use_product_description",
-      "label": "Use real product description as lead",
-      "default": true,
-      "info": "When enabled and product is set, the lead uses a short clean summary from product.description."
+      "label": "Use product description / lawn.short_summary as lead",
+      "default": true
     },
     {
       "type": "textarea",
       "id": "lead",
-      "label": "Lead description (fallback)",
-      "default": "Professional-Grade Tall Fescue Blend Designed For Durability, Color, And Performance Without The Hassle Of High Maintenance."
+      "label": "Lead (fallback)",
+      "default": "Premium product description."
     },
     {
       "type": "header",
@@ -579,9 +710,9 @@
     {
       "type": "checkbox",
       "id": "use_size_block_labels",
-      "label": "Use custom size block labels for real variants",
+      "label": "Force size block labels for real variants",
       "default": false,
-      "info": "Keep disabled to show actual Shopify variant titles."
+      "info": "Off = use variant.title (or variant metafield lawn.size_label). On = use the Size block's label."
     },
     {
       "type": "text",
@@ -603,13 +734,14 @@
       "type": "number",
       "id": "default_qty",
       "label": "Default quantity",
-      "default": 2
+      "default": 1
     },
     {
       "type": "text",
       "id": "urgency_text",
-      "label": "Urgency text",
-      "default": "Selling Fast"
+      "label": "Urgency text (fallback)",
+      "default": "Selling Fast",
+      "info": "Overridden by product metafield lawn.urgency_text."
     },
     {
       "type": "text",
@@ -668,9 +800,9 @@
   "blocks": [
     {
       "type": "thumb",
-      "name": "Gallery thumbnail",
+      "name": "Gallery thumbnail (fallback)",
       "settings": [
-        { "type": "image_picker", "id": "image", "label": "Thumbnail image", "info": "Falls back to product media, then to thumb-N.png assets." },
+        { "type": "image_picker", "id": "image", "label": "Thumbnail image", "info": "Used only when product media is empty." },
         { "type": "text", "id": "alt", "label": "Alt text", "default": "Product gallery thumbnail" }
       ]
     },
@@ -684,14 +816,15 @@
     },
     {
       "type": "feature",
-      "name": "Feature point",
+      "name": "Feature point (fallback)",
       "settings": [
-        { "type": "text", "id": "text", "label": "Text", "default": "Darker Green Color" }
+        { "type": "text", "id": "text", "label": "Text", "default": "Feature point" },
+        { "type": "paragraph", "content": "Overridden by product metafield list 'lawn.features'." }
       ]
     },
     {
       "type": "size",
-      "name": "Size option",
+      "name": "Size option (fallback)",
       "settings": [
         { "type": "text", "id": "size", "label": "Size label (used when no product variants)", "default": "10 lbs" },
         { "type": "text", "id": "coverage", "label": "Coverage", "default": "(1,000-2,500sqft)" },
@@ -704,7 +837,24 @@
       "name": "Accordion item",
       "settings": [
         { "type": "text", "id": "title", "label": "Title", "default": "Product Details" },
-        { "type": "richtext", "id": "content", "label": "Content" }
+        { "type": "richtext", "id": "content", "label": "Content (overrides metafield)" },
+        {
+          "type": "select",
+          "id": "metafield_key",
+          "label": "Pull content from product metafield (lawn.<key>)",
+          "options": [
+            { "value": "", "label": "— None —" },
+            { "value": "product_details", "label": "lawn.product_details" },
+            { "value": "spreader_settings", "label": "lawn.spreader_settings" },
+            { "value": "whats_inside", "label": "lawn.whats_inside" },
+            { "value": "when_to_use", "label": "lawn.when_to_use" },
+            { "value": "grow_tips", "label": "lawn.grow_tips" },
+            { "value": "ingredients", "label": "lawn.ingredients" },
+            { "value": "shipping_returns", "label": "lawn.shipping_returns" },
+            { "value": "faq", "label": "lawn.faq" }
+          ],
+          "default": ""
+        }
       ]
     }
   ],
@@ -728,11 +878,11 @@
         { "type": "size", "settings": { "size": "10 lbs", "coverage": "(1,000-2,500sqft)", "price": "$28.99" } },
         { "type": "size", "settings": { "size": "25 lbs", "coverage": "(2,500-5,000sqft)", "price": "$28.99", "badge": "Popular" } },
         { "type": "size", "settings": { "size": "50 lbs", "coverage": "(5,000-10,000sqft)", "price": "$28.99", "badge": "Best Value" } },
-        { "type": "accordion", "settings": { "title": "Product Details" } },
-        { "type": "accordion", "settings": { "title": "Spreader Settings" } },
-        { "type": "accordion", "settings": { "title": "What's Inside The Blend?" } },
-        { "type": "accordion", "settings": { "title": "When To Use" } },
-        { "type": "accordion", "settings": { "title": "Grow A Thicker Greener Lawn" } }
+        { "type": "accordion", "settings": { "title": "Product Details", "metafield_key": "product_details" } },
+        { "type": "accordion", "settings": { "title": "Spreader Settings", "metafield_key": "spreader_settings" } },
+        { "type": "accordion", "settings": { "title": "What's Inside The Blend?", "metafield_key": "whats_inside" } },
+        { "type": "accordion", "settings": { "title": "When To Use", "metafield_key": "when_to_use" } },
+        { "type": "accordion", "settings": { "title": "Grow A Thicker Greener Lawn", "metafield_key": "grow_tips" } }
       ]
     }
   ]
