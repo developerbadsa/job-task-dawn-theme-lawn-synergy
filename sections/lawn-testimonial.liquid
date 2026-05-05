@@ -177,12 +177,7 @@
         {{
           grass_edge
           | image_url: width: 2800
-          | image_tag:
-            loading: 'lazy',
-            class: 'lawn-testimonial-custom__grass-img',
-            alt: '',
-            width: 2800,
-            height: 360
+          | image_tag: loading: 'lazy', class: 'lawn-testimonial-custom__grass-img', alt: '', width: 2800, height: 360
         }}
       {%- else -%}
         <img
@@ -915,11 +910,11 @@
       "type": "range",
       "id": "layout_content_left",
       "label": "Content left position",
-      "min": 660,
+      "min": 360,
       "max": 760,
-      "step": 1,
+      "step": 4,
       "unit": "px",
-      "default": 711
+      "default": 712
     },
     {
       "type": "range",
