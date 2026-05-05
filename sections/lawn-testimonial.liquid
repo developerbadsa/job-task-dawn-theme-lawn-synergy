@@ -42,7 +42,8 @@
   assign heading_color = section.settings.visual_heading_color | default: '#FFFFFF'
   assign body_color = section.settings.visual_body_color | default: '#FFFFFF'
 
-  assign texture_opacity = section.settings.texture_opacity | default: 26 | times: 0.01
+  assign texture_opacity = section.settings.texture_opacity | default: 35 | times: 0.01
+  assign texture_blend = section.settings.texture_blend | default: 'overlay'
 
   if bg_texture != blank
     assign texture_url = bg_texture | image_url: width: 2400
@@ -59,32 +60,27 @@
     --testimonial-height: {{ layout_height }}px;
     --testimonial-panel-left: {{ panel_left }}px;
     --testimonial-panel-radius: {{ panel_radius }}px;
-
     --testimonial-person-left: {{ person_left }}px;
     --testimonial-person-top: {{ person_top }}px;
     --testimonial-person-width: {{ person_width }}px;
     --testimonial-person-height: {{ person_height }}px;
-
     --testimonial-content-left: {{ content_left }}px;
     --testimonial-content-top: {{ content_top }}px;
     --testimonial-content-width: {{ content_width }}px;
-
     --testimonial-card-width: {{ card_width }}px;
     --testimonial-card-height: {{ card_height }}px;
     --testimonial-card-gap: {{ card_gap }}px;
     --testimonial-grass-height: {{ grass_height }}px;
-
     --testimonial-panel-bg: {{ panel_bg }};
     --testimonial-card-bg: {{ card_bg }};
     --testimonial-primary: {{ primary_green }};
     --testimonial-heading: {{ heading_color }};
     --testimonial-body: {{ body_color }};
-
     --testimonial-heading-size: {{ heading_size }}px;
     --testimonial-quote-size: {{ quote_size }}px;
-
     --testimonial-texture: {% if texture_url != blank %}url('{{ texture_url }}'){% else %}none{% endif %};
     --testimonial-texture-opacity: {{ texture_opacity }};
+    --testimonial-texture-blend: {{ texture_blend }};
   "
 >
   <div class="lawn-testimonial-custom__inner">
@@ -199,13 +195,23 @@
 </section>
 
 <style>
+  /* ============================================================
+     ARCHITECTURE:
+     - SECTION itself is the dark green canvas (always renders).
+     - ::before paints the texture pattern over the dark green.
+     - ::after paints a WHITE cutout on the LEFT with a rounded
+       top-right corner — this curve creates the rounded panel
+       transition. No fragile mix-blend-mode dependencies on a
+       separate panel div.
+     ============================================================ */
+
   #shopify-section-{{ section.id }} {
     position: relative;
     z-index: 2;
     overflow: hidden;
-    background: #ffffff;
   }
 
+  /* SECTION = the dark green canvas */
   #lawn-testimonial-{{ section.id }} {
     position: relative;
     z-index: 1;
@@ -213,7 +219,8 @@
     height: var(--testimonial-height);
     min-height: var(--testimonial-height);
     overflow: hidden;
-    background: #ffffff;
+    isolation: isolate;
+    background-color: var(--testimonial-panel-bg);
     color: var(--testimonial-body);
   }
 
@@ -223,42 +230,46 @@
     box-sizing: border-box;
   }
 
+  /* TEXTURE LAYER — sits on top of dark green, blended in */
+  #lawn-testimonial-{{ section.id }}::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: var(--testimonial-texture);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: var(--testimonial-texture-opacity);
+    mix-blend-mode: var(--testimonial-texture-blend);
+    pointer-events: none;
+  }
+
+  /* WHITE CUTOUT on the LEFT side with rounded top-right corner.
+     This curve creates the "rounded panel transition" where dark green meets white. */
+  #lawn-testimonial-{{ section.id }}::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    width: max(
+      var(--testimonial-panel-left),
+      calc((100vw - var(--testimonial-width)) / 2 + var(--testimonial-panel-left))
+    );
+    background: #ffffff;
+    border-top-right-radius: var(--testimonial-panel-radius);
+    pointer-events: none;
+  }
+
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
     position: relative;
     width: min(100%, var(--testimonial-width));
     height: var(--testimonial-height);
     margin-inline: auto;
     overflow: visible;
-    isolation: isolate;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: var(--testimonial-panel-left);
-    right: calc(50% - 50vw);
-    border-top-left-radius: var(--testimonial-panel-radius);
-    pointer-events: none;
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before {
-    z-index: 1;
-    background: var(--testimonial-panel-bg);
-  }
-
-  #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
-    z-index: 2;
-    background-image:
-      linear-gradient(0deg, rgba(4, 51, 32, 0.38), rgba(4, 51, 32, 0.38)),
-      var(--testimonial-texture);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: var(--testimonial-texture-opacity);
-    filter: grayscale(1) contrast(1.28) brightness(0.9);
+    z-index: 3;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
@@ -428,22 +439,21 @@
     object-position: center bottom;
   }
 
+  /* TABLET (990 - 1279) */
   @media screen and (max-width: 1279px) and (min-width: 990px) {
     #lawn-testimonial-{{ section.id }} {
       height: 760px;
       min-height: 760px;
     }
 
+    #lawn-testimonial-{{ section.id }}::after {
+      width: 21%;
+      border-top-right-radius: 42px;
+    }
+
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
       width: 100%;
       height: 760px;
-    }
-
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
-      left: 21%;
-      right: calc(50% - 50vw);
-      border-top-left-radius: 42px;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
@@ -478,13 +488,16 @@
     }
   }
 
+  /* MOBILE (<= 989) — vertical stack, no white cutout (whole section is dark green) */
   @media screen and (max-width: 989px) {
     #lawn-testimonial-{{ section.id }} {
       height: auto;
       min-height: auto;
       padding: 52px 20px 128px;
-      overflow: hidden;
-      background: var(--testimonial-panel-bg);
+    }
+
+    #lawn-testimonial-{{ section.id }}::after {
+      display: none;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
@@ -492,15 +505,6 @@
       height: auto;
       margin-inline: auto;
       overflow: visible;
-    }
-
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
-      top: -52px;
-      right: -20px;
-      bottom: -128px;
-      left: -20px;
-      border-radius: 0;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person,
@@ -552,14 +556,6 @@
       padding: 44px 16px 110px;
     }
 
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::before,
-    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner::after {
-      top: -44px;
-      right: -16px;
-      bottom: -110px;
-      left: -16px;
-    }
-
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
       margin-bottom: 12px;
       font-size: 14px;
@@ -599,7 +595,6 @@
     }
   }
 </style>
-
 {% schema %}
 {
   "name": "Lawn — Testimonial",
@@ -634,7 +629,21 @@
       "max": 100,
       "step": 1,
       "unit": "%",
-      "default": 26
+      "default": 35
+    },
+    {
+      "type": "select",
+      "id": "texture_blend",
+      "label": "Texture blend mode",
+      "info": "Overlay = subtle pattern (recommended). Soft light = even subtler. Multiply = darker pattern. Normal = flat overlay (no blending).",
+      "options": [
+        { "value": "overlay", "label": "Overlay (recommended)" },
+        { "value": "soft-light", "label": "Soft light (subtle)" },
+        { "value": "multiply", "label": "Multiply (darker)" },
+        { "value": "screen", "label": "Screen (lighter)" },
+        { "value": "normal", "label": "Normal (no blend)" }
+      ],
+      "default": "overlay"
     },
     {
       "type": "image_picker",
