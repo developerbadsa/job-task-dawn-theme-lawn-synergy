@@ -344,14 +344,15 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
-    z-index: 8;
+    bottom: -60px;
+    z-index: 22;
     display: block;
     width: 100%;
-    height: var(--bottom-grass-height);
+    height: 264px;
     object-fit: cover;
     object-position: center bottom;
     pointer-events: none;
+    inset: 12
   }
 
   @media screen and (max-width: 1320px) {
@@ -577,9 +578,9 @@
       "label": "Content width",
       "min": 900,
       "max": 1400,
-      "step": 1,
+      "step": 5,
       "unit": "px",
-      "default": 1272
+      "default": 1270
     },
     {
       "type": "range",
@@ -587,9 +588,9 @@
       "label": "Section height",
       "min": 560,
       "max": 900,
-      "step": 1,
+      "step": 5,
       "unit": "px",
-      "default": 824
+      "default": 825
     },
     {
       "type": "range",
