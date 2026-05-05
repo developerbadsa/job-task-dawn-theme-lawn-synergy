@@ -17,33 +17,26 @@
     --testimonial-height: {{ section.settings.section_height | default: 905 }}px;
     --testimonial-panel-left: {{ section.settings.panel_left | default: 250 }}px;
     --testimonial-panel-radius: {{ section.settings.panel_radius | default: 30 }}px;
-
     --testimonial-person-left: {{ section.settings.person_left | default: 18 }}px;
     --testimonial-person-bottom: {{ section.settings.person_bottom | default: 0 }}px;
     --testimonial-person-width: {{ section.settings.person_width | default: 780 }}px;
     --testimonial-person-height: {{ section.settings.person_height | default: 905 }}px;
-
     --testimonial-content-left: {{ section.settings.content_left | default: 590 }}px;
     --testimonial-content-top: {{ section.settings.content_top | default: 150 }}px;
     --testimonial-content-width: {{ section.settings.content_box_width | default: 648 }}px;
-
     --testimonial-card-width: {{ section.settings.card_width | default: 648 }}px;
     --testimonial-card-height: {{ section.settings.card_height | default: 328 }}px;
     --testimonial-card-gap: {{ section.settings.card_top_gap | default: 88 }}px;
-
     --testimonial-grass-height: {{ section.settings.grass_height | default: 180 }}px;
     --testimonial-grass-overlap: {{ section.settings.grass_overlap | default: 22 }}px;
-
     --testimonial-panel-bg: {{ section.settings.panel_bg | default: '#00452E' }};
     --testimonial-card-bg: {{ section.settings.card_bg | default: '#25AA6C' }};
     --testimonial-primary: {{ section.settings.primary_green | default: '#20B26B' }};
     --testimonial-heading: {{ section.settings.heading_color | default: '#FFFFFF' }};
     --testimonial-body: {{ section.settings.body_color | default: '#FFFFFF' }};
-
     --testimonial-heading-size: {{ section.settings.heading_size | default: 52 }}px;
     --testimonial-quote-size: {{ section.settings.quote_size | default: 24 }}px;
     --testimonial-texture-opacity: {{ texture_opacity }};
-
     {%- if bg_texture != blank -%}
       --testimonial-texture: url('{{ bg_texture | image_url: width: 2400 }}');
     {%- else -%}
@@ -58,21 +51,21 @@
       {%- if person != blank -%}
         {{
           person
-          | image_url: width: 1300
+          | image_url: width: 1400
           | image_tag:
             loading: 'lazy',
             class: 'lawn-testimonial-custom__person-img',
             alt: person_alt,
-            width: 1300,
-            height: 1500
+            width: 1400,
+            height: 1600
         }}
       {%- else -%}
         <img
           class="lawn-testimonial-custom__person-img"
           src="{{ 'testimonial-man.png' | asset_url }}"
           alt="{{ person_alt | escape }}"
-          width="1300"
-          height="1500"
+          width="1400"
+          height="1600"
           loading="lazy"
         >
       {%- endif -%}
@@ -197,7 +190,7 @@
     z-index: 1;
     overflow: hidden;
     border-top-left-radius: var(--testimonial-panel-radius);
-    background-color: var(--testimonial-panel-bg);
+    background: var(--testimonial-panel-bg);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel::before {
@@ -210,7 +203,7 @@
     background-position: center;
     background-repeat: no-repeat;
     opacity: var(--testimonial-texture-opacity);
-    mix-blend-mode: screen;
+    mix-blend-mode: soft-light;
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel::after {
@@ -218,7 +211,9 @@
     position: absolute;
     inset: 0;
     z-index: 2;
-    background: rgba(0, 55, 36, 0.38);
+    background:
+      radial-gradient(circle at 40% 20%, rgba(255,255,255,0.04), transparent 34%),
+      rgba(0, 45, 30, 0.18);
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
@@ -248,7 +243,7 @@
   }
 
   #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__eyebrow {
-    margin: 0 0 18px;
+    margin: 0 0 20px;
     color: var(--testimonial-primary);
     font-family: "Poppins", var(--font-body-family), sans-serif;
     font-size: 16px;
@@ -382,6 +377,10 @@
   @media screen and (max-width: 1279px) {
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__inner {
       width: 100%;
+    }
+
+    #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__panel {
+      left: 18%;
     }
 
     #lawn-testimonial-{{ section.id }} .lawn-testimonial-custom__person {
@@ -619,7 +618,7 @@
       "id": "section_height",
       "label": "Section height",
       "min": 700,
-      "max": 920,
+      "max": 1200,
       "step": 5,
       "unit": "px",
       "default": 905
@@ -679,7 +678,7 @@
       "id": "person_height",
       "label": "Person height",
       "min": 650,
-      "max": 920,
+      "max": 1100,
       "step": 5,
       "unit": "px",
       "default": 905
@@ -708,7 +707,7 @@
       "type": "range",
       "id": "content_box_width",
       "label": "Text box width",
-      "min": 480,
+      "min": 500,
       "max": 760,
       "step": 4,
       "unit": "px",
