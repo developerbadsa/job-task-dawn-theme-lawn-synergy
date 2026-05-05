@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "name": "Header",
   "type": "header",
@@ -6,6 +15,7 @@
       "type": "lawn-announcement-bar",
       "settings": {
         "text": "USE CODE: CELEBRATE10 FOR 10% OFF YOUR ORDER!",
+        "link": "",
         "bg_color": "#61bd91",
         "text_color": "#ffffff"
       }
@@ -13,11 +23,41 @@
     "lawn_header": {
       "type": "lawn-header",
       "blocks": {
-        "link_home": { "type": "link", "settings": { "label": "Home", "url": "/" } },
-        "link_shop": { "type": "link", "settings": { "label": "Shop Now", "url": "/collections/all" } },
-        "link_reviews": { "type": "link", "settings": { "label": "Reviews", "url": "/pages/reviews" } },
-        "link_tracking": { "type": "link", "settings": { "label": "Order Tracking", "url": "/pages/order-tracking" } },
-        "link_contact": { "type": "link", "settings": { "label": "Contact Us", "url": "/pages/contact" } }
+        "link_home": {
+          "type": "link",
+          "settings": {
+            "label": "Home",
+            "url": "/"
+          }
+        },
+        "link_shop": {
+          "type": "link",
+          "settings": {
+            "label": "Shop Now",
+            "url": "/collections/all"
+          }
+        },
+        "link_reviews": {
+          "type": "link",
+          "settings": {
+            "label": "Reviews",
+            "url": "/pages/reviews"
+          }
+        },
+        "link_tracking": {
+          "type": "link",
+          "settings": {
+            "label": "Order Tracking",
+            "url": "/pages/order-tracking"
+          }
+        },
+        "link_contact": {
+          "type": "link",
+          "settings": {
+            "label": "Contact Us",
+            "url": "/pages/contact"
+          }
+        }
       },
       "block_order": [
         "link_home",
@@ -27,12 +67,23 @@
         "link_contact"
       ],
       "settings": {
+        "logo": "shopify://shop_images/image_2256_1.png",
         "logo_width": 176,
         "cart_label": "Cart",
+        "cart_icon_alt": "Cart",
+        "icon_size": 18,
         "show_wishlist": true,
-        "show_account": true
+        "wishlist_label": "Wishlist",
+        "wishlist_icon_alt": "Wishlist",
+        "wishlist_url": "",
+        "show_account": true,
+        "account_label": "Account",
+        "account_icon_alt": "Account"
       }
     }
   },
-  "order": ["lawn_announcement", "lawn_header"]
+  "order": [
+    "lawn_announcement",
+    "lawn_header"
+  ]
 }
