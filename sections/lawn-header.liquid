@@ -1,6 +1,7 @@
 {%- liquid
   assign logo = section.settings.logo
   assign logo_width = section.settings.logo_width | default: 176
+  assign logo_style = 'width: ' | append: logo_width | append: 'px;'
   assign cart_label = section.settings.cart_label | default: 'Cart'
   assign icon_size = section.settings.icon_size | default: 18
 -%}
@@ -14,7 +15,7 @@
           width: logo.width,
           height: logo.height,
           alt: shop.name,
-          style: 'width: ' | append: logo_width | append: 'px;'
+          style: logo_style
         }}
       {%- else -%}
         <img src="{{ 'lawn-synergy-logo.png' | asset_url }}"
