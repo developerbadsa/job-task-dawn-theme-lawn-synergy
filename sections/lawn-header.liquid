@@ -4,6 +4,8 @@
   assign logo_style = 'width: ' | append: logo_width | append: 'px;'
   assign cart_label = section.settings.cart_label | default: 'Cart'
   assign icon_size = section.settings.icon_size | default: 18
+  assign icon_style = 'width: ' | append: icon_size | append: 'px; height: ' | append: icon_size | append: 'px;'
+  assign use_custom_action_icons = section.settings.use_custom_action_icons
 -%}
 
 <header class="site-header">
@@ -38,47 +40,59 @@
 
     <div class="nav-actions" aria-label="Shopping actions">
       <a class="cart-button" href="{{ routes.cart_url }}" type="button">
-        {%- if section.settings.cart_icon != blank -%}
+        {%- if use_custom_action_icons and section.settings.cart_icon != blank -%}
           {{ section.settings.cart_icon | image_url: width: 96 | image_tag:
             loading: 'lazy',
             class: 'header-action-icon header-action-icon--image',
             alt: section.settings.cart_icon_alt | default: cart_label,
             width: icon_size,
-            height: icon_size
+            height: icon_size,
+            style: icon_style
           }}
         {%- else -%}
-          <span class="icon cart-icon"></span>
+          <svg class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6.4 7.2h14.1l-1.6 7.1H8.1L6.4 7.2Z" />
+            <path d="M3.5 4.5h2l.9 2.7" />
+            <path d="M9 19.2h.1M17.7 19.2h.1" />
+          </svg>
         {%- endif -%}
         <span>{{ cart_label }}</span>
         <span class="cart-count">{{ cart.item_count | default: 0 }}</span>
       </a>
       {%- if section.settings.show_wishlist -%}
         <a class="icon-button" href="{{ section.settings.wishlist_url | default: '#' }}" aria-label="{{ section.settings.wishlist_label | default: 'Wishlist' }}">
-          {%- if section.settings.wishlist_icon != blank -%}
+          {%- if use_custom_action_icons and section.settings.wishlist_icon != blank -%}
             {{ section.settings.wishlist_icon | image_url: width: 96 | image_tag:
               loading: 'lazy',
               class: 'header-action-icon header-action-icon--image',
               alt: section.settings.wishlist_icon_alt | default: section.settings.wishlist_label | default: 'Wishlist',
               width: icon_size,
-              height: icon_size
+              height: icon_size,
+              style: icon_style
             }}
           {%- else -%}
-            <span class="icon heart-icon"></span>
+            <svg class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M20.4 5.8c-1.7-1.9-4.5-2-6.3-.2L12 7.7 9.9 5.6C8.1 3.8 5.3 3.9 3.6 5.8c-1.6 1.8-1.5 4.6.2 6.3l8.2 8 8.2-8c1.7-1.7 1.8-4.5.2-6.3Z" />
+            </svg>
           {%- endif -%}
         </a>
       {%- endif -%}
       {%- if section.settings.show_account -%}
         <a class="icon-button" href="{%- if shop.customer_accounts_enabled -%}{{ routes.account_url }}{%- else -%}#{%- endif -%}" aria-label="{{ section.settings.account_label | default: 'Account' }}">
-          {%- if section.settings.account_icon != blank -%}
+          {%- if use_custom_action_icons and section.settings.account_icon != blank -%}
             {{ section.settings.account_icon | image_url: width: 96 | image_tag:
               loading: 'lazy',
               class: 'header-action-icon header-action-icon--image',
               alt: section.settings.account_icon_alt | default: section.settings.account_label | default: 'Account',
               width: icon_size,
-              height: icon_size
+              height: icon_size,
+              style: icon_style
             }}
           {%- else -%}
-            <span class="icon user-icon"></span>
+            <svg class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 12.1a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+              <path d="M5 20.2c.8-3.3 3.4-5.2 7-5.2s6.2 1.9 7 5.2" />
+            </svg>
           {%- endif -%}
         </a>
       {%- endif -%}
@@ -119,6 +133,13 @@
       "id": "cart_label",
       "label": "Cart label",
       "default": "Cart"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_custom_action_icons",
+      "label": "Use uploaded action icons",
+      "default": false,
+      "info": "Keep disabled to use the Figma-matched default cart, wishlist, and account icons."
     },
     {
       "type": "image_picker",

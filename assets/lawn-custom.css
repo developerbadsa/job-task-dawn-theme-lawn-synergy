@@ -105,14 +105,14 @@ img {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .cart-button,
 .icon-button {
   border: 0;
   background: #f3fbf7;
-  color: #111;
+  color: #101815;
   height: 44px;
   border-radius: 8px;
 }
@@ -120,9 +120,10 @@ img {
 .cart-button {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 0 16px;
+  gap: 9px;
+  padding: 0 14px;
   font-weight: 500;
+  line-height: 1;
 }
 
 .icon-button {
@@ -132,58 +133,36 @@ img {
 }
 
 .cart-count {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   background: #63c89b;
   color: #fff;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-}
-
-.icon {
-  width: 18px;
-  height: 18px;
-  display: inline-block;
-  border: 2px solid currentColor;
 }
 
 .header-action-icon {
   display: block;
   flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.header-action-icon--image {
+  stroke: none;
 }
 
 .icon-button .header-action-icon {
   margin: auto;
-}
-
-.cart-icon {
-  border-top: 0;
-  transform: skewX(-8deg);
-}
-
-.heart-icon {
-  border-radius: 50% 50% 45% 45%;
-}
-
-.user-icon {
-  border-radius: 50%;
-  position: relative;
-}
-
-.user-icon::after {
-  content: "";
-  position: absolute;
-  left: 2px;
-  right: 2px;
-  bottom: -10px;
-  height: 8px;
-  border: 2px solid currentColor;
-  border-top: 0;
-  border-radius: 0 0 12px 12px;
 }
 
 .hero {
