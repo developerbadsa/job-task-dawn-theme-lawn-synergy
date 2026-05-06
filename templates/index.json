@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "product_cards": {
@@ -6,7 +15,7 @@
         "envy_card": {
           "type": "product_card",
           "settings": {
-            "product": "",
+            "product": "envy-premium-tall-fescue-grass-seed-blend",
             "image": "shopify://shop_images/a2a48fb8dc1e6454669f19bb9abc157c34f5b533.png",
             "image_alt": "Envy Premium Tall Fescue Grass Seed Blend",
             "badge": "Best Seller",
@@ -25,7 +34,7 @@
         "dense_card": {
           "type": "product_card",
           "settings": {
-            "product": "",
+            "product": "envy-premium-tall-fescue-grass-seed-blend",
             "image": "shopify://shop_images/eb525d0a099acc205cbd49814b99be2d1f85dc41.png",
             "image_alt": "Thicker greener lawn result",
             "badge": "Premium Blend",
@@ -44,8 +53,8 @@
         "seasonal_card": {
           "type": "product_card",
           "settings": {
-            "product": "",
-            "image": "shopify://shop_images/0f2da063c03b82221ec1cea1539c95e9ea37821d.png",
+            "product": "envy-premium-tall-fescue-grass-seed-blend",
+            "image": "shopify://shop_images/bae93f15abcc31d803feb74b69e8708af9269eea.png",
             "image_alt": "Healthy lawn seed growth",
             "badge": "Starter Pick",
             "highlight": false,
@@ -72,16 +81,16 @@
         "lead": "Pick a product below to open the product detail page, choose your size, and continue checkout.",
         "button_label": "View Details",
         "show_rating": true,
-        "rating_stars": "\u2605\u2605\u2605\u2605\u2605",
+        "rating_stars": "★★★★★",
         "max_width": 1280,
-        "background_color": "#EFF9F4",
-        "card_background": "#FFFFFF",
-        "green_color": "#24A96B",
-        "dark_color": "#073C27",
-        "orange_color": "#FF5A1F",
-        "text_color": "#1B1B1B",
-        "muted_color": "#5F625F",
-        "line_color": "#E7EEE9"
+        "background_color": "#eff9f4",
+        "card_background": "#ffffff",
+        "green_color": "#24a96b",
+        "dark_color": "#073c27",
+        "orange_color": "#ff5a1f",
+        "text_color": "#1b1b1b",
+        "muted_color": "#5f625f",
+        "line_color": "#e7eee9"
       }
     }
   },
