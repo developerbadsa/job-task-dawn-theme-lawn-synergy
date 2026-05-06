@@ -92,9 +92,94 @@
         "muted_color": "#5f625f",
         "line_color": "#e7eee9"
       }
+    },
+    "lawn_product_cards_ymxDcV": {
+      "type": "lawn-product-cards",
+      "blocks": {
+        "product_card_MttWwR": {
+          "type": "product_card",
+          "settings": {
+            "product": "envy-premium-tall-fescue-grass-seed-blend",
+            "image": "shopify://shop_images/a2a48fb8dc1e6454669f19bb9abc157c34f5b533.png",
+            "image_alt": "Envy Premium Tall Fescue Grass Seed Blend",
+            "badge": "Best Seller",
+            "highlight": true,
+            "title": "Envy Premium Tall Fescue Grass Seed Blend",
+            "text": "Professional-grade tall fescue designed for darker color, better density, and a cleaner lawn finish.",
+            "rating_text": "Rated By 12,520+ Customers",
+            "feature_1": "Darker green color",
+            "feature_2": "0% weed seeds",
+            "price": "$49.99",
+            "compare_price": "$56.25",
+            "link": "/products/envy-tall-fescue",
+            "button_label": "View Details"
+          }
+        },
+        "product_card_JcDPjR": {
+          "type": "product_card",
+          "settings": {
+            "product": "envy-premium-tall-fescue-grass-seed-blend",
+            "image": "shopify://shop_images/eb525d0a099acc205cbd49814b99be2d1f85dc41.png",
+            "image_alt": "Thicker greener lawn result",
+            "badge": "Premium Blend",
+            "highlight": false,
+            "title": "Dense Growth Lawn Seed",
+            "text": "A clean, easy option for filling thin areas and building a thicker, more uniform lawn.",
+            "rating_text": "Customer Favorite",
+            "feature_1": "Improved fill-in",
+            "feature_2": "Uniform turf look",
+            "price": "$39.99",
+            "compare_price": "",
+            "link": "/products/envy-tall-fescue",
+            "button_label": "View Details"
+          }
+        },
+        "product_card_dQ8NNT": {
+          "type": "product_card",
+          "settings": {
+            "product": "envy-premium-tall-fescue-grass-seed-blend",
+            "image": "shopify://shop_images/bae93f15abcc31d803feb74b69e8708af9269eea.png",
+            "image_alt": "Healthy lawn seed growth",
+            "badge": "Starter Pick",
+            "highlight": false,
+            "title": "Seasonal Overseeding Mix",
+            "text": "Refresh bare spots and improve coverage with a simple seasonal lawn upgrade.",
+            "rating_text": "Easy Lawn Upgrade",
+            "feature_1": "Great for bare spots",
+            "feature_2": "Simple overseeding",
+            "price": "$29.99",
+            "compare_price": "",
+            "link": "/products/envy-tall-fescue",
+            "button_label": "View Details"
+          }
+        }
+      },
+      "block_order": [
+        "product_card_MttWwR",
+        "product_card_JcDPjR",
+        "product_card_dQ8NNT"
+      ],
+      "settings": {
+        "eyebrow": "",
+        "heading": "",
+        "lead": "",
+        "button_label": "View Details",
+        "show_rating": true,
+        "rating_stars": "★★★★★",
+        "max_width": 1280,
+        "background_color": "#eff9f4",
+        "card_background": "#ffffff",
+        "green_color": "#24a96b",
+        "dark_color": "#073c27",
+        "orange_color": "#ff5a1f",
+        "text_color": "#1b1b1b",
+        "muted_color": "#5f625f",
+        "line_color": "#e7eee9"
+      }
     }
   },
   "order": [
-    "product_cards"
+    "product_cards",
+    "lawn_product_cards_ymxDcV"
   ]
 }
