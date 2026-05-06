@@ -1297,7 +1297,14 @@ p {
   align-items: start;
 }
 
+.footer-logo-wrap,
+.footer-grid > div:first-child {
+  font-size: 0;
+  line-height: 0;
+}
+
 .footer-logo {
+  display: block;
   width: 150px;
   height: auto;
   object-fit: contain;

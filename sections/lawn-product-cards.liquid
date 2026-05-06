@@ -1,0 +1,697 @@
+{%- liquid
+  assign card_blocks = section.blocks | where: 'type', 'product_card'
+-%}
+
+<section
+  id="lawn-product-cards-{{ section.id }}"
+  class="lawn-product-cards"
+  style="
+    --lpc-bg: {{ section.settings.background_color }};
+    --lpc-card-bg: {{ section.settings.card_background }};
+    --lpc-dark: {{ section.settings.dark_color }};
+    --lpc-text: {{ section.settings.text_color }};
+    --lpc-muted: {{ section.settings.muted_color }};
+    --lpc-green: {{ section.settings.green_color }};
+    --lpc-orange: {{ section.settings.orange_color }};
+    --lpc-line: {{ section.settings.line_color }};
+    --lpc-max: {{ section.settings.max_width }}px;
+  "
+>
+  <div class="lawn-product-cards__inner">
+    <div class="lawn-product-cards__header">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="lawn-product-cards__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.heading != blank -%}
+        <h1 class="lawn-product-cards__heading">{{ section.settings.heading }}</h1>
+      {%- endif -%}
+
+      {%- if section.settings.lead != blank -%}
+        <p class="lawn-product-cards__lead">{{ section.settings.lead }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="lawn-product-cards__grid">
+      {%- for block in card_blocks -%}
+        {%- liquid
+          assign card_product = block.settings.product
+          assign card_title = block.settings.title
+          assign card_text = block.settings.text
+          assign card_price = block.settings.price
+          assign card_compare_price = block.settings.compare_price
+          assign card_url = block.settings.link
+          assign card_image = block.settings.image
+          assign card_alt = block.settings.image_alt
+
+          if card_product != blank
+            if card_title == blank
+              assign card_title = card_product.title
+            endif
+
+            if card_text == blank and card_product.description != blank
+              assign card_text = card_product.description | strip_html | truncatewords: 18
+            endif
+
+            if card_price == blank
+              assign card_price = card_product.price | money
+            endif
+
+            if card_compare_price == blank and card_product.compare_at_price_max > card_product.price
+              assign card_compare_price = card_product.compare_at_price_max | money
+            endif
+
+            if card_url == blank
+              assign card_url = card_product.url
+            endif
+
+            if card_image == blank
+              assign card_image = card_product.featured_image
+            endif
+
+            if card_alt == blank
+              assign card_alt = card_product.title
+            endif
+          endif
+
+          if card_title == blank
+            assign card_title = 'Envy Premium Tall Fescue Grass Seed Blend'
+          endif
+
+          if card_text == blank
+            assign card_text = 'Premium lawn seed built for thicker, darker, more uniform turf.'
+          endif
+
+          if card_price == blank
+            assign card_price = '$49.99'
+          endif
+
+          if card_url == blank
+            assign card_url = routes.all_products_collection_url
+          endif
+
+          if card_alt == blank
+            assign card_alt = card_title
+          endif
+        -%}
+
+        <article class="lawn-product-card{% if block.settings.highlight %} lawn-product-card--highlight{% endif %}" {{ block.shopify_attributes }}>
+          {%- if block.settings.badge != blank -%}
+            <span class="lawn-product-card__badge">{{ block.settings.badge }}</span>
+          {%- endif -%}
+
+          <a class="lawn-product-card__media" href="{{ card_url }}" aria-label="{{ card_title | escape }}">
+            {%- if card_image != blank -%}
+              {{
+                card_image
+                | image_url: width: 900
+                | image_tag:
+                  loading: 'lazy',
+                  alt: card_alt,
+                  widths: '320, 480, 640, 900',
+                  sizes: '(min-width: 990px) 31vw, (min-width: 640px) 45vw, 92vw'
+              }}
+            {%- else -%}
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg lawn-product-card__placeholder' }}
+            {%- endif -%}
+          </a>
+
+          <div class="lawn-product-card__body">
+            {%- if section.settings.show_rating and block.settings.rating_text != blank -%}
+              <div class="lawn-product-card__rating">
+                <span aria-hidden="true">{{ section.settings.rating_stars }}</span>
+                <small>{{ block.settings.rating_text }}</small>
+              </div>
+            {%- endif -%}
+
+            <h2 class="lawn-product-card__title">
+              <a href="{{ card_url }}">{{ card_title }}</a>
+            </h2>
+
+            <p class="lawn-product-card__text">{{ card_text }}</p>
+
+            {%- if block.settings.feature_1 != blank or block.settings.feature_2 != blank -%}
+              <ul class="lawn-product-card__features" role="list">
+                {%- if block.settings.feature_1 != blank -%}
+                  <li>{{ block.settings.feature_1 }}</li>
+                {%- endif -%}
+                {%- if block.settings.feature_2 != blank -%}
+                  <li>{{ block.settings.feature_2 }}</li>
+                {%- endif -%}
+              </ul>
+            {%- endif -%}
+
+            <div class="lawn-product-card__footer">
+              <div class="lawn-product-card__price">
+                <strong>{{ card_price }}</strong>
+                {%- if card_compare_price != blank -%}
+                  <span>{{ card_compare_price }}</span>
+                {%- endif -%}
+              </div>
+
+              <a class="lawn-product-card__cta" href="{{ card_url }}">
+                {{ block.settings.button_label | default: section.settings.button_label }}
+              </a>
+            </div>
+          </div>
+        </article>
+      {%- else -%}
+        <article class="lawn-product-card">
+          <a class="lawn-product-card__media" href="{{ routes.all_products_collection_url }}" aria-label="Shop products">
+            <img
+              src="{{ 'envy-tall-fescue-design.png' | asset_url }}"
+              alt="Envy Premium Tall Fescue Grass Seed Blend"
+              loading="lazy"
+              width="900"
+              height="900"
+            >
+          </a>
+          <div class="lawn-product-card__body">
+            <div class="lawn-product-card__rating">
+              <span aria-hidden="true">{{ section.settings.rating_stars }}</span>
+              <small>Rated By 12,520+ Customers</small>
+            </div>
+            <h2 class="lawn-product-card__title">
+              <a href="{{ routes.all_products_collection_url }}">Envy Premium Tall Fescue Grass Seed Blend</a>
+            </h2>
+            <p class="lawn-product-card__text">Premium lawn seed built for thicker, darker, more uniform turf.</p>
+            <ul class="lawn-product-card__features" role="list">
+              <li>Darker green color</li>
+              <li>0% weed seeds</li>
+            </ul>
+            <div class="lawn-product-card__footer">
+              <div class="lawn-product-card__price">
+                <strong>$49.99</strong>
+                <span>$56.25</span>
+              </div>
+              <a class="lawn-product-card__cta" href="{{ routes.all_products_collection_url }}">
+                {{ section.settings.button_label }}
+              </a>
+            </div>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+<style>
+  #lawn-product-cards-{{ section.id }} {
+    background: var(--lpc-bg);
+    color: var(--lpc-text);
+    padding: 74px 24px 92px;
+  }
+
+  #lawn-product-cards-{{ section.id }} * {
+    box-sizing: border-box;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-cards__inner {
+    width: min(100%, var(--lpc-max));
+    margin: 0 auto;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-cards__header {
+    max-width: 760px;
+    margin-bottom: 38px;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-cards__eyebrow {
+    margin: 0 0 12px;
+    color: var(--lpc-green);
+    font-size: 15px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-cards__heading {
+    margin: 0;
+    color: var(--lpc-dark);
+    font-family: var(--font-display, "Clash Grotesk", "Poppins", Arial, sans-serif);
+    font-size: clamp(34px, 4vw, 56px);
+    line-height: 1.08;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-cards__lead {
+    max-width: 690px;
+    margin: 18px 0 0;
+    color: var(--lpc-muted);
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-cards__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1.5px solid var(--lpc-line);
+    border-radius: 8px;
+    background: var(--lpc-card-bg);
+    box-shadow: 0 18px 40px rgba(7, 60, 39, 0.07);
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card--highlight {
+    border-color: var(--lpc-green);
+    box-shadow: 0 22px 46px rgba(7, 60, 39, 0.12);
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__badge {
+    position: absolute;
+    z-index: 2;
+    top: 14px;
+    left: 14px;
+    min-height: 30px;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 6px 13px;
+    background: var(--lpc-green);
+    color: #ffffff;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 700;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__media {
+    display: block;
+    aspect-ratio: 1 / 0.82;
+    border-bottom: 1px solid var(--lpc-line);
+    background: #ffffff;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__media img,
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__rating {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 13px;
+    color: var(--lpc-green);
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__rating span {
+    color: #ff9200;
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__rating small {
+    color: var(--lpc-green);
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 600;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__title {
+    margin: 0;
+    color: var(--lpc-dark);
+    font-family: var(--font-display, "Clash Grotesk", "Poppins", Arial, sans-serif);
+    font-size: 25px;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__text {
+    margin: 13px 0 0;
+    color: var(--lpc-muted);
+    font-size: 15px;
+    line-height: 1.55;
+    font-weight: 500;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__features {
+    display: grid;
+    gap: 9px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__features li {
+    position: relative;
+    min-height: 22px;
+    padding-left: 30px;
+    color: var(--lpc-dark);
+    font-size: 14px;
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__features li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 1px;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: var(--lpc-green);
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__features li::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 7px;
+    width: 8px;
+    height: 4px;
+    border-left: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    transform: rotate(-45deg);
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: auto;
+    padding-top: 24px;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__price {
+    display: grid;
+    gap: 4px;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__price strong {
+    color: var(--lpc-orange);
+    font-size: 27px;
+    line-height: 1;
+    font-weight: 800;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__price span {
+    color: #68726c;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 700;
+    text-decoration: line-through;
+  }
+
+  #lawn-product-cards-{{ section.id }} .lawn-product-card__cta {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 13px 20px;
+    background: var(--lpc-orange);
+    color: #ffffff;
+    font-size: 15px;
+    line-height: 1;
+    font-weight: 800;
+    text-align: center;
+    box-shadow: 0 12px 26px rgba(255, 85, 24, 0.24);
+  }
+
+  @media screen and (max-width: 989px) {
+    #lawn-product-cards-{{ section.id }} {
+      padding: 58px 20px 74px;
+    }
+
+    #lawn-product-cards-{{ section.id }} .lawn-product-cards__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 640px) {
+    #lawn-product-cards-{{ section.id }} {
+      padding: 44px 16px 58px;
+    }
+
+    #lawn-product-cards-{{ section.id }} .lawn-product-cards__grid {
+      grid-template-columns: 1fr;
+    }
+
+    #lawn-product-cards-{{ section.id }} .lawn-product-card__body {
+      padding: 20px;
+    }
+
+    #lawn-product-cards-{{ section.id }} .lawn-product-card__footer {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    #lawn-product-cards-{{ section.id }} .lawn-product-card__cta {
+      width: 100%;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Lawn - Product cards",
+  "tag": "section",
+  "class": "lawn-product-cards-section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Shop Lawn Synergy"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Choose Your Lawn Upgrade"
+    },
+    {
+      "type": "textarea",
+      "id": "lead",
+      "label": "Intro text",
+      "default": "Select a product below to view the full product details, sizes, and checkout options."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Default button label",
+      "default": "View Details"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating line",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "rating_stars",
+      "label": "Rating stars",
+      "default": "\u2605\u2605\u2605\u2605\u2605"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 960,
+      "max": 1440,
+      "step": 10,
+      "unit": "px",
+      "default": 1280
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#EFF9F4"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "green_color",
+      "label": "Green",
+      "default": "#24A96B"
+    },
+    {
+      "type": "color",
+      "id": "dark_color",
+      "label": "Dark text",
+      "default": "#073C27"
+    },
+    {
+      "type": "color",
+      "id": "orange_color",
+      "label": "Orange",
+      "default": "#FF5A1F"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Body text",
+      "default": "#1B1B1B"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Muted text",
+      "default": "#5F625F"
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "Border",
+      "default": "#E7EEE9"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product_card",
+      "name": "Product card",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Manual image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Manual image alt"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge",
+          "default": "Best Seller"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "Highlight card",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Manual title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Manual description"
+        },
+        {
+          "type": "text",
+          "id": "rating_text",
+          "label": "Rating text",
+          "default": "Rated By 12,520+ Customers"
+        },
+        {
+          "type": "text",
+          "id": "feature_1",
+          "label": "Feature 1",
+          "default": "Darker green color"
+        },
+        {
+          "type": "text",
+          "id": "feature_2",
+          "label": "Feature 2",
+          "default": "0% weed seeds"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Manual price"
+        },
+        {
+          "type": "text",
+          "id": "compare_price",
+          "label": "Manual compare price"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Manual link"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Lawn - Product cards",
+      "blocks": [
+        {
+          "type": "product_card",
+          "settings": {
+            "badge": "Best Seller",
+            "highlight": true,
+            "title": "Envy Premium Tall Fescue Grass Seed Blend",
+            "text": "Professional-grade tall fescue for a thicker, darker, more uniform lawn.",
+            "feature_1": "Strong heat tolerance",
+            "feature_2": "Thick, uniform growth",
+            "price": "$49.99",
+            "compare_price": "$56.25"
+          }
+        },
+        {
+          "type": "product_card",
+          "settings": {
+            "badge": "Premium Blend",
+            "title": "Dense Growth Lawn Seed",
+            "text": "A clean seed option for filling thin patches and improving lawn density.",
+            "feature_1": "Fast fill-in",
+            "feature_2": "Clean seed quality",
+            "price": "$39.99"
+          }
+        },
+        {
+          "type": "product_card",
+          "settings": {
+            "badge": "Starter Pick",
+            "title": "Seasonal Overseeding Mix",
+            "text": "A simple way to refresh bare spots and build a stronger seasonal lawn.",
+            "feature_1": "Easy overseeding",
+            "feature_2": "Better coverage",
+            "price": "$29.99"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
