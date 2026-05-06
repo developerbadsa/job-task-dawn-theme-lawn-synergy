@@ -27,7 +27,7 @@
             "feature_2": "0% weed seeds",
             "price": "$49.99",
             "compare_price": "$56.25",
-            "link": "/products/envy-tall-fescue",
+            "link": "shopify://products/envy-premium-tall-fescue-grass-seed-blend",
             "button_label": "View Details"
           }
         },
@@ -46,7 +46,7 @@
             "feature_2": "Uniform turf look",
             "price": "$39.99",
             "compare_price": "",
-            "link": "/products/envy-tall-fescue",
+            "link": "shopify://products/envy-premium-tall-fescue-grass-seed-blend",
             "button_label": "View Details"
           }
         },
@@ -65,7 +65,7 @@
             "feature_2": "Simple overseeding",
             "price": "$29.99",
             "compare_price": "",
-            "link": "/products/envy-tall-fescue",
+            "link": "shopify://products/envy-premium-tall-fescue-grass-seed-blend",
             "button_label": "View Details"
           }
         }
@@ -111,7 +111,7 @@
             "feature_2": "0% weed seeds",
             "price": "$49.99",
             "compare_price": "$56.25",
-            "link": "/products/envy-tall-fescue",
+            "link": "shopify://products/envy-premium-tall-fescue-grass-seed-blend",
             "button_label": "View Details"
           }
         },
@@ -130,7 +130,7 @@
             "feature_2": "Uniform turf look",
             "price": "$39.99",
             "compare_price": "",
-            "link": "/products/envy-tall-fescue",
+            "link": "shopify://products/envy-premium-tall-fescue-grass-seed-blend",
             "button_label": "View Details"
           }
         },
